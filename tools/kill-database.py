@@ -12,7 +12,7 @@ db.create_all()
 page = wiki.Page()
 page.slug = "main"
 page.title = "Main Page"
-page.text = "This is some fucking retareed text ... blah I am tired don't mess with me now."
+page.text = "Hello World page with **markdown**."
 db.session.add(page)
 
 tag =  wiki.Tag()

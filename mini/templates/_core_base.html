@@ -21,13 +21,19 @@
                 <div class="navbar navbar-static-top navbar-inverse">
                     <div class="navbar-inner">
                         <div class="container">
-                            <ul class="nav">
-                                <li class="active">
-                                    <a href="/wiki">Wiki</a>
-                                </li>
-                                <li><a href="#">Link</a></li>
-                                <li><a href="#">Link</a></li>
-                            </ul>
+                                {% macro render_menu(list, level=0) %}
+                                    {% if list %}
+                                    <ul{% if level == 0 %} class="nav"{% else %} class="dropdown-menu" role="menu"{% endif %}>
+                                        {% for item in list %}
+                                            <li class="dropdown">
+                                                <a href="{{ item.get_url() }}">{{ item.title }}</a>
+                                                {{ render_menu(item.children, level + 1) }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                {% endmacro %}
+                                {{ render_menu(menu) }}
                         </div>
                     </div>
                 </div>

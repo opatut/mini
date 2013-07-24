@@ -22,3 +22,21 @@ footer {
     left: 0;
     right: 0;
 }
+
+ul.nav li.dropdown:hover > ul.dropdown-menu{
+    display: block;
+}
+
+ul.nav li.dropdown > ul.dropdown-menu {
+    border-radius: 0;
+    margin-top: 1px;
+    background: #F9F9F9;
+    border-top: 0;
+}
+
+.navbar .nav > li > .dropdown-menu:before {
+}
+
+.navbar .nav > li > .dropdown-menu:after {
+    border-bottom-color: #F9F9F9;
+}

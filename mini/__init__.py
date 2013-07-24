@@ -20,11 +20,25 @@ app.config['SECRET_KEY'] = 'CHANGE_ME'
 
 db = SQLAlchemy(app)
 
-# Markdown(app, safe_mode="escape")
+Markdown(app, safe_mode="escape")
 
-# import mini.core.models
-import mini.core.views
-# import mini.core.utils
+from mini.core import *
 
 from mini.modules.wiki import ext as wiki
-app.register_blueprint(wiki, url_prefix='/wiki')
+app.register_blueprint(wiki.blueprint, url_prefix='/wiki')
+
+menu = [
+    Menu("index", "Index", lambda: url_for("index"), "")
+] + wiki.menu
+
+def build_menu(path=""):
+    r = []
+    for item in menu:
+        if item.path == path:
+            item.children = build_menu(("%s.%s" % (path, item.name)) if path else item.name)
+            r.append(item)
+    return r
+
+@app.context_processor
+def inject_menu():
+    return dict(menu=build_menu())
