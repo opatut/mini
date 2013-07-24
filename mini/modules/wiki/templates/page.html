@@ -1,0 +1,14 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <h1>
+        {{ page.title }}
+        {% for tag in page.tags %}
+            <a href="{{ url_for('wiki.tag', tag=tag.tag) }}" class="label">{{ tag.tag }}</a>
+        {% endfor %}
+    </h1>
+{% endblock %}
+
+{% block content %}
+    {{ page.text }}
+{% endblock %}

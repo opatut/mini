@@ -1,0 +1,11 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <h1>Tag: {{ tag.tag }}</h1>
+{% endblock %}
+
+{% block content %}
+    {% for page in tag.pages %}
+        <li><a href="{{ url_for('wiki.page', slug=page.slug) }}">{{ page.title }}</a></li>
+    {% endfor %}
+{% endblock %}

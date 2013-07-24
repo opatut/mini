@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %} &middot; miniSUITE</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+        <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/core.css') }}" type="text/css" />
+
+        <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+        {% block head %}{% endblock %}
+    </head>
+
+    <body class="default">
+        <div id="wrapper">
+            <div id="body">
+                <div class="navbar navbar-static-top navbar-inverse">
+                    <div class="navbar-inner">
+                        <div class="container">
+                            <ul class="nav">
+                                <li class="active">
+                                    <a href="/wiki">Wiki</a>
+                                </li>
+                                <li><a href="#">Link</a></li>
+                                <li><a href="#">Link</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    {% block core_content %}
+                        NO CORE CONTENT :(
+                    {% endblock %}
+                </div>
+            </div>
+
+            <footer class="footer" id="footer">
+                <div class="container">
+                    <p>Powered by <a href="https://github.com/opatut/minigit">miniSUITE</a>.</p>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

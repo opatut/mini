@@ -1,0 +1,24 @@
+body {
+    font-family: Open Sans;
+    font-size: 10pt;
+}
+
+.navbar {
+}
+
+.page-header h1 {
+    font-size: 2em;
+    font-weight: normal;
+}
+
+footer {
+    height: 30px;
+    background: #F7F7F7;
+    border-top: 1px solid #DDD;
+    margin-top: 20px;
+    padding: 20px 0 10px 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

@@ -1,0 +1,9 @@
+*.cfg
+*.config.py
+*.db
+*.log
+*.pyc
+config.py
+config/
+env/
+data/

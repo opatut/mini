@@ -1,0 +1,11 @@
+{% set flashes = get_flashed_messages(with_categories = True) %}
+{% if flashes %}
+    <div class="flashes">
+    {% for category, message in flashes %}
+        <div class="alert{{ (' alert-' + category) if category and category != 'message' else '' }}">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ message | safe }}
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
