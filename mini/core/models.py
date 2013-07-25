@@ -21,32 +21,12 @@ class Email(db.Model):
         self.address = address
         self.user = user
 
-class PublicKey(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    key = db.Column(db.String(1024), unique = True)
-    name = db.Column(db.String(128))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-
-    def __init__(self, key, name, user):
-        self.key = key.strip()
-        self.name = name
-        self.user = user
-
-    @property
-    def fingerprint(self):
-        return fingerprint(self.key)
-
-    @property
-    def type(self):
-        return keytype(self.key)
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(80), unique = True)
     password = db.Column(db.String(128))
 
     emails = db.relationship("Email", backref = "user", lazy = "dynamic")
-    keys = db.relationship("PublicKey", backref = "user", lazy = "dynamic")
 
     is_admin = db.Column(db.Boolean, default = False)
     permissions = db.relationship("Permission", backref = "user", lazy = "dynamic")
@@ -62,13 +42,6 @@ class User(db.Model):
 
         if default: self.setDefaultEmail(e)
         if gravatar: self.setGravatarEmail(e)
-
-    def addPublicKey(self, key, name = ""):
-        if not verify_key(key):
-            raise Error("Invalid SSH Key.")
-        k = PublicKey(key, name, self)
-        db.session.add(k)
-        self.keys.append(k)
 
     def setDefaultEmail(self, email):
         if self.default_email:
@@ -122,141 +95,3 @@ class Permission(db.Model):
         self.repository = repository
         self.access = access
 
-class Repository(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    slug = db.Column(db.String(128), unique = True)
-    title = db.Column(db.String(128))
-    upstream = db.Column(db.String(256)) # URL BRANCH
-    is_public = db.Column(db.Boolean, default = True)
-    implicit_access = db.Column(db.Enum("none", "find", "read", "write", "admin"), default = "none")
-    implicit_guest_access = db.Column(db.Boolean, default = False)
-    created = db.Column(db.DateTime)
-
-    permissions = db.relationship("Permission", backref = "repository", lazy = "dynamic")
-
-    _git = None
-    _commits = None
-    _contributors = None
-
-    def __init__(self, title, slug = ""):
-        self.slug = get_slug(title) if not slug else slug
-        self.title = title
-        self.created = datetime.utcnow()
-
-    @property
-    def path(self):
-        return abspath(join(app.config["REPOHOME"], self.slug + ".git"))
-
-    @property
-    def gitUrl(self):
-        return "{0}@{1}:{2}.git".format(app.config["GIT_USER"], app.config["DOMAIN"], self.slug)
-
-    @property
-    def exists(self):
-        return isdir(self.path)
-
-    def init(self):
-        if self.exists: return
-        run("mkdir -p {0} && cd {0} &&  mkdir {1}.git && cd {1}.git && git init --bare".format(app.config["REPOHOME"], self.slug))
-
-    def cloneFrom(self, url, branch = ""):
-        if self.exists: return
-        self.upstream = url + " " + branch
-        run("mkdir -p {0} && cd {0} && git clone {2} {1}.git b {3} --bare".format(app.config["REPOHOME"], self.slug. url, branch))
-
-    def requirePermission(self, permission):
-        require_login()
-        if not self.userHasPermission(get_current_user(), permission):
-            abort(403)
-
-    def clearUserPermission(self, user):
-        perm = Permission.query.filter_by(user_id = user.id, repository_id = self.id).first()
-        db.session.delete(perm)
-
-    def setUserPermission(self, user, permission):
-        """ `permissions` can be either of: none, find, read, write, admin """
-        perm = Permission.query.filter_by(user_id = user.id, repository_id = self.id).first()
-
-        if not perm:
-            # we have no permission object, create it
-            perm = Permission(user, self, permission)
-            db.session.add(perm)
-        else:
-            # we have a permission object, edit it
-            perm.access = permission
-
-    def getUserPermission(self, user):
-        p = Permission.query.filter_by(user_id = user.id, repository_id = self.id).first()
-        if not p:
-            return self.implicit_access if not user.is_admin else "admin"
-        else:
-            return p.access
-
-    """ Users with is_admin flag have implicit admin access"""
-    def userHasPermission(self, user, permission):
-        p = self.getUserPermission(user)
-
-        if permission == "admin":
-            return p == "admin" or user.is_admin
-
-        if permission == "write":
-            return p in ("write", "admin")  or user.is_admin
-
-        if permission == "read":
-            return p in ("read", "write", "admin") or user.is_admin
-
-        if permission == "find":
-            return p in ("find", "read", "write", "admin") or user.is_admin
-
-        if permission == "none":
-            return not self.is_public and p == "none"
-
-        return False
-
-    @property
-    def git(self):
-        if not self._git:
-            self._git = git.Repo(self.path)
-        return self._git
-
-    def findCommitContaining(self, rev, obj):
-        commits = []
-        for commit in git.Commit.iter_items(self.git, rev, obj.path):
-            commits.append(commit)
-        commits.sort(key = lambda o: o.committed_date, reverse = True)
-        return commits[0]
-
-    @property
-    def commits(self):
-        if not self._commits:
-            self._commits = []
-            for commit in git.Commit.iter_items(self.git, "master"):
-                self._commits.append(commit)
-        return self._commits
-
-    @property
-    def contributors(self):
-        if not self._contributors:
-            from minigit.filters import gitToUser
-            self._contributors = []
-            for commit in self.commits:
-                user = gitToUser(commit.author)
-                if user and not user in self._contributors:
-                    self._contributors.append(user)
-        return self._contributors
-
-
-    def getCommit(self, rev):
-        node = self.git.rev_parse(rev)
-
-        if not node:
-            return None
-
-        if type(node) == git.Blob or type(node) == git.Tree:
-            return node.commit
-        if type(node) == git.Tag:
-            return node.object
-        if type(node) == git.Commit:
-            return node
-
-        return None
