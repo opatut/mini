@@ -1,14 +1,48 @@
-{% extends "_base.html" %}
-
-{% block header %}
-    <h1>
-        {{ page.title }}
-        {% for tag in page.tags %}
-            <a href="{{ url_for('wiki.tag', tag=tag.tag) }}" class="label">{{ tag.tag }}</a>
-        {% endfor %}
-    </h1>
-{% endblock %}
+{% extends "_core_base.html" %}
 
 {% block content %}
-    {{ page.text | markdown }}
+{% if action == "view" %}
+    <div class="page-header">
+        <h1>
+            {{ page.title }}
+            {% for tag in page.tags %}
+                <a href="{{ url_for('wiki.tag', tag=tag.tag) }}" class="label">{{ tag.tag }}</a>
+            {% endfor %}
+
+            <small class="pull-right toolbar">
+                <a href="{{ url_for('wiki.page', slug=page.slug, action='edit') }}" class="btn">Edit this page</a>
+            </small>
+        </h1>
+    </div>
+    <div class="content">
+        {{ page.text | markdown }}
+    </div>
+{% elif action == "edit" or action == "new" %}
+    <form method="post">
+        <div class="page-header">
+            <h1>
+                {% if action != "new" %}Edit: {{ page.title }}{% else %}Create new Page{% endif %}
+
+                <small class="pull-right toolbar">
+                    {% if action != "new" %}<a href="{{ url_for('wiki.page', slug=page.slug) }}" class="btn btn-link">Cancel</a>{% endif %}
+                    <input type="submit" class="btn btn-primary" value="Save" />
+                </small>
+            </h1>
+        </div>
+        <div class="content">
+            <strong>Page title</strong>
+            <input name="title" type="text" placeholder="Page title" value="{{ page.title or '' }}" class="input-block-level" />
+
+            <strong>Content</strong>
+            <textarea name="text" class="input-block-level code" rows="16">{{ page.text or '' }}</textarea>
+
+            <input class="tags" name="tags" type="text" placeholder="Tags"
+                style="vertical-align: top;"
+                {% if page.tags %}value="{% for tag in page.tags %}{{", " if loop.index != 1 else ""}}{{tag.tag}}{% endfor %}"{% endif %}
+                alltags='[{% for tag in wiki_tags %}{{"," if loop.index != 1 else ""}}"{{tag.tag}}"{% endfor %}]' />
+        </div>
+    </form>
+{% else %}
+    <p class="alert alert-error">Invalid page action.</a>
+{% endif %}
 {% endblock %}

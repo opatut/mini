@@ -1,0 +1,13 @@
+{% extends "_core_base.html" %}
+
+{% block title %}Repository List{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Repository List</h1>
+    </div>
+
+    {% for repository in repositories %}
+        {{ repository }}
+    {% endfor %}
+{% endblock %}

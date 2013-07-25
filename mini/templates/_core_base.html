@@ -10,7 +10,8 @@
 
         <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+        <link rel="icon" href="{{ url_for('static', filename='gfx/favicon.png') }}" type="image/png">
 
         {% block head %}{% endblock %}
     </head>
@@ -25,7 +26,7 @@
                                     {% if list %}
                                     <ul{% if level == 0 %} class="nav"{% else %} class="dropdown-menu" role="menu"{% endif %}>
                                         {% for item in list %}
-                                            <li class="dropdown">
+                                            <li class="dropdown{{' active' if item.find_current() else ''}}">
                                                 <a href="{{ item.get_url() }}">{{ item.title }}</a>
                                                 {{ render_menu(item.children, level + 1) }}
                                             </li>
@@ -38,8 +39,8 @@
                     </div>
                 </div>
                 <div class="container">
-                    {% block core_content %}
-                        NO CORE CONTENT :(
+                    {% block content %}
+                        <p class="alert alert-error">No content provided by template.</a>
                     {% endblock %}
                 </div>
             </div>

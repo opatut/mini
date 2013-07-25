@@ -8,9 +8,9 @@ page_tag = db.Table('page_tag', db.metadata,
 class Page(db.Model):
     __tablename__ = "wiki_page"
     id = db.Column(db.Integer, primary_key=True)
-    slug = db.Column(db.String(64), unique=True)
-    title = db.Column(db.String(128))
-    text = db.Column(db.Text)
+    slug = db.Column(db.String(64), unique=True, default="")
+    title = db.Column(db.String(128), default="")
+    text = db.Column(db.Text, default="")
 
     tags = db.relationship("Tag", backref="pages", secondary=page_tag)
 

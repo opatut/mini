@@ -1,5 +1,5 @@
 from flask import Blueprint, url_for
-from menu import Menu
+from menu import Menu, MenuItem
 
 class Module(object):
     def __init__(self, name, title, author):
@@ -9,10 +9,4 @@ class Module(object):
         self.author = author
 
         self.models = []
-        self.menu = []
-
-    def add_menu(self, name, title, path="", permission=None):
-        def decorator(fun):
-            self.menu.append(Menu(name, title, lambda: url_for("%s.%s" % (self.name, fun.__name__)), path, permission))
-            return fun
-        return decorator
+        self.menu = Menu(self.name + ".")

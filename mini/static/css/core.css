@@ -1,14 +1,40 @@
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: Open Sans;
     font-size: 10pt;
 }
 
+#wrapper {
+    min-height: 100%;
+    position: relative;
+}
+
+#body {
+    min-height: 100%;
+    padding-bottom: 100px;
+}
+
 .navbar {
+    margin-bottom: 10px;
+}
+
+.page-header {
+    height: auto;
+    padding: 0;
+    border-bottom-width: 3px;
 }
 
 .page-header h1 {
     font-size: 2em;
     font-weight: normal;
+    margin: 0;
+}
+
+.page-header h1 * {
+    vertical-align: middle;
 }
 
 footer {
@@ -39,4 +65,8 @@ ul.nav li.dropdown > ul.dropdown-menu {
 
 .navbar .nav > li > .dropdown-menu:after {
     border-bottom-color: #F9F9F9;
+}
+
+textarea.code {
+    font-family: monospace;
 }
