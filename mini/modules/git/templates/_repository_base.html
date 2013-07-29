@@ -1,0 +1,17 @@
+{% extends "_core_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('git.static', filename='css/git.css') }}" type="text/css" />
+{% endblock %}
+
+{% block title %}{{ repository.title }}{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ repository.title }}</h1>
+    </div>
+
+    <div class="well well-small">nav here</div>
+
+    {% block repository_content %}{% endblock %}
+{% endblock %}

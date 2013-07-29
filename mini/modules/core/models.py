@@ -1,9 +1,26 @@
 # -*- coding: utf-8 -*-
 
-from mini import db
+from mini import db, login_manager
 from mini.base.util import *
 from datetime import datetime
+from flask.ext.login import current_user, login_user, logout_user
 import fnmatch
+
+class AnonymousUser(object):
+    def has_permission(self, permission):
+        return permission == "nologin"
+
+    def get_id(self):
+        return unicode(0)
+
+    def is_active(self):
+        return False
+
+    def is_anonymous(self):
+        return True
+
+    def is_authenticated(self):
+        return False
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -33,3 +50,32 @@ class User(db.Model):
                 return True
 
         return False
+
+    def login(self):
+        login_user(self)
+
+    def logout(self):
+        logout_user()
+
+    @staticmethod
+    def get_current():
+        return current_user
+
+    # flask-login
+    def get_id(self):
+        return unicode(self.id)
+
+    def is_active(self):
+        return True #self.is_verified
+
+    def is_anonymous(self):
+        return False
+
+    def is_authenticated(self):
+        return True
+    # /flask-login
+
+# we need this so flask-login can load a user into a session
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter_by(id=int(user_id)).first()

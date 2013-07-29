@@ -1,0 +1,7 @@
+{% extends "_repository_base.html" %}
+
+{% block repository_content %}
+    {% for commit in repository.get_commits() %}
+        {{ commit }}
+    {% endfor %}
+{% endblock %}

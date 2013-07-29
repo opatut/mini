@@ -1,3 +1,4 @@
+from mini import db
 from mini.base import Module
 from flask import render_template, abort
 

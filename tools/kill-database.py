@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from mini import db
 import mini.modules.core.models as core
 import mini.modules.wiki.models as wiki
+import mini.modules.git.models as git
 
 db.drop_all()
 db.create_all()
@@ -12,13 +13,7 @@ db.create_all()
 admin = core.User()
 admin.username = "admin"
 admin.set_password("hunter2")
-admin.permissions = """settings.core*
-settings.git*
-"""
-print("Core Settings: ", admin.has_permission("settings.core"))
-print("Wiki Settings: ", admin.has_permission("settings.wiki"))
-print("Core Settings Delete: ", admin.has_permission("settings.core.delete"))
-print("Login: ", admin.has_permission("login"))
+admin.permissions = """*"""
 db.session.add(admin)
 
 page = wiki.Page()
@@ -31,5 +26,12 @@ tag =  wiki.Tag()
 tag.tag = "awesome"
 tag.pages.append(page)
 db.session.add(tag)
+
+repo = git.Repository()
+repo.slug = "testrepo"
+repo.title = "Testing Repository"
+repo.upstream = ""
+repo.init()
+db.session.add(repo)
 
 db.session.commit()

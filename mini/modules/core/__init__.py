@@ -6,5 +6,6 @@ app = ext.blueprint
 
 from models import *
 from views import *
+from forms import *
 
 ext.models = [User]

@@ -30,5 +30,6 @@ def tags():
 
 @app.route("/settings/")
 @ext.menu.add_view("wiki", "Wiki", "settings")
+@ext.access.require("settings.wiki")
 def settings():
     return "lol"

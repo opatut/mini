@@ -13,5 +13,5 @@ class MiniCore(object):
             m = importlib.import_module("mini.modules."+name)
             ext = m.ext
             self.modules[name] = ext
-            self.app.register_blueprint(ext.blueprint, url_prefix='/' + ("" if name == "core" else name))
+            self.app.register_blueprint(ext.blueprint, url_prefix=("" if name == "core" else ("/"+name)))
             self.menu_items += ext.menu.items

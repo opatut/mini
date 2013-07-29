@@ -1,0 +1,22 @@
+{% extends "_core_base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1><i class="icon-key"></i> Login</h1>
+    </div>
+
+    <div class="content login well">
+        {% include "_flashes.html" %}
+        <div class="row-fluid">
+            <form method="POST" action="{{ url_for('core.login') }}">
+                {{ form.hidden_tag() }}
+                {{ form.username(class="span12", placeholder=form.username.label.text)}}
+                {{ form.password(class="span12", placeholder=form.password.label.text)}}
+
+                <input type="submit" value="Login" class="btn btn-primary btn-normal pull-right span6">
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -8,22 +8,22 @@ class Menu(object):
     def add(self, item):
         self.items.append(item)
 
-    def add_view(self, name, title, path="", permission=None, index=0, **kwargs):
+    def add_view(self, name, title, path="", index=0, **kwargs):
         def decorator(fun):
             endpoint = self.prefix + fun.__name__
-            self.add(MenuItem(name, title, lambda: url_for(endpoint, **kwargs), path, permission, index, endpoint))
+            self.add(MenuItem(name, title, lambda: url_for(endpoint, **kwargs), path, index, endpoint, fun))
             return fun
         return decorator
 
 class MenuItem(object):
-    def __init__(self, name, title, url, path="", permission=None, index=0, endpoint=""):
+    def __init__(self, name, title, url, path="", index=0, endpoint="", view_function=None):
         self.name = name
         self.title = title
         self._url = url
         self.path = path
-        self.permission = permission
         self.index = index
         self.endpoint = endpoint
+        self.view_function = view_function
         self.children = []
 
     def get_url(self, *args, **kwargs):
@@ -31,16 +31,9 @@ class MenuItem(object):
             return self._url(*args, **kwargs)
         return self._url
 
-    def has_permission(self, user):
-        if self._permission is None:
-            return True
-        elif isinstance(self._permission, str):
-            return user.has_permission(self._permission)
-        elif callable(self._permission):
-            return self._permission(user)
-        else:
-            raise Exception("Permission for menu item should be permission "
-                "string or function, not %s." % type(self._permission))
+    def is_shown(self):
+        from mini import access
+        return access.view_allowed(self.view_function)
 
     def __repr__(self):
         return '<Menu "%s">'%self.name

@@ -1,4 +1,9 @@
-from mini import db
+from mini import app as main_app
+from mini.modules.git import app, ext, db
+from mini.base.util import run
+from datetime import datetime
+from os.path import abspath, join, isdir
+import git
 
 class PublicKey(db.Model):
     __tablename__ = "git_publickey"
@@ -32,9 +37,6 @@ class Repository(db.Model):
     slug = db.Column(db.String(64), unique=True, default="")
     title = db.Column(db.String(128), default="")
     upstream = db.Column(db.String(256)) # URL BRANCH
-
-    guest_access = db.Column(db.Enum("none", "find", "read", "write", "admin"), default = "none")
-    implicit_access = db.Column(db.Enum("none", "find", "read", "write", "admin"), default = "none")
     created = db.Column(db.DateTime)
 
     _git = None
@@ -46,11 +48,11 @@ class Repository(db.Model):
 
     @property
     def path(self):
-        return abspath(join(app.config["REPOHOME"], self.slug + ".git"))
+        return abspath(join(main_app.config["GIT_REPOSITORY_DIRECTORY"], self.slug + ".git"))
 
     @property
     def gitUrl(self):
-        return "{0}@{1}:{2}.git".format(app.config["GIT_USER"], app.config["DOMAIN"], self.slug)
+        return "{0}@{1}:{2}.git".format(main_app.config["GIT_USER"], main_app.config["DOMAIN"], self.slug)
 
     @property
     def exists(self):
@@ -58,18 +60,25 @@ class Repository(db.Model):
 
     def init(self):
         if self.exists: return
-        run("mkdir -p {0} && cd {0} && mkdir {1}.git && cd {1}.git && git init --bare".format(app.config["REPOHOME"], self.slug))
+        run("mkdir -p {0} && cd {0} && mkdir {1}.git && cd {1}.git && git init --bare".format(main_app.config["GIT_REPOSITORY_DIRECTORY"], self.slug))
 
     def cloneFrom(self, url, branch = ""):
         if self.exists: return
         self.upstream = (url + " " + branch).strip()
-        run("mkdir -p {0} && cd {0} && git clone {2} {1}.git --branch {3} --bare".format(app.config["REPOHOME"], self.slug, url, branch))
+        run("mkdir -p {0} && cd {0} && git clone {2} {1}.git --branch {3} --bare".format(main_app.config["GIT_REPOSITORY_DIRECTORY"], self.slug, url, branch))
 
     @property
     def git(self):
         if not self._git:
             self._git = git.Repo(self.path)
         return self._git
+
+    def get_commits(self):
+        if not self._commits:
+            self._commits = []
+            for commit in git.Commit.iter_items(self.git, "master"):
+                self._commits.append(commit)
+        return self._commits
 
     def getCommit(self, rev):
         node = self.git.rev_parse(rev)

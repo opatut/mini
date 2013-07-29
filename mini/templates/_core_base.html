@@ -4,8 +4,9 @@
         <title>{% block title %}{% endblock %} &middot; miniSUITE</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-        <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-opensans.css') }}" type="text/css" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/core.css') }}" type="text/css" />
 
         <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
@@ -35,10 +36,17 @@
                                     {% endif %}
                                 {% endmacro %}
                                 {{ render_menu(menu) }}
+
+                                <div class="pull-right">
+                                    {% if current_user.is_active() %}
+                                        Logged in as {{ current_user.username }}
+                                    {% endif %}
+                                </div>
                         </div>
                     </div>
                 </div>
                 <div class="container">
+                    {% include "_flashes.html" %}
                     {% block content %}
                         <p class="alert alert-error">No content provided by template.</a>
                     {% endblock %}

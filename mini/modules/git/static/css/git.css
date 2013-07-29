@@ -1,0 +1,17 @@
+.repositories {
+    list-style: none;
+    margin: 0;
+}
+
+.repositories li {
+    background: #F6F6F6;
+    padding: 8px;
+}
+
+.repositories li .title {
+    font-size: 1.2em;
+}
+
+.repositories li .title small {
+    color: #888;
+}

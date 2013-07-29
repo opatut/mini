@@ -21,6 +21,11 @@ body {
     margin-bottom: 10px;
 }
 
+.navbar-inverse .navbar-inner {
+    background: #1d1d1d;
+    text-shadow: none !important;
+}
+
 .page-header {
     height: auto;
     padding: 0;
@@ -69,4 +74,18 @@ ul.nav li.dropdown > ul.dropdown-menu {
 
 textarea.code {
     font-family: monospace;
+}
+
+.login {
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+form {
+    margin: 0;
+}
+
+* {
+    border-radius: 0 !important;
 }
