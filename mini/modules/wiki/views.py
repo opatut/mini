@@ -26,7 +26,7 @@ def tag(tag):
 @app.route("/tags/")
 @ext.menu.add_view("tags", "Tags", "wiki")
 def tags():
-    return "lol"
+    return render_template("list/tags.html", tags=Tag.query.all())
 
 @app.route("/settings/")
 @ext.menu.add_view("wiki", "Wiki", "settings")
