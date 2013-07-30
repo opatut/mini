@@ -1,0 +1,19 @@
+{% extends "_repository_base.html" %}
+
+{% set raw_url = url_for('git.file_content', slug=repository.slug, rev=rev, path=file.path) %}
+
+{% block repository_content %}
+
+<div class="page-header">
+    <h3>{{ file.name }}</h3>
+</div>
+
+<div class="pull-right" style="margin-top: -5px;">
+    <a href="{{ raw_url }}" class="btn btn-default btn-small"><i class="icon-hdd"></i> Download</a>
+</div>
+
+{% set path = file.path %}
+<p>{% include "_path.html" %}</p>
+{% include "_render_file.html" %}
+{% endblock %}
+

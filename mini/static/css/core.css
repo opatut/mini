@@ -29,7 +29,8 @@ body {
 .page-header {
     height: auto;
     padding: 0;
-    border-bottom-width: 3px;
+    border: 0;
+    margin-top: 20px;
 }
 
 .page-header h1 {
@@ -43,7 +44,7 @@ body {
 }
 
 footer {
-    height: 30px;
+    height: 60px;
     background: #F7F7F7;
     border-top: 1px solid #DDD;
     margin-top: 20px;
@@ -66,10 +67,24 @@ ul.nav li.dropdown > ul.dropdown-menu {
 }
 
 .navbar .nav > li > .dropdown-menu:before {
+    display: none;
 }
 
 .navbar .nav > li > .dropdown-menu:after {
     border-bottom-color: #F9F9F9;
+    display: none;
+}
+
+.navbar .nav > li > ul {
+    padding: 0px;
+    margin-top: -1px;
+}
+.navbar .nav > li > ul li a:hover {
+    background: #555;
+}
+.navbar .nav > li > ul li.active a {
+    background: #111;
+    color: #FFF;
 }
 
 textarea.code {
@@ -77,15 +92,85 @@ textarea.code {
 }
 
 .login {
-    width: 300px;
-    margin: 0 auto;
-    text-align: center;
+    max-width: 600px;
+}
+.login * {
+    margin-bottom: 0;
 }
 
 form {
     margin: 0;
 }
 
-* {
-    border-radius: 0 !important;
+.table tr:first-child > * {
+    border-top: 0;
+}
+
+.table th, .table td {
+    padding: 6px 12px;
+}
+
+.sha {
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+ul.nav-tabs li a i {
+    font-size: 14px;
+    vertical-align: top;
+    margin-right: 3px;
+}
+
+
+
+
+/* Side notes for calling out things
+-------------------------------------------------- */
+
+/* Base styles (regardless of theme) */
+.callout {
+  margin: 20px 0;
+  padding: 15px 30px 15px 15px;
+  border-left: 5px solid #eee;
+}
+.callout h4 {
+  margin-top: 0;
+}
+.callout p:last-child {
+  margin-bottom: 0;
+}
+.callout code,
+.callout .highlight {
+  background-color: #fff;
+}
+
+/* Themes for different contexts */
+.callout-danger {
+  background-color: #fcf2f2;
+  border-color: #dFb5b4;
+}
+.callout-warning {
+  background-color: #fefbed;
+  border-color: #f1e7bc;
+}
+.callout-info {
+  background-color: #f0f7fd;
+  border-color: #d0e3f0;
+}
+
+.btn-mini {
+    padding: 3px 5px;
+    font-size: 11px;
+    line-height: 1.3;
+}
+
+
+.user .avatar {
+    vertical-align: -3px;
+    margin: 0 1px;
+    border-radius: 2px;
+}
+
+.user.anonymous {
+    color: #888;
 }

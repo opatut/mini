@@ -21,15 +21,15 @@
                 <small><b>/</b> {{ repository.slug }}</small>
 
                 <div class="tags pull-right">
-                    <a class="btn btn-mini" href="{{ url_for('git.browse', slug=repository.slug) }}"><i class="icon-file"></i> Browse</a>
-                    <a class="btn btn-mini" href="{{ url_for('git.history', slug=repository.slug) }}"><i class="icon-time"></i> History</a>
+                    <a class="btn btn-default btn-mini" href="{{ url_for('git.browse', slug=repository.slug) }}"><i class="icon-file"></i> Browse</a>
+                    <a class="btn btn-default btn-mini" href="{{ url_for('git.history', slug=repository.slug) }}"><i class="icon-time"></i> History</a>
                 </div>
             </div>
 
             <div class="details">
                 Something
                 <div class="pull-right">
-                    <code>git clone {{ repository.gitUrl }}</code>
+                    <code>git clone {{ repository.git_url }}</code>
                     <!-- <input type="text" class="git-url" value="git clone {{ repository.gitUrl }}"/> -->
                 </div>
             </div>

@@ -1,0 +1,38 @@
+{% set type = file|filetype %}
+{% set extension = file|extension %}
+
+{% if type == "textfile" %}
+    {% if extension in ("md", "markdown") %}
+        <div class="markdown markdown-file">
+            {{ file.data_stream.read() | markdown }}
+        </div>
+    {% else %}
+        <style>
+            {# vs tango autumn borland #}
+            {{ "borland" | highlightsheet }}
+        </style>
+        <div class="codefile">
+            {{ file.data_stream.read() | highlight(file.name) }}
+        </div>
+    {% endif %}
+{% elif type == "image" %}
+    <div class="image-preview white">
+        <div class="well well-small pull-right" style="display: inline-block; padding: 3px 10px;">
+            <button data-mode="white"       class="mode active"><span class="white"></span></button>
+            <button data-mode="black"       class="mode"><span class="black"></span></button>
+            <button data-mode="transparent" class="mode"><span class="transparent"></span></button>
+        </div>
+
+        <a href="{{ raw_url }}">
+            <img src="{{ raw_url }}" />
+        </a>
+    </div>
+{% elif type == "empty" %}
+    <div class="alert alert-info">
+        This file is empty.
+    </div>
+{% else %}
+    <div class="alert">
+        This file cannot be displayed.
+    </div>
+{% endif %}

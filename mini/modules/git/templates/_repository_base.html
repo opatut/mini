@@ -2,6 +2,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('git.static', filename='css/git.css') }}" type="text/css" />
+    <script src="{{ url_for('git.static', filename='js/git.js') }}"></script>
 {% endblock %}
 
 {% block title %}{{ repository.title }}{% endblock %}
@@ -11,7 +12,15 @@
         <h1>{{ repository.title }}</h1>
     </div>
 
-    <div class="well well-small">nav here</div>
+    <ul class="nav nav-tabs">
+        <li{{ ' class="active"'|safe if request.endpoint == "git.history" else "" }}><a href="{{ url_for('git.history', slug=repository.slug) }}"><i class="icon-time"></i> History</a></li>
+        <li{{ ' class="active"'|safe if request.endpoint == "git.browse"  else "" }}><a href="{{ url_for('git.browse', slug=repository.slug) }}"><i class="icon-file-alt"></i> Browse</a></li>
+        <li{{ ' class="active"'|safe if request.endpoint == "git.issues"  else "" }}><a href="{{ url_for('git.issues', slug=repository.slug) }}"><i class="icon-exclamation-sign"></i> Issues</a></li>
+        <li{{ ' class="active"'|safe if request.endpoint == "git.wiki"    else "" }}><a href="{{ url_for('git.wiki', slug=repository.slug) }}"><i class="icon-book"></i> Wiki</a></li>
+        {% if current_user.has_permission(repository.get_permission("admin")) %}
+        <li{{ ' class="active"'|safe if request.endpoint == "git.admin"   else "" }}><a href="{{ url_for('git.admin', slug=repository.slug) }}"><i class="icon-wrench"></i> Admin</a></li>
+        {% endif %}
+    </ul>
 
     {% block repository_content %}{% endblock %}
 {% endblock %}

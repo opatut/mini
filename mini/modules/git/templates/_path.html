@@ -1,0 +1,21 @@
+<div class="browse-path">
+    {% if path == "" %}
+        <span class="repo">{{ repository.slug }}</span>
+    {% else %}
+        <a class="repo" href="{{ url_for('git.browse', slug=repository.slug, rev=rev, path='') }}">{{ repository.slug }}</a>
+    {% endif %}
+
+    {% set _p = "" %}
+    {% for p in (path | pathsplit) %}
+        <span class="separator">/</span>
+        {% set _p = _p + p + "/" %}
+
+        {% if not loop.last %}
+            <a href="{{ url_for('git.browse', slug=repository.slug, rev=rev, path=_p) }}">
+                {{ p }}
+            </a>
+        {% else %}
+            <span>{{ p }}</span>
+        {% endif %}
+    {% endfor %}
+</div>

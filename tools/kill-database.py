@@ -10,11 +10,13 @@ import mini.modules.git.models as git
 db.drop_all()
 db.create_all()
 
-admin = core.User()
-admin.username = "admin"
-admin.set_password("hunter2")
-admin.permissions = """*"""
-db.session.add(admin)
+opatut = core.User()
+opatut.name = "Paul Bienkowski"
+opatut.username = "opatut"
+opatut.email = "opatutlol@aol.com"
+opatut.set_password("lol")
+opatut.permissions = """*"""
+db.session.add(opatut)
 
 page = wiki.Page()
 page.slug = "main"
@@ -33,5 +35,10 @@ repo.title = "Testing Repository"
 repo.upstream = ""
 repo.init()
 db.session.add(repo)
+
+mail = git.UserEmail()
+mail.email = "paulbienkowski@aol.com"
+mail.user = opatut
+db.session.add(mail)
 
 db.session.commit()

@@ -2,6 +2,7 @@ import subprocess
 from hashlib import sha512, md5
 from datetime import datetime
 from werkzeug.exceptions import Forbidden
+from flask import Markup
 
 def run(p):
     child = subprocess.Popen(p, shell = True, stdout = subprocess.PIPE)
@@ -26,26 +27,42 @@ def hash_password(s):
     return sha512((s + "TODO::secret").encode('utf-8')).hexdigest()
 
 class AnonymousUser(object):
+    def __init__(self, name="Anonymous", email="anonymous@example.com"):
+        self.id = 0
+        self.name = name
+        self.email = email
+
     def has_permission(self, permission):
         return permission == "nologin"
 
     def get_id(self):
-        return unicode(0)
+        return unicode(self.id)
 
     def is_active(self):
-        return False
+        return self.id != 0
 
     def is_anonymous(self):
-        return True
+        return self.id == 0
 
     def is_authenticated(self):
-        return False
+        return self.id != 0
 
     def logout(self):
-        pass
+        if self.is_anonymous(): return
+        logout_user()
 
     def login(self):
-        raise Exception("Cannot login as anonymous user.")
+        if self.is_anonymous(): raise Exception("Cannot login as anonymous user.")
+        login_user(self)
+
+    def get_display_name(self):
+        return self.name
+
+    def get_link(self):
+        return Markup('<span class="user anonymous"><img class="avatar" src="{0}" /> {1}</span>'.format(self.get_avatar(16), self.get_display_name()))
+
+    def get_avatar(self, size=32):
+        return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
 
 class AccessControl(object):
     def __init__(self, current_user):

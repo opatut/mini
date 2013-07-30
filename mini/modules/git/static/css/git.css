@@ -1,6 +1,7 @@
 .repositories {
     list-style: none;
     margin: 0;
+    padding: 0;
 }
 
 .repositories li {
@@ -14,4 +15,141 @@
 
 .repositories li .title small {
     color: #888;
+}
+
+.commit-message pre {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    margin-bottom: 10px;
+}
+
+.commit-message .meta {
+    color: #888;
+}
+
+.commit-message .info {
+    text-align: right;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.fam-16 {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-position: 0 0;
+    line-height: 16px;
+    vertical-align: top;
+}
+
+.fam-textfile {
+    background-image: url("../gfx/icons/page_white_text.png");
+}
+
+.fam-folder {
+    background-image: url("../gfx/icons/folder.png");
+}
+
+.fam-image {
+    background-image: url("../gfx/icons/image.png");
+}
+
+.fam-empty-file,
+.fam-file {
+    background-image: url("../gfx/icons/page_white.png");
+}
+
+.image-preview {
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 500px;
+    margin: 20px;
+    box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #CCC;
+    padding: 5px;
+}
+
+.image-preview .mode {
+    background: none;
+    padding: 0;
+    border: 0;
+    display: inline-block;
+}
+.image-preview .mode span {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #DDD;
+    padding: 0;
+    margin: 4px 0;
+    vertical-align: middle;
+}
+
+.image-preview .active .mode span {
+    border-color: #BBB;
+}
+
+.image-preview .mode .white,
+.image-preview.white img {
+    background: #FFF;
+}
+
+.image-preview .mode .black,
+.image-preview.black img {
+    background: #000;
+}
+
+.image-preview .mode .transparent,
+.image-preview.transparent img {
+    background: #F9F9F9 url("../gfx/background.png");
+}
+
+
+.codefile {
+    background: #F7F7F7;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #DDD;
+}
+
+.codefile pre {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    line-height: 1.4em;
+    margin: 0;
+}
+
+.codefile {
+    overflow: auto;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.linenos pre {
+    padding: 0 10px;
+    text-align: right;
+}
+
+.branch-select {
+    display: inline-block;
+    width: 200px;
+    vertical-align: -7px;
+}
+
+#branch-select {
+    width: 120px;
+}
+
+div.browse-path {
+    display: inline-block;
+}
+
+.tree-table td, .tree-table th {
+    border-width: 1px 0 !important;
 }

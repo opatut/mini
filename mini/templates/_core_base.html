@@ -23,25 +23,25 @@
                 <div class="navbar navbar-static-top navbar-inverse">
                     <div class="navbar-inner">
                         <div class="container">
-                                {% macro render_menu(list, level=0) %}
-                                    {% if list %}
-                                    <ul{% if level == 0 %} class="nav"{% else %} class="dropdown-menu" role="menu"{% endif %}>
-                                        {% for item in list %}
-                                            <li class="dropdown{{' active' if item.find_current() else ''}}">
-                                                <a href="{{ item.get_url() }}">{{ item.title }}</a>
-                                                {{ render_menu(item.children, level + 1) }}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                    {% endif %}
-                                {% endmacro %}
-                                {{ render_menu(menu) }}
+                            {% macro render_menu(list, level=0) %}
+                                {% if list %}
+                                <ul{% if level == 0 %} class="nav navbar-nav"{% else %} class="dropdown-menu" role="menu"{% endif %}>
+                                    {% for item in list %}
+                                        <li class="dropdown{{' active' if item.find_current() else ''}}">
+                                            <a href="{{ item.get_url() }}">{{ item.title }}</a>
+                                            {{ render_menu(item.children, level + 1) }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            {% endmacro %}
+                            {{ render_menu(menu) }}
 
-                                <div class="pull-right">
-                                    {% if current_user.is_active() %}
-                                        Logged in as {{ current_user.username }}
-                                    {% endif %}
-                                </div>
+                            <div class="pull-right navbar-text">
+                                {% if current_user.is_active() %}
+                                    Logged in as {{ current_user.username }}
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>

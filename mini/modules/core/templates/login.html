@@ -7,16 +7,16 @@
         <h1><i class="icon-key"></i> Login</h1>
     </div>
 
-    <div class="content login well">
-        {% include "_flashes.html" %}
-        <div class="row-fluid">
-            <form method="POST" action="{{ url_for('core.login') }}">
-                {{ form.hidden_tag() }}
-                {{ form.username(class="span12", placeholder=form.username.label.text)}}
-                {{ form.password(class="span12", placeholder=form.password.label.text)}}
+    {% include "_flashes.html" %}
 
-                <input type="submit" value="Login" class="btn btn-primary btn-normal pull-right span6">
-            </form>
-        </div>
+    <div class="content login callout callout-info">
+        <form method="POST" action="{{ url_for('core.login') }}" class="form-inline">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-5 form-group">{{ form.username(class="form-control", placeholder=form.username.label.text)}}</div>
+                <div class="col-5 form-group">{{ form.password(class="form-control", placeholder=form.password.label.text)}}</div>
+                <div class="col-2 form-group text-right"><input type="submit" value="Login" class="btn btn-primary btn-normal"></div>
+            </div>
+        </form>
     </div>
 {% endblock %}

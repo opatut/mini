@@ -5,10 +5,18 @@ from datetime import datetime
 from os.path import abspath, join, isdir
 import git
 
+class UserEmail(db.Model):
+    __tablename__ = "git_user_email"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(128), unique=True)
+
+    user = db.relationship("User", backref="user_emails")
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
 class PublicKey(db.Model):
     __tablename__ = "git_publickey"
-    id = db.Column(db.Integer, primary_key = True)
-    key = db.Column(db.String(1024), unique = True)
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(1024), unique=True)
     name = db.Column(db.String(128))
 
     user = db.relationship("User", backref="public_keys")
@@ -51,7 +59,7 @@ class Repository(db.Model):
         return abspath(join(main_app.config["GIT_REPOSITORY_DIRECTORY"], self.slug + ".git"))
 
     @property
-    def gitUrl(self):
+    def git_url(self):
         return "{0}@{1}:{2}.git".format(main_app.config["GIT_USER"], main_app.config["DOMAIN"], self.slug)
 
     @property
@@ -60,12 +68,12 @@ class Repository(db.Model):
 
     def init(self):
         if self.exists: return
-        run("mkdir -p {0} && cd {0} && mkdir {1}.git && cd {1}.git && git init --bare".format(main_app.config["GIT_REPOSITORY_DIRECTORY"], self.slug))
+        sefl._git = Repo.init(self.path, bare=True)
 
-    def cloneFrom(self, url, branch = ""):
+    def clone_from(self, url, branch = ""):
         if self.exists: return
         self.upstream = (url + " " + branch).strip()
-        run("mkdir -p {0} && cd {0} && git clone {2} {1}.git --branch {3} --bare".format(main_app.config["GIT_REPOSITORY_DIRECTORY"], self.slug, url, branch))
+        self._git = Repo.clone_from(self.upstream, self.path, bare=True)
 
     @property
     def git(self):
@@ -76,24 +84,25 @@ class Repository(db.Model):
     def get_commits(self):
         if not self._commits:
             self._commits = []
-            for commit in git.Commit.iter_items(self.git, "master"):
-                self._commits.append(commit)
+            for head in self.git.heads:
+                for commit in git.Commit.iter_items(self.git, head):
+                    if not commit in self._commits:
+                        self._commits.append(commit)
+            self._commits.sort(key=lambda c: c.committed_date)
         return self._commits
 
-    def getCommit(self, rev):
+    def get_commit(self, rev):
         node = self.git.rev_parse(rev)
-
-        if not node:
-            return None
 
         if type(node) == git.Blob or type(node) == git.Tree:
             return node.commit
-        if type(node) == git.Tag:
+        elif type(node) == git.Tag:
             return node.object
-        if type(node) == git.Commit:
+        elif type(node) == git.Commit:
             return node
+        else:
+            return None
 
-        return None
-
-    def get_permission(self, type="view"):
+    # find, read, write, admin
+    def get_permission(self, type):
         return "git.repository.%s.%s" % (self.id, type)
