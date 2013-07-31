@@ -1,7 +1,7 @@
 #!/bin/bash
 virtualenv -p python2 env
 . env/bin/activate
-pip install --upgrade \
+pip install --pre --upgrade \
     flask \
     flask-sqlalchemy \
     flask-wtf \
