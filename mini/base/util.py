@@ -3,6 +3,7 @@ from hashlib import sha512, md5
 from datetime import datetime
 from werkzeug.exceptions import Forbidden
 from flask import Markup
+from flask.ext.login import login_user, logout_user, current_user
 
 def run(p):
     child = subprocess.Popen(p, shell = True, stdout = subprocess.PIPE)
