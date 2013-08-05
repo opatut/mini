@@ -7,8 +7,6 @@
         <h1><i class="icon-key"></i> Login</h1>
     </div>
 
-    {% include "_flashes.html" %}
-
     <div class="content login callout callout-info">
         <form method="POST" action="{{ url_for('core.login') }}" class="form-inline">
             {{ form.hidden_tag() }}

@@ -3,8 +3,7 @@ from mini.modules.git import app, ext, db
 from mini.base.util import run
 from datetime import datetime
 from os.path import abspath, join, isdir
-#import git
-from git import Repo
+import git
 
 class UserEmail(db.Model):
     __tablename__ = "git_user_email"
@@ -69,12 +68,12 @@ class Repository(db.Model):
 
     def init(self):
         if self.exists: return
-        self._git = Repo.init(self.path, bare=True)
+        self._git = git.Repo.init(self.path, bare=True)
 
     def clone_from(self, url, branch = ""):
         if self.exists: return
         self.upstream = (url + " " + branch).strip()
-        self._git = Repo.clone_from(self.upstream, self.path, bare=True)
+        self._git = git.Repo.clone_from(self.upstream, self.path, bare=True)
 
     @property
     def git(self):
