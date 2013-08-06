@@ -15,3 +15,11 @@ class MiniCore(object):
             self.modules[name] = ext
             self.app.register_blueprint(ext.blueprint, url_prefix=("" if name == "core" else ("/"+name)))
             self.menu_items += ext.menu.items
+
+    @property
+    def widgets(self):
+        w = {}
+        for name, module in self.modules.iteritems():
+            for widget, function in module.widgets.iteritems():
+                w["%s.%s" % (name, widget)] = function
+        return w

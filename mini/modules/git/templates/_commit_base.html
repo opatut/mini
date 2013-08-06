@@ -1,0 +1,27 @@
+{% extends "_repository_base.html" %}
+
+{% block repository_content %}
+
+<div class="callout callout-info commit-message">
+    <div class="info pull-right">
+        {% for c in [commit]+commit.parents|list %}
+            <div>
+                {{ "commit" if c == commit else "parent" }}
+                <a class="sha" href="{{ url_for('git.commit', slug=repository.slug, rev=c.hexsha) }}">{{ c.hexsha | shortsha }}</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h4>{{ commit.message|first_line }}</h4>
+    {% set message_body = (commit.message|splitlines)[1:] %}
+    {% if message_body %}<pre class="normal">{{ "\n".join(message_body) }}</pre>{% endif %}
+
+    <div class="meta">
+        Authored by {{ (commit.author|git_user).get_link() }}
+        on {{ commit|git_committer_time|date_human }}
+    </div>
+</div>
+
+{% block commit_content %}{% endblock %}
+
+{% endblock %}

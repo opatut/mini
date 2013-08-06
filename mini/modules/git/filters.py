@@ -20,7 +20,7 @@ def shortsha(s):
 # shorten a string
 @app.template_filter()
 def shorten(s, length):
-    return s[:length]
+    return s[:length] + ("..." if len(s) > length else "")
 
 # shorten a string
 @app.template_filter()
@@ -140,3 +140,23 @@ def find_readme(tree):
     for x in tree.blobs:
         if x.name.upper().startswith("README"):
             return x
+
+@app.template_filter()
+def diffLineType(line):
+    if line[:3] == "---":
+        return "from"
+    elif line[:3] == "+++":
+        return "to"
+    elif line[:2] == "@@":
+        return "section"
+    elif line[:1] == "-":
+        return "deletion"
+    elif line[:1] == "+":
+        return "insertion"
+    return "context"
+
+@app.template_filter()
+def diffParseSection(line):
+    m = re.search('^@@\s*-([0-9]+),[0-9]+\s+\+([0-9]+),[0-9]+\s*@@.*$', line)
+    return (int(m.group(1)), int(m.group(2)))
+

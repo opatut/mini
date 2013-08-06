@@ -15,7 +15,7 @@
     {% for commit in repository.get_commits()|reverse %}
         <tr>
             <td>{{ (commit.author|git_user).get_link() }}</td>
-            <td><a href="#" class="sha">{{ commit.hexsha|shortsha }}</a></td>
+            <td><a href="{{ url_for('git.commit', slug=repository.slug, rev=commit.hexsha) }}" class="sha">{{ commit.hexsha|shortsha }}</a></td>
             <td><div class="nobreak">{{ (commit.message*5)|first_line|shorten(120) }}</div></td>
             <td>{{ commit|git_committer_time|date_human }}</td>
         </tr>

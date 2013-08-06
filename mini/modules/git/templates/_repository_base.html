@@ -13,7 +13,7 @@
     </div>
 
     <ul class="nav nav-tabs">
-        <li{{ ' class="active"'|safe if request.endpoint == "git.history" else "" }}><a href="{{ url_for('git.history', slug=repository.slug) }}"><i class="icon-time"></i> History</a></li>
+        <li{{ ' class="active"'|safe if request.endpoint in ("git.history", "git.commit") else "" }}><a href="{{ url_for('git.history', slug=repository.slug) }}"><i class="icon-time"></i> History</a></li>
         <li{{ ' class="active"'|safe if request.endpoint == "git.browse"  else "" }}><a href="{{ url_for('git.browse', slug=repository.slug) }}"><i class="icon-file-alt"></i> Browse</a></li>
         <li{{ ' class="active"'|safe if request.endpoint == "git.issues"  else "" }}><a href="{{ url_for('git.issues', slug=repository.slug) }}"><i class="icon-exclamation-sign"></i> Issues</a></li>
         <li{{ ' class="active"'|safe if request.endpoint == "git.wiki"    else "" }}><a href="{{ url_for('git.wiki', slug=repository.slug) }}"><i class="icon-book"></i> Wiki</a></li>

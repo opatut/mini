@@ -57,7 +57,7 @@ def commit(slug, rev):
     access.check(repository.get_permission("read"))
 
     commit = repository.get_commit(rev)
-    return render_template("commit.html", repository=repository, commit=commit)
+    return render_template("commit.html", repository=repository, commit=commit, rev=rev)
 
 @app.route("/<slug>/raw/<rev>/<path:path>")
 def file_content(slug, rev, path):
@@ -89,3 +89,21 @@ def admin(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.get_permission("admin"))
     return render_template("admin.html", repository=repository)
+
+@ext.register_widget("repositories")
+def widget_git_repos():
+    return render_template("widget_repositories.html", repositories=Repository.query.all())
+
+@ext.register_widget("commits")
+def widget_git_commits(slug=None):
+    if slug:
+        repository = Repository.query.filter_by(slug=slug).first()
+        commits = [(repository, commit) for commit in repository.get_commits()]
+    else:
+        repository = None
+        commits = []
+        for r in Repository.query.all():
+            commits += [(r, commit) for commit in r.get_commits()]
+        commits.sort(key=lambda c: c[1].committed_date)
+
+    return render_template("widget_commits.html", repository=repository, commits=commits)

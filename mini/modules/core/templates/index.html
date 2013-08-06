@@ -7,4 +7,13 @@
     <h1>Index</h1>
 </div>
 
+<div class="row">
+    <div class="col-6">
+        {{ widgets["git.repositories"]()|safe }}
+    </div>
+    <div class="col-6">
+        {{ widgets["git.commits"]()|safe }}
+    </div>
+</div>
+
 {% endblock %}

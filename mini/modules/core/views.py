@@ -7,7 +7,8 @@ from flask.ext.login import current_user
 @app.route("/")
 @ext.menu.add_view("index", "Index", index=-100)
 def index():
-    return render_template("index.html")
+    from mini import core
+    return render_template("index.html", widgets=core.widgets)
 
 @app.route("/settings/")
 @ext.menu.add_view("settings", "Settings", index=100)
@@ -48,4 +49,3 @@ def account():
 def permission(p):
     from mini import access
     return str(access.user_has_permission(p))
-

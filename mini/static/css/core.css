@@ -174,3 +174,12 @@ ul.nav-tabs li a i {
 .user.anonymous {
     color: #888;
 }
+
+.info {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.list-group-small .list-group-item {
+    padding: 2px 6px;
+}

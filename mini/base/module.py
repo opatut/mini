@@ -11,7 +11,15 @@ class Module(object):
         self.models = []
         self.menu = Menu(self.name + ".")
 
+        self.widgets = {}
+
     @property
     def access(self):
         from mini import access as _a
         return _a
+
+    def register_widget(self, name):
+        def decorator(f):
+            self.widgets[name] = f
+            return f
+        return decorator

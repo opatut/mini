@@ -1,0 +1,11 @@
+{% extends "_core_widget.html" %}
+
+{% block title %}Git Repositories{% endblock %}
+
+{% block content %}
+    <div class="list-group">
+    {% for repository in repositories %}
+        <a href="{{ url_for('git.repository', slug=repository.slug) }}" class="list-group-item">{{ repository.title }}</a>
+    {% endfor %}
+    </div>
+{% endblock %}
