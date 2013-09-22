@@ -1,0 +1,32 @@
+{% extends "git/_base_repository.html" %}
+
+{% block repository_content %}
+
+<div  style="width: 100%">
+    <table class="table">
+        <thead>
+        <tr>
+            <th width="10"></th>
+            <th>Title</th>
+            <th>Assignee</th>
+            <th>Status</th>
+            <th>Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for issue in issues %}
+        <tr>
+            <td><span class="info">#{{ issue.number }}</span></td>
+            <td><a href="{{ issue.get_url() }}">{{ issue.title }}</a></td>
+            <td>{{ issue.assignee.get_link() if issue.assignee else "&mdash;"|safe }}</td>
+            <td>{{ issue.status }}</td>
+            <td>
+                {% for tag in issue.issue_tags %}{{ tag.render() }}{% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends "_core_base.html" %}
+{% extends "_base.html" %}
 
 {% block title %}{{ error.code }} - {{ error.name }}{% endblock %}
 
@@ -6,7 +6,7 @@
 
 <div style="margin: 50px 0; width: 400px;">
     <h1>{{ error.code }} - {{ error.name }}</h1>
-    <p>{{ error.description }}</p>
+    <p>{{ error.description | safe }}</p>
 </div>
 
 {% endblock %}

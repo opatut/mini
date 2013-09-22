@@ -1,0 +1,49 @@
+{% extends "git/_base_repository.html" %}
+
+{% block repository_content %}
+
+<br />
+
+<div class="row">
+    <div class="col-md-2">
+        <h4>Status</h4>
+        <select class="issue-status-select input-sm form-control {{issue.status}}">
+            {% for s in ["open", "discussion", "wip", "invalid", "closed"] %}
+                <option {% if issue.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
+            {% endfor %}
+        </select>
+
+        <h4>Assignee</h4>
+        <select class="issue-assignee-select input-sm form-control">
+            {% for user in repository.get_users_with_permission("read") %}
+                <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_link()}}</option>
+            {% endfor %}
+        </select>
+
+        <h4>Labels</h4>
+        <ul class="issue-tag-select">
+            {% for tag in repository.issue_tags %}
+                <li class="{{ 'active' if tag in issue.issue_tags else 'inactive' }}">
+                    <label href="#" style="background: #{{ tag.color }}">
+                        <input type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} />
+                        <span style="background: #{{ tag.color }}"></span>
+                        {{ tag.tag }}
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-10">
+        <h3>
+            {{ issue.title }}
+
+            <a href="{{ url_for('issues', slug=repository.slug) }}" class="btn pull-right btn-primary btn-small">&laquo; Back to list</a>
+        </h3>
+
+        <div class="issue-text">
+            {{ issue.text|markdown }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

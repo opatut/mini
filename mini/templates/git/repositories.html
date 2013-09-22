@@ -1,0 +1,41 @@
+{% extends "_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/git.css') }}" type="text/css" />
+{% endblock %}
+
+{% block title %}Repository List{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Repository List</h1>
+    </div>
+
+
+<ul class="repositories">
+{% for repository in repositories %}
+    <li>
+        <div class="content">
+            <div class="title" style="margin-bottom: 3px;">
+                <a href="{{ url_for('repository', slug=repository.slug) }}">{{ repository.title }}</a>
+                <small><b>/</b> {{ repository.slug }}</small>
+
+                <div class="tags pull-right">
+                    <a class="btn btn-default btn-mini" href="{{ url_for('browse', slug=repository.slug) }}"><i class="icon-file"></i> Browse</a>
+                    <a class="btn btn-default btn-mini" href="{{ url_for('history', slug=repository.slug) }}"><i class="icon-time"></i> History</a>
+                </div>
+            </div>
+
+            <div class="details">
+                Something
+                <div class="pull-right">
+                    <code>git clone {{ repository.git_url }}</code>
+                    <!-- <input type="text" class="git-url" value="git clone {{ repository.gitUrl }}"/> -->
+                </div>
+            </div>
+        </div>
+
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

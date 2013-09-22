@@ -7,6 +7,10 @@ body {
     font-size: 10pt;
 }
 
+:focus {
+    outline: 0;
+}
+
 #wrapper {
     min-height: 100%;
     position: relative;
@@ -104,6 +108,7 @@ form {
 
 .table tr:first-child > * {
     border-top: 0;
+    border-bottom-width: 0;
 }
 
 .table th, .table td {
@@ -183,3 +188,85 @@ ul.nav-tabs li a i {
 .list-group-small .list-group-item {
     padding: 2px 6px;
 }
+
+.issuetag {
+    margin-right: 2px;
+    font-size: 8pt;
+    vertical-align: 2px;
+    font-weight: normal;
+}
+
+.issue-tag-select {
+    list-style: none;
+    padding: 0;
+}
+
+.issue-tag-select li {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.issue-tag-select li label {
+    display: block;
+    font-size: 0.8em;
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    transition: background 0.3s, color 0.2s;
+}
+
+.issue-tag-select li label span {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    border-radius: 2px;
+    vertical-align: top;
+    float: right;
+    transition: width 0.1s;
+}
+
+.issue-tag-select li input {
+    margin: 0;
+    display: none;
+}
+
+.issue-tag-select li.inactive label {
+    background: none !important;
+    color: #000;
+}
+
+.issue-tag-select li.inactive label:hover {
+    color: #666;
+}
+
+.issue-tag-select li.inactive label:hover span {
+    width: 16px;
+    margin-left: 0px;
+}
+
+.issue-tag-select li.active label {
+    color: #FFF;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.issue-tag-select li > * {
+    padding: 5px !important;
+    text-align: left;
+}
+
+.issue-assignee-select,
+.issue-status-select {
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    background: #F9F9F9;
+    box-shadow: none !important;
+}
+
+.issue-status-select.closed     { background: #BD2C00; color: #FFF; }
+.issue-status-select.open       { background: #6CC644; color: #FFF; }
+.issue-status-select.wip        { background: #FFFF88; color: #000; }
+.issue-status-select.discussion { background: #AACCFF; color: #FFF; }
+.issue-status-select.invalid    { background: #888888; color: #FFF; }
+
+.issue-status-select option { background: #FFF; color: #000; }

@@ -1,0 +1,20 @@
+{% extends "_base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1><i class="icon-key"></i> Login</h1>
+    </div>
+
+    <div class="content login callout callout-info">
+        <form method="POST" action="{{ url_for('login') }}" class="form-inline">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-5 form-group">{{ form.username(class="form-control", placeholder=form.username.label.text)}}</div>
+                <div class="col-5 form-group">{{ form.password(class="form-control", placeholder=form.password.label.text)}}</div>
+                <div class="col-2 form-group text-right"><input type="submit" value="Login" class="btn btn-primary btn-normal"></div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
