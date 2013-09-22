@@ -212,18 +212,40 @@ ul.nav-tabs li a i {
     text-decoration: none;
     border-radius: 4px;
     cursor: pointer;
-
-    transition: background 0.3s, color 0.2s;
+    position: relative;
+    height: 24px;
 }
 
-.issue-tag-select li label span {
+.issue-tag-select li label span.tag {
+    position: absolute;
+    left: 15px;
+    top: 4px;
+    transition: left 0.1s;
+}
+
+.issue-tag-select li.inactive:hover label span.tag {
+    left: 21px;
+}
+
+.issue-tag-select li label span.color {
     display: inline-block;
-    width: 8px;
-    height: 16px;
     border-radius: 2px;
     vertical-align: top;
-    float: right;
     transition: width 0.1s;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.issue-tag-select li.inactive:hover label span.color {
+    width: 12px;
+}
+
+.issue-tag-select li.inactive label span.color {
+    width: 6px;
 }
 
 .issue-tag-select li input {
@@ -232,22 +254,11 @@ ul.nav-tabs li a i {
 }
 
 .issue-tag-select li.inactive label {
-    background: none !important;
     color: #000;
-}
-
-.issue-tag-select li.inactive label:hover {
-    color: #666;
-}
-
-.issue-tag-select li.inactive label:hover span {
-    width: 16px;
-    margin-left: 0px;
 }
 
 .issue-tag-select li.active label {
     color: #FFF;
-    border-radius: 3px;
     font-weight: bold;
 }
 
@@ -270,3 +281,4 @@ ul.nav-tabs li a i {
 .issue-status-select.invalid    { background: #888888; color: #FFF; }
 
 .issue-status-select option { background: #FFF; color: #000; }
+
