@@ -11,7 +11,7 @@ pip install --upgrade \
     flask-login \
     GitPython \
     iso8601 \
-    pytz \
+    pytz==2013d \
     pygments \
 #    python-dateutil
 # flask-mail flask-login python-dateutil requests
