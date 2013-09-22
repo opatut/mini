@@ -51,6 +51,22 @@
         <div class="issue-text">
             {{ issue.text|markdown }}
         </div>
+
+        <ul class="issue-comments">
+            {% for comment in issue.get_sorted_comments() %}
+                <li>
+                    <div class="meta">
+                        <ul class="meta-actions">
+                            <li><a href="#"><i class="icon-pencil"></i></a></li>
+                            <li><a href="#"><i class="icon-remove"></i></a></li>
+                        </ul>
+
+                        {{ comment.author.get_link() }} commented {{ comment.created|date_human }} at {{ comment.created|time }}
+                    </div>
+                    <div class="issue-text">{{ comment.text | markdown }}</div>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 

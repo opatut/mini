@@ -55,6 +55,7 @@ issue.status = "open"
 issue.issue_tags.append(issuetag1)
 issue.issue_tags.append(issuetag2)
 issue.assignee = opatut
+issue.author = opatut
 issue.repository = repo
 db.session.add(issue)
 
@@ -65,8 +66,14 @@ issue.title = "Idea for implementation"
 issue.text = "Just testing more, *nevermind*!"
 issue.status = "discussion"
 issue.repository = repo
+issue.author = opatut
 issue.issue_tags.append(issuetag1)
 db.session.add(issue)
 
+comment = IssueComment()
+comment.author = opatut
+comment.text = "I said [something](http://google.de)."
+issue.issue_comments.append(comment)
+db.session.add(comment)
 
 db.session.commit()

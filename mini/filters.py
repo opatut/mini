@@ -76,7 +76,7 @@ def datetime(s, with_title=True):
 # format a timestamp as human readable date
 @app.template_filter()
 def date_human(s, with_title=True):
-    return date_title(s, "Today" if d.today() == s.date() else s.strftime("%B %d, %Y"), with_title)
+    return date_title(s, "today" if d.today() == s.date() else s.strftime("%B %d, %Y"), with_title)
 
 @app.template_filter()
 def filetype(blob):

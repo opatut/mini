@@ -282,3 +282,49 @@ ul.nav-tabs li a i {
 
 .issue-status-select option { background: #FFF; color: #000; }
 
+
+.issue-comments {
+    list-style: none;
+    padding: 0;
+}
+
+.issue-comments > li {
+    margin-top: 2em;
+}
+
+.issue-comments > li .meta {
+    font-size: 0.8em;
+    color: #666;
+    background: #F6F6F6;
+    border: 1px solid #DDD;
+    padding: 5px;
+}
+
+.issue-comments > li .meta .meta-actions {
+    float: right;
+    list-style: none;
+    padding: 2px;
+}
+
+.issue-comments > li .meta .meta-actions li {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.issue-comments > li .meta .meta-actions li a {
+    text-decoration: none;
+    color: #888;
+}
+
+.issue-comments > li .meta .meta-actions li a:hover {
+    color: #444;
+}
+
+.issue-comments > li .meta i {
+    font-size: 14px;
+}
+
+.issue-comments > li .issue-text {
+    padding: 4px;
+    padding-left: 28px;
+}
