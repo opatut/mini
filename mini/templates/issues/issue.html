@@ -1,72 +1,128 @@
-{% extends "git/_base_repository.html" %}
+{% extends "_base_repository.html" %}
+
+{% block repository_actions %}
+    <a href="{{ url_for('issues', slug=repository.slug) }}" class="btn btn-default btn-sm">&laquo; Back to list</a>
+{% endblock %}
 
 {% block repository_content %}
 
 <br />
 
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-3 col-md-push-9">
         <form method="POST" action="?save-status">
-            <h3>&nbsp;</h3>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Issue Status</strong></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="issue-status-select input-sm form-control {{issue.status}}" name="status">
+                            {% for s in ["open", "discussion", "wip", "invalid", "closed"] %}
+                                <option {% if issue.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-            <h4>Status</h4>
-            <select class="issue-status-select input-sm form-control {{issue.status}}" name="status">
-                {% for s in ["open", "discussion", "wip", "invalid", "closed"] %}
-                    <option {% if issue.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
-                {% endfor %}
-            </select>
+                    <div class="form-group">
+                        <label>Assignee</label>
+                        <select class="issue-assignee-select input-sm form-control" name="assignee">
+                            {% for user in repository.get_users_with_permission("read") %}
+                                <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_display_name()}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-            <h4>Assignee</h4>
-            <select class="issue-assignee-select input-sm form-control" name="assignee">
-                {% for user in repository.get_users_with_permission("read") %}
-                    <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_link()}}</option>
-                {% endfor %}
-            </select>
-
-            <h4>Labels</h4>
-            <ul class="issue-tag-select">
-                {% for tag in repository.issue_tags %}
-                    <li class="{{ 'active' if tag in issue.issue_tags else 'inactive' }}">
-                        <label>
-                            <input type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} name="tag" value="{{ tag.id }}" />
-                            <span class="color" style="background: #{{ tag.color }}"></span>
-                            <span class="tag">{{ tag.tag }}</span>
-                        </label>
-                    </li>
-                {% endfor %}
-            </ul>
-
-            <hr />
-            <input type="submit" value="Save" class="btn btn-success" />
+                    <div class="form-group">
+                        <strong>Labels</strong>
+                        <ul class="issue-tag-select">
+                            {% for tag in repository.issue_tags %}
+                                <li class="{{ 'active' if tag in issue.issue_tags else 'inactive' }}">
+                                    <label>
+                                        <input type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} name="tag" value="{{ tag.id }}" />
+                                        <span class="color" style="background: #{{ tag.color }}"></span>
+                                        <span class="tag">{{ tag.tag }}</span>
+                                    </label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer" align="right">
+                    <input type="submit" value="Save" class="btn btn-success btn-sm" />
+                </div>
+            </div>
         </form>
     </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-9">
-        <h3>
-            {{ issue.title }}
-
-            <a href="{{ url_for('issues', slug=repository.slug) }}" class="btn pull-right btn-primary btn-small">&laquo; Back to list</a>
-        </h3>
-
-        <div class="issue-text">
-            {{ issue.text|markdown }}
-        </div>
-
-        <ul class="issue-comments">
-            {% for comment in issue.get_sorted_comments() %}
-                <li>
-                    <div class="meta">
-                        <ul class="meta-actions">
-                            <li><a href="#"><i class="icon-pencil"></i></a></li>
-                            <li><a href="#"><i class="icon-remove"></i></a></li>
-                        </ul>
-
-                        {{ comment.author.get_link() }} commented {{ comment.created|date_human }} at {{ comment.created|time }}
+    <div class="col-md-9 col-md-pull-3">
+        {% macro render_comment(comment, mode="comment") %}
+        <a name="{{ mode }}-{{ comment.id }}" />
+        <div class="comment">
+            <a class="comment-avatar" href="#">
+                <img src="{{ comment.author.get_avatar(48) }}" alt="" width="48" height="48">
+            </a>
+            <div class="comment-content">
+                {% if mode == "issue" %}
+                    <div class="comment-heading">
+                        <div class="pull-right">
+                            {% if comment.can_edit(current_user) %}
+                            <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                            {% endif %}
+                        </div>
+                        <h3>{{ comment.title }}</h3>
                     </div>
-                    <div class="issue-text">{{ comment.text | markdown }}</div>
-                </li>
-            {% endfor %}
-        </ul>
+                {% endif %}
+
+                <div class="comment-meta">
+                    {% if mode == "comment" %}
+                    <ul class="meta-actions">
+                        {% if comment.can_delete(current_user) %}
+                            <li><a href="?comment-remove={{ comment.id }}"><i class="icon-remove"></i></a></li>
+                        {% endif %}
+                    </ul>
+
+                    <i class="icon-comment"></i>
+                    {% endif %}
+
+                    <b>{{ comment.author.get_display_name() }}</b>
+
+                    {% if mode == "issue" %}
+                        opened this issue
+                    {% else %}
+                        commented
+                    {% endif %}
+
+                    {{ comment.created|date_human }} at {{ comment.created|time }}
+                </div>
+                <div class="comment-body markdown">
+                    {{ comment.text|markdown }}
+                </div>
+            </div>
+        </div>
+        {% endmacro %}
+
+        {{ render_comment(issue, "issue") }}
+
+        {% for comment in issue.get_sorted_comments() %}
+            {{ render_comment(comment) }}
+        {% endfor %}
+
+        <form method="POST" action="?post-comment">
+            <div class="comment">
+                <a class="comment-avatar" href="#">
+                    <img src="{{ current_user.get_avatar(48) }}" alt="" width="48" height="48">
+                </a>
+                <div class="comment-content comment-reply">
+                    <textarea class="form-control" placeholder="Leave a comment" rows="5" name="comment"></textarea>
+                </div>
+
+                <div align="right">
+                    <input type="submit" value="Comment & close"    class="btn btn-sm btn-default" />
+                    <input type="submit" value="Comment"            class="btn btn-sm btn-success" />
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 

@@ -77,3 +77,6 @@ class Repository(db.Model):
 
     def get_users_with_permission(self, type):
         return [user for user in User.query.all() if user.has_permission(self.get_permission(type))]
+
+    def get_root_wiki_pages(self):
+        return [page for page in self.wiki_pages if not page.parent_page]

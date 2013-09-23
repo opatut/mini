@@ -1,4 +1,4 @@
-import subprocess
+import subprocess, re
 from hashlib import sha512, md5
 from datetime import datetime
 from werkzeug.exceptions import Forbidden
@@ -23,6 +23,20 @@ def get_slug(s):
     s = re.sub(r"[\s_+]+", "-", s)
     s = re.sub("[^a-z0-9\-]", "", s)
     return s
+
+def validate_slug(obj):
+    objs = type(obj).query.filter_by(slug=obj.slug).all()
+    return len(objs) == 0 or (len(objs) == 1 and objs[0] == obj)
+
+def generate_new_slug(obj):
+    old_slug = obj.slug
+    obj.slug = get_slug(obj.title)
+    if validate_slug(obj):
+        return True
+    else:
+        obj.slug = old_slug
+        return False
+
 
 def hash_password(s):
     return sha512((s + "TODO::secret").encode('utf-8')).hexdigest()

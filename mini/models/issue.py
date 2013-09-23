@@ -30,3 +30,6 @@ class Issue(db.Model):
         comments = list(self.issue_comments)
         comments.sort(key=lambda comment: comment.created)
         return comments
+
+    def can_edit(self, user):
+        return user == self.author or user.has_permission(self.repository.get_permission("write"))

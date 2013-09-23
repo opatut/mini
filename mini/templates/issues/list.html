@@ -1,12 +1,16 @@
-{% extends "git/_base_repository.html" %}
+{% extends "_base_repository.html" %}
+
+{% block repository_actions %}
+    <a href="#" class="btn btn-success btn-sm">New issue</a>
+{% endblock %}
 
 {% block repository_content %}
 
 <div  style="width: 100%">
-    <table class="table">
+    <table class="table issue-table">
         <thead>
         <tr>
-            <th width="10"></th>
+            <th></th>
             <th>Title</th>
             <th>Assignee</th>
             <th>Status</th>
@@ -15,13 +19,22 @@
     </thead>
     <tbody>
     {% for issue in issues %}
-        <tr>
-            <td><span class="info">#{{ issue.number }}</span></td>
-            <td><a href="{{ issue.get_url() }}">{{ issue.title }}</a></td>
-            <td>{{ issue.assignee.get_link() if issue.assignee else "&mdash;"|safe }}</td>
-            <td>{{ issue.status }}</td>
-            <td>
-                {% for tag in issue.issue_tags %}{{ tag.render() }}{% endfor %}
+        <tr class="issue {{ issue.status }}">
+            <td class="number">
+                <!-- <span class="status-icon"></span> -->
+                #{{ issue.number }}
+                <i class="status-icon icon-{{ {"open":"circle-blank", "closed":"ok-circle", "invalid":"ban-circle", "wip":"gear", "discussion":"comments"}[issue.status] }}"></i>
+            </td>
+            <td class="title">
+                <a href="{{ issue.get_url() }}">{{ issue.title }}</a>
+                {% if issue.issue_comments %}<span class="pull-right">{{ issue.issue_comments|length }} <i class="icon-comment-alt"></i></span>{% endif %}
+            </td>
+            <td class="assignee">
+                {{ issue.assignee.get_link() if issue.assignee else "&mdash;"|safe }}
+            </td>
+            <td class="status">{{ issue.status }}</td>
+            <td class="tags">
+                {% for tag in issue.issue_tags %}{{ tag.render() }} {% endfor %}
             </td>
         </tr>
     {% endfor %}

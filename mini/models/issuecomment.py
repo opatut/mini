@@ -8,7 +8,7 @@ class IssueComment(db.Model):
     text = db.Column(db.Text, default="")
     created = db.Column(db.DateTime)
 
-    issue = db.relationship("Issue", backref="issue_comments")
+    issue = db.relationship("Issue", backref="issue_comments", order_by="IssueComment.created")
     issue_id = db.Column(db.Integer, db.ForeignKey("issue.id"))
 
     author = db.relationship("User", backref="issue_comments")
@@ -16,3 +16,9 @@ class IssueComment(db.Model):
 
     def __init__(self):
         self.created = datetime.utcnow()
+
+    def can_edit(self, user):
+        return user == self.author or user.has_permission(self.issue.repository.get_permission("write"))
+
+    def can_delete(self, user):
+        return self.can_edit(user) and self.issue.issue_comments[-1] == self

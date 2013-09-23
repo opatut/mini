@@ -2,7 +2,8 @@
 {% if flashes %}
     <div class="flashes">
     {% for category, message in flashes %}
-        <div class="alert{{ (' alert-' + category) if category and category != 'message' else '' }}">
+        {% set replace = {"message":"info","error":"danger"} %}
+        <div class="alert alert-{{  replace[category] if category in replace else category }}">
             <button type="button" class="close" data-dismiss="alert">×</button>
             {{ message | safe }}
         </div>

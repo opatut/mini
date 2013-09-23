@@ -16,12 +16,6 @@ opatut.set_password("lol")
 opatut.permissions = """*"""
 db.session.add(opatut)
 
-page = WikiPage()
-page.slug = "main"
-page.title = "Main Page"
-page.text = "Hello World page with **markdown**."
-db.session.add(page)
-
 repo = Repository()
 repo.slug = "testrepo"
 repo.title = "Testing Repository"
@@ -75,5 +69,37 @@ comment.author = opatut
 comment.text = "I said [something](http://google.de)."
 issue.issue_comments.append(comment)
 db.session.add(comment)
+
+for s in ("open", "discussion", "closed", "wip", "invalid"):
+    issue = Issue()
+    issue.number = repo.next_issue_number
+    repo.next_issue_number += 1
+    issue.title = "Status " + s + " test"
+    issue.text = "Just testing more, *nevermind*!"
+    issue.status = s
+    issue.repository = repo
+    issue.author = opatut
+    db.session.add(issue)
+
+wiki_main = WikiPage()
+wiki_main.slug = "main"
+wiki_main.title = "Main Page"
+wiki_main.text = """#Main Page
+
+This is the main wiki page of some repository. It is awesome.
+"""
+wiki_main.repository = repo
+db.session.add(wiki_main)
+
+wiki_sub = WikiPage()
+wiki_sub.slug = "subpage-in-wiki"
+wiki_sub.title = "Subpage in wiki"
+wiki_sub.text = """#Subpage
+
+This is some sort of subpage.
+"""
+wiki_sub.repository = repo
+wiki_sub.parent_page = wiki_main
+db.session.add(wiki_sub)
 
 db.session.commit()

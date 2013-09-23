@@ -91,8 +91,12 @@ ul.nav li.dropdown > ul.dropdown-menu {
     color: #FFF;
 }
 
+textarea {
+    font: inherit !important;
+}
+
 textarea.code {
-    font-family: monospace;
+    font-family: monospace !important;
 }
 
 .login {
@@ -199,6 +203,7 @@ ul.nav-tabs li a i {
 .issue-tag-select {
     list-style: none;
     padding: 0;
+    margin: 10px;
 }
 
 .issue-tag-select li {
@@ -282,49 +287,168 @@ ul.nav-tabs li a i {
 
 .issue-status-select option { background: #FFF; color: #000; }
 
-
-.issue-comments {
-    list-style: none;
-    padding: 0;
+.comment-avatar {
+    float: left;
+    margin-top: -2px;
 }
 
-.issue-comments > li {
-    margin-top: 2em;
+.comment-content:before {
+    content: " ";
+    position: absolute;
+    border-right: 14px solid #e5e5e5;
+    border-bottom: 14px solid transparent;
+    border-top: 14px solid transparent;
+    left: -15px;
+    top: 10px;
 }
 
-.issue-comments > li .meta {
+.comment-content {
+    position: relative;
+    margin-left: 64px;
+    margin-bottom: 2em;
+    border: 1px solid #CCC;
+    box-shadow: 0 0 0 3px #e5e5e5;
+    border-radius: 2px;
+}
+
+.comment-heading h3 {
+    margin: 5px 0;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.comment-meta {
+    background: #F5F5F5;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 4px 8px;
     font-size: 0.8em;
-    color: #666;
-    background: #F6F6F6;
-    border: 1px solid #DDD;
-    padding: 5px;
+    color: #454545;
 }
 
-.issue-comments > li .meta .meta-actions {
+.comment-meta:first-child {
+    border-top: 0;
+}
+
+.comment-meta,
+.comment-heading,
+.comment-body {
+    padding: 8px 12px;
+}
+
+.comment-body p:last-child {
+    margin-bottom: 0;
+}
+
+blockquote {
+    padding: 5px 10px;
+    border-left: 4px solid #e5e5e5;
+    margin: 0.5em 0;
+}
+
+blockquote * {
+    font: inherit !important;
+    color: #888;
+}
+
+
+.comment .comment-meta .meta-actions {
     float: right;
     list-style: none;
     padding: 2px;
 }
 
-.issue-comments > li .meta .meta-actions li {
+.comment .comment-meta .meta-actions li {
     display: inline-block;
     margin-left: 5px;
 }
 
-.issue-comments > li .meta .meta-actions li a {
+.comment .comment-meta .meta-actions li a {
     text-decoration: none;
     color: #888;
 }
 
-.issue-comments > li .meta .meta-actions li a:hover {
+.comment .comment-meta .meta-actions li a:hover {
     color: #444;
 }
 
-.issue-comments > li .meta i {
+.comment .comment-meta i {
     font-size: 14px;
 }
 
-.issue-comments > li .issue-text {
-    padding: 4px;
-    padding-left: 28px;
+.comment-reply {
+    padding: 10px;
+    background: #F9F9F9;
 }
+
+
+.issue-table .issue span.status-icon {
+    background: #000;
+    display: inline-block;
+    height: 26px;
+    width: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    vertical-align: middle;
+    margin: -8px;
+    margin-right: 5px;
+}
+
+.issue-table .issue             .status-icon { font-size: 14px; margin-left: 5px; }
+.issue-table .issue.closed      .status-icon { color: #A00; }
+.issue-table .issue.open        .status-icon { color: #0A0; }
+.issue-table .issue.wip         .status-icon { color: #0A0; }
+.issue-table .issue.discussion  .status-icon { color: #0A0; }
+.issue-table .issue.invalid     .status-icon { color: #777; }
+
+.issue-table .number {
+    color: #AAA;
+}
+
+.issue-table .issue.invalid .title a,
+.issue-table .issue.closed .title a {
+    color: #AAA;
+}
+
+ul.wiki-pages, ul.wiki-pages ul {
+    list-style: square;
+    padding-left: 1.4em;
+}
+
+ul.wiki-pages li {
+    padding-left: 0;
+    color: #555;
+}
+
+ul.wiki-pages li.current > a {
+    font-weight: bold;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    font: inherit;
+    margin: 0;
+}
+
+.markdown h1 { font-size: 1.9em; font-weight: bold;   border-bottom: 1px solid #E9E9E9; padding: 0.2em 0; margin: 0.2em 0; }
+.markdown h2 { font-size: 1.6em; font-weight: normal; border-bottom: 1px solid #E9E9E9; padding: 0.2em 0; margin: 0.2em 0; }
+.markdown h3 { font-size: 1.3em; font-weight: normal; border-bottom: 1px solid #E9E9E9; padding: 0.2em 0; margin: 0.2em 0; }
+.markdown h4 { font-size: 1.1em; font-weight: normal; border-bottom: 1px solid #E9E9E9; padding: 0.2em 0; margin: 0.2em 0; }
+.markdown h5 { font-size: 1.0em; font-weight: bold; border-bottom: 1px solid #E9E9E9; padding: 0.2em 0; margin: 0.2em 0; }
+.markdown h6 { font-size: 1.0em; font-weight: bold; border-bottom: 0px solid #E9E9E9; padding: 0.2em 0; margin: 0.2em 0; }
+.markdown img { max-width: 100%; display: block; }
+
+
+.panel-heading ol.breadcrumb {
+    margin: 0;
+    padding: 0.4em;
+}
+
+.alert {
+    padding: 6px 10px;
+    border-radius: 0;
+}
+

@@ -1,45 +1,93 @@
-{% extends "_core_base.html" %}
+{% extends "_base_repository.html" %}
+{% from "_formhelpers.html" import form_errors %}
 
-{% block content %}
+{% block repository_actions %}
+    <a href="{{ url_for('wiki_new', slug=repository.slug) }}" class="btn btn-success btn-sm">New Page</a>
+{% endblock %}
+
+{% block repository_content %}
+
 {% if action == "view" %}
-    <div class="page-header">
-        <h1>
-            {{ page.title }}
-            {% for tag in page.tags %}
-                <a href="{{ url_for('wiki.tag', tag=tag.tag) }}" class="label">{{ tag.tag }}</a>
-            {% endfor %}
+    <div class="row">
+        <div class="col-md-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="pull-right">
+                        {% if page.can_edit(current_user) %}
+                            <a href="{{ url_for('wiki_delete', slug=repository.slug, page=page.slug) }}" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="{{ url_for('wiki_edit', slug=repository.slug, page=page.slug) }}" class="btn btn-primary btn-sm">Edit</a>
+                        {% endif %}
+                    </div>
 
-            <small class="pull-right toolbar">
-                <a href="{{ url_for('wiki.page', slug=page.slug, action='edit') }}" class="btn">Edit this page</a>
-            </small>
-        </h1>
-    </div>
-    <div class="content">
-        {{ page.text | markdown }}
+                    <ol class="breadcrumb">
+                        {% for p in [page] recursive %}
+                            {% if p.parent_page %}{{ loop([p.parent_page]) }}{% endif %}
+                            <li{% if p == page %} class="active"{% endif %}>
+                                {% if p == page %}
+                                    {{ p.title }}
+                                {% else %}
+                                    <a href="{{ p.get_url() }}">{{ p.title }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                <div class="panel-body">
+                    <div class="markdown">
+                        {{ page.text | markdown }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <h4>Wiki pages</h4>
+            <ul class="wiki-pages">
+                {% for p in repository.get_root_wiki_pages() recursive %}
+                    <li class="{{ 'current' if page == p else '' }}">
+                        <a href="{{ p.get_url() }}">{{ p.title }}</a>
+                        {% if p.child_pages %}
+                            <ul>{{ loop(p.child_pages) }}</ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 {% elif action == "edit" or action == "new" %}
-    <form method="post">
+    <form method="post" role="form" action="{{ url_for('wiki_' + action, slug=repository.slug, page=page.slug) }}">
         <div class="page-header">
             <h1>
                 {% if action != "new" %}Edit: {{ page.title }}{% else %}Create new Page{% endif %}
 
                 <small class="pull-right toolbar">
-                    {% if action != "new" %}<a href="{{ url_for('wiki.page', slug=page.slug) }}" class="btn btn-link">Cancel</a>{% endif %}
+                    <a href="{{ url_for('wiki_page', slug=repository.slug, page=page.slug) if action == 'edit' else url_for('wiki', slug=repository.slug) }}" class="btn btn-link">Cancel</a>
                     <input type="submit" class="btn btn-primary" value="Save" />
                 </small>
             </h1>
         </div>
         <div class="content">
-            <strong>Page title</strong>
-            <input name="title" type="text" placeholder="Page title" value="{{ page.title or '' }}" class="input-block-level" />
+            {{ form_errors(form) }}
+            {{ form.hidden_tag() }}
 
-            <strong>Content</strong>
-            <textarea name="text" class="input-block-level code" rows="16">{{ page.text or '' }}</textarea>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.title.label }}
+                        {{ form.title(placeholder="Page title", class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.parent_page_id.label }}
+                        {{ form.parent_page_id(class="form-control") }}
+                    </div>
+                </div>
+            </div>
 
-            <input class="tags" name="tags" type="text" placeholder="Tags"
-                style="vertical-align: top;"
-                {% if page.tags %}value="{% for tag in page.tags %}{{", " if loop.index != 1 else ""}}{{tag.tag}}{% endfor %}"{% endif %}
-                alltags='[{% for tag in wiki_tags %}{{"," if loop.index != 1 else ""}}"{{tag.tag}}"{% endfor %}]' />
+            <div class="form-group">
+                {{ form.text.label }}
+                {{ form.text(class="form-control code", rows=16) }}
+            </div>
         </div>
     </form>
 {% else %}

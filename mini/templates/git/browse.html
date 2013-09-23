@@ -1,5 +1,9 @@
 {% extends "git/_base_commit.html" %}
 
+{% block repository_actions %}
+    <a href="{{ url_for('commit', slug=repository.slug, rev=rev if rev else branch) }}" class="btn btn-primary btn-sm">Commit details</a>
+{% endblock %}
+
 {% block commit_content %}
 
 <h4>
@@ -23,10 +27,6 @@
     </span>
 
     {% include "git/_path.html" %}
-
-    <span class="pull-right">
-        <a href="{{ url_for('commit', slug=repository.slug, rev=rev if rev else branch) }}" class="btn btn-primary btn-sm">Commit details</a>
-    </span>
 </h4>
 
 <table class="table table-bordered table-striped tree-table">

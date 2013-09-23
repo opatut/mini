@@ -1,4 +1,8 @@
-{% extends "_commit_base.html" %}
+{% extends "git/_base_commit.html" %}
+
+{% block repository_actions %}
+    <a href="{{ url_for('browse', slug=repository.slug, rev=rev) }}" class="btn btn-primary btn-sm">Browse files @ {{ commit.hexsha|shortsha }}</a>
+{% endblock %}
 
 {% block commit_content %}
 
@@ -14,17 +18,13 @@
         -
         <span class="lines">{{ s["lines"] }} total</span>
     </span>
-
-    <span class="pull-right">
-        <a href="{{ url_for('git.browse', slug=repository.slug, rev=rev) }}" class="btn btn-primary btn-small">Browse files @ {{ commit.hexsha|shortsha }}</a>
-    </span>
     <div style="clear: right;"></div>
 </p>
 
 
 {% if not commit.parents[0] %}
     <p class="alert alert-info">
-        This commit does not have any parents, just <a href="{{ url_for('git.browse', slug=repository.slug, rev=commit.hexsha) }}">browse its code</a> if you want to see the file contents.
+        This commit does not have any parents, just <a href="{{ url_for('browse', slug=repository.slug, rev=commit.hexsha) }}">browse its code</a> if you want to see the file contents.
     </p>
 {% elif commit.parents[1] %}
     <p class="alert alert-info">
@@ -32,52 +32,55 @@
     </p>
 {% else %}
     {% for diff in commit.parents[0].diff(commit, create_patch = True) %}
-        <div class="commit-file panel">
+        <div class="commit-file panel panel-default">
             {% set from = diff.rename_from if diff.renamed else diff.a_blob.path %}
             {% set to = diff.rename_to if diff.renamed else diff.b_blob.path %}
 
             {% set lines = diff.diff.splitlines() %}
 
             <div class="panel-heading files">
-                <span class="from">{{ from }}</span>
-                {% if to != from %}
-                    <span class="rename">&raquo;</span>
-                    <span class="to">{{ to }}</span>
-                {% endif %}
-            </div>
-
-            <div class="diff">
-                <table class="patch">
-                {% set lineA, lineB = 0, 0 %}
-
-                {% for line in lines[2:] %}
-                    {% set t = line | diffLineType %}
-
-                    {% if t == "section" %}
-                        {% set lineA, lineB = line | diffParseSection %}
+                <h3 class="panel-title">
+                    <span class="from">{{ from }}</span>
+                    {% if to != from %}
+                        <span class="rename">&raquo;</span>
+                        <span class="to">{{ to }}</span>
                     {% endif %}
-
-                    {% if t != "insertion" %}{% set lineA = lineA + 1 %}{% endif %}
-                    {% if t != "deletion" %}{% set lineB = lineB + 1 %}{% endif %}
-
-                    <tr class="line {{ t }}">
-                        {% if t == "section" %}
-                            <td colspan="nonumber"></td>
-                            <td colspan="nonumber"></td>
-                        {% else %}
-                            <td class="number a">{% if t != "insertion" %}{{ lineA }}{% endif %}</td>
-                            <td class="number b">{% if t != "deletion" %}{{ lineB }}{% endif %}</td>
-                        {% endif %}
-                        <td> {{ line }}</td>
-                    </tr>
-                {% endfor %}
-
-                {% if lines | length <= 2 %}
-                    <tr class="line context"><td colspan="3">[no changes]</td></div>
-                {% endif %}
-                </table>
+                </h3>
             </div>
 
+            <div class="panel-body">
+                <div class="diff">
+                    <table class="patch">
+                    {% set lineA, lineB = 0, 0 %}
+
+                    {% for line in lines[2:] %}
+                        {% set t = line | diffLineType %}
+
+                        {% if t == "section" %}
+                            {% set lineA, lineB = line | diffParseSection %}
+                        {% endif %}
+
+                        {% if t != "insertion" %}{% set lineA = lineA + 1 %}{% endif %}
+                        {% if t != "deletion" %}{% set lineB = lineB + 1 %}{% endif %}
+
+                        <tr class="line {{ t }}">
+                            {% if t == "section" %}
+                                <td colspan="nonumber"></td>
+                                <td colspan="nonumber"></td>
+                            {% else %}
+                                <td class="number a">{% if t != "insertion" %}{{ lineA }}{% endif %}</td>
+                                <td class="number b">{% if t != "deletion" %}{{ lineB }}{% endif %}</td>
+                            {% endif %}
+                            <td> {{ line }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    {% if lines | length <= 2 %}
+                        <tr class="line context"><td colspan="3">[no changes]</td></div>
+                    {% endif %}
+                    </table>
+                </div>
+            </div>
             <div class="panel-footer stats">
                 {% set s = commit.stats.files[to] %}
                 <span class="insertions">{{ s["insertions"] }} insertions</span>
@@ -87,7 +90,7 @@
                 <span class="lines">{{ s["lines"] }} total</span>
 
                 <div class="pull-right">
-                    <a href="{{ url_for('git.browse', slug=repository.slug, rev=commit.hexsha, path=diff.b_blob.path) }}">Show file @ {{ commit.hexsha|shortsha }}</a>
+                    <a href="{{ url_for('browse', slug=repository.slug, rev=commit.hexsha, path=diff.b_blob.path) }}">Show file @ {{ commit.hexsha|shortsha }}</a>
                 </div>
             </div>
         </div>
