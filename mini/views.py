@@ -1,4 +1,4 @@
-from mini import app, menu, access, db
+from mini import app, access, db
 from mini.forms import *
 from mini.models import *
 from flask import render_template, flash, abort, url_for, request, redirect
@@ -10,28 +10,27 @@ import git # for type checks
 ################################################################################
 
 @app.route("/")
-@menu.add_view("index", "Index", index=-100)
 def index():
     return redirect(url_for("repositories"))
-    #return render_template("index.html")
 
 @app.route("/settings/")
-@menu.add_view("settings", "Settings", index=100)
 @access.require("settings.core")
 def settings():
     return render_template("settings.html")
 
 @app.route("/repositories")
-@menu.add_view("repositories", "Repositories", "index")
 def repositories():
     return render_template("git/repositories.html", repositories=Repository.query.all())
+
+@app.route("/users")
+def users():
+    return render_template("users.html", users=User.query.all())
 
 ################################################################################
 # ACCOUNT                                                                      #
 ################################################################################
 
 @app.route("/login/", methods=["GET", "POST"])
-@menu.add_view("login", "Login", index=200)
 @access.require("nologin")
 def login():
     form = LoginForm()
@@ -46,18 +45,103 @@ def login():
     return render_template("login.html", form=form)
 
 @app.route("/logout/")
-@menu.add_view("logout", "Logout", "account", index=100)
 @access.require("login")
 def logout():
     current_user.logout()
     flash("You have been logged out.", "info")
     return redirect(url_for("index"))
 
-@app.route("/account/")
-@menu.add_view("account", "Account", index=200)
+@app.route("/register/")
+@access.require("nologin")
+def register():
+    abort(501)
+    #return render_template("register.html")
+
+@app.route("/settings/", methods=("GET", "POST"))
+@app.route("/settings/<tab>/", methods=("GET", "POST"))
 @access.require("login")
-def account():
-    return render_template("settings.html")
+def settings(tab="general"):
+    args = {}
+
+    if tab == "general":
+        form = GeneralSettingsForm(obj=current_user)
+        password_form = ChangePasswordForm()
+
+        if form.validate_on_submit():
+            form.populate_obj(current_user)
+            db.session.commit()
+            flash("Your settings were saved.", "success")
+            return redirect(url_for("settings", tab="general"))
+        elif password_form.validate_on_submit():
+            if hash_password(password_form.password.data) != current_user.password:
+                flash("Your old password is incorrect. Please try again.", "error")
+            else:
+                current_user.password = hash_password(password_form.password1.data)
+                db.session.commit()
+                flash("You changed your password.", "success")
+                return redirect(url_for("settings", tab="general"))
+
+        args["form"] = form
+        args["password_form"] = password_form
+
+    elif tab == "emails":
+        form = NewEmailForm()
+        if form.validate_on_submit():
+            email = Email()
+            email.user = current_user
+            email.email = form.email.data
+            db.session.add(email)
+            db.session.commit()
+
+        args["form"] = form
+
+    elif tab == "keys":
+        form = NewPublicKeyForm()
+        if form.validate_on_submit():
+            key = PublicKey()
+            key.set_key(form.key.data)
+            key.name = form.name.data.strip()
+            key.user = current_user
+            db.session.add(key)
+            db.session.commit()
+            flash("Your key was added. Please check the fingerprint: <code>%s</code>." % key.fingerprint, "success")
+            return redirect(url_for("settings", tab="keys"))
+
+        args["form"] = form
+
+    elif tab == "notifications":
+        pass
+
+    else:
+        abort(404)
+
+    return render_template("settings.html", tab=tab, **args)
+
+@app.route("/settings/emails/<id>/<action>/")
+@access.require("login")
+def settings_email_action(action, id):
+    email = Email.query.filter_by(id=id).first_or_404()
+
+    if email.user != current_user:
+        abort(403)
+
+    if action == "set-gravatar":
+        for m in current_user.emails: m.is_gravatar = (m == email)
+        flash("Your email settings were successfully updated.", "success")
+    elif action == "set-default":
+        for m in current_user.emails: m.is_default = (m == email)
+        flash("Your email settings were successfully updated.", "success")
+    elif action == "remove":
+        if email.is_default or email.is_gravatar:
+            flash("Cannot remove default or gravatar address.", "error")
+        else:
+            db.session.delete(email)
+            flash("The email address %s has been removed." % email.email, "success")
+    else:
+        abort(404)
+
+    db.session.commit()
+    return redirect(url_for("settings", tab="emails"))
 
 ################################################################################
 # HISTORY                                                                      #

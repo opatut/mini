@@ -1,9 +1,10 @@
-import subprocess, re
+import subprocess, re, base64
 from hashlib import sha512, md5
 from datetime import datetime
 from werkzeug.exceptions import Forbidden
 from flask import Markup
 from flask.ext.login import login_user, logout_user, current_user
+from os.path import *
 
 def run(p):
     child = subprocess.Popen(p, shell = True, stdout = subprocess.PIPE)
@@ -37,9 +38,25 @@ def generate_new_slug(obj):
         obj.slug = old_slug
         return False
 
+def get_hooks_path():
+    return abspath(join(basename(__file__), "..", "hooks.py"))
+
+def shellquote(s):
+    return "'" + s.replace("'", "'\\''") + "'"
 
 def hash_password(s):
     return sha512((s + "TODO::secret").encode('utf-8')).hexdigest()
+
+def verify_key(key):
+    try:
+        type, key_string, comment = key.strip().split()
+        data = base64.decodestring(key_string)
+        int_len = 4
+        str_len = struct.unpack('>I', data[:int_len])[0] # this should return the length of the type
+        return data[int_len:int_len + str_len] == type
+    except:
+        return False
+
 
 class AnonymousUser(object):
     def __init__(self, name="Anonymous", email="anonymous@example.com"):

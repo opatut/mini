@@ -2,6 +2,7 @@
 
 from mini import db, login_manager
 from mini.util import *
+from mini.models import Email
 from datetime import datetime
 from flask.ext.login import current_user, login_user, logout_user
 import fnmatch
@@ -12,9 +13,11 @@ class User(db.Model, AnonymousUser):
     name = db.Column(db.String(80), unique = True)
     username = db.Column(db.String(80), unique = True)
     password = db.Column(db.String(128))
-    email = db.Column(db.String(128))
     created = db.Column(db.DateTime)
     permissions = db.Column(db.Text)
+
+    location = db.Column(db.String(200))
+    about = db.Column(db.Text)
 
     def __init__(self):
         self.created = datetime.utcnow()
@@ -22,8 +25,16 @@ class User(db.Model, AnonymousUser):
     def set_password(self, cleartext):
         self.password = hash_password(cleartext)
 
-    def get_avatar(self, size = 32):
-        return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
+    @property
+    def default_email(self):
+        return Email.query.filter_by(user_id=self.id, is_default=True).first()
+
+    @property
+    def gravatar_email(self):
+        return Email.query.filter_by(user_id=self.id, is_gravatar=True).first()
+
+    def get_avatar(self, size=32):
+        return self.gravatar_email.get_avatar(size)
 
     def has_permission(self, permission):
         if permission == "login":

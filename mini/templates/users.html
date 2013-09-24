@@ -1,0 +1,26 @@
+{% extends "_base.html" %}
+
+{% block title %}User List{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>User List</h1>
+    </div>
+
+<div class="user-list row">
+{% for user in users %}
+    <div class="user col-md-3 col-sm-6">
+        <a href="{{ user.get_url() }}"><img src="{{ user.get_avatar(48) }}" class="avatar" /></a>
+        <div class="name"><a href="{{ user.get_url() }}">{{ user.name }}</a></div>
+        <div class="username">{{ user.username }}</div>
+        <div class="info">
+            {% if user.location %}
+                <i class="icon-home"></i>
+                {{ user.location }}
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}

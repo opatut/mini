@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="520"
+   height="380"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="icon.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="284.46554"
+     inkscape:cy="195.39139"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-bbox="true"
+     inkscape:snap-page="true"
+     inkscape:window-width="1362"
+     inkscape:window-height="714"
+     inkscape:window-x="0"
+     inkscape:window-y="34"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3771"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-672.36214)">
+    <rect
+       style="fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3816"
+       width="520"
+       height="379.99997"
+       x="2.8421709e-14"
+       y="672.36212" />
+    <text
+       xml:space="preserve"
+       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold"
+       x="119.99997"
+       y="772.36218"
+       id="text3792"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/icon-stacked-black.png"
+       inkscape:export-xdpi="110.15"
+       inkscape:export-ydpi="110.15"><tspan
+         sodipodi:role="line"
+         id="tspan3794"
+         x="119.99997"
+         y="772.36218"
+         style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;text-anchor:start;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold">mini</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3790"
+       width="60"
+       height="60"
+       x="40"
+       y="712.36218"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/icon-stacked-black.png"
+       inkscape:export-xdpi="110.15"
+       inkscape:export-ydpi="110.15" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3796"
+       y="802.36218"
+       x="40"
+       style="font-size:61.06506348px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold"
+       xml:space="preserve"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/icon-stacked-black.png"
+       inkscape:export-xdpi="110.15"
+       inkscape:export-ydpi="110.15"><tspan
+         style="font-size:30.53253174px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;text-anchor:start;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold"
+         y="802.36218"
+         x="40"
+         id="tspan3798"
+         sodipodi:role="line">developer suite</tspan></text>
+    <rect
+       y="952.36218"
+       x="40"
+       height="60"
+       width="60"
+       id="rect3800"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/favicon.png"
+       inkscape:export-xdpi="48"
+       inkscape:export-ydpi="48" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3802"
+       y="1006.3622"
+       x="42.068359"
+       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold"
+       xml:space="preserve"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/favicon.png"
+       inkscape:export-xdpi="48"
+       inkscape:export-ydpi="48"><tspan
+         style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;text-anchor:start;fill:#ffffff;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold"
+         y="1006.3622"
+         x="42.068359"
+         id="tspan3804"
+         sodipodi:role="line">m</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3806"
+       y="912.36218"
+       x="120"
+       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold"
+       xml:space="preserve"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/icon-horizontal-white.png"
+       inkscape:export-xdpi="19.5"
+       inkscape:export-ydpi="19.5"><tspan
+         style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;text-anchor:start;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold;fill:#ffffff"
+         y="912.36218"
+         x="120"
+         id="tspan3808"
+         sodipodi:role="line">mini</tspan></text>
+    <rect
+       y="852.36218"
+       x="40"
+       height="60"
+       width="60"
+       id="rect3810"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/icon-horizontal-white.png"
+       inkscape:export-xdpi="19.5"
+       inkscape:export-ydpi="19.5" />
+    <text
+       xml:space="preserve"
+       style="font-size:61.06506347999999917px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold"
+       x="280"
+       y="912.36218"
+       id="text3812"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/paul/src/prj/mini/extra/icon-horizontal-white.png"
+       inkscape:export-xdpi="29.841299"
+       inkscape:export-ydpi="29.841299"><tspan
+         sodipodi:role="line"
+         id="tspan3814"
+         x="280"
+         y="912.36218"
+         style="font-size:30.53253173999999959px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;text-anchor:start;font-family:Tuffy;-inkscape-font-specification:Tuffy Bold;fill:#ffffff">developer suite</tspan></text>
+  </g>
+</svg>

@@ -11,10 +11,15 @@ db.create_all()
 opatut = User()
 opatut.name = "Paul Bienkowski"
 opatut.username = "opatut"
-opatut.email = "opatutlol@aol.com"
 opatut.set_password("lol")
 opatut.permissions = """*"""
 db.session.add(opatut)
+
+key = PublicKey()
+key.user = opatut
+key.key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDRUFLcksSX57IC7Z1yGWWYignX7tnn0c2EffImrZbUoZTtxpQPvsnkw191/NAb9ol8K0ndjLYtaaRIxYsXwAcLaT+/Cu0K+Jd7E+CKa1KzJJNhYsnEJIYH+JMFbBcq3IP+r5XI5E35SA0mjWlPHmqFDssotSPd9f0Q66OIy7MNscrJaNNUSauVkNVr/SlMpEHB0mpY0fZJZz0Qlqb2PV7OWvh332bMdM70+dl9CyxNRNruApq95gI+IUYac7gMqgtoFIsxojBvaETuMqqhcfwuc9wx++ezxqq2UgMV9KDGlv9rfrjPr+P3/ZhUD0afo75BalCLyEAVeYugCv8hRg+lD1IgT7oJy1WVPIKAHgM8KjqDKWUDBJRdnBokMQ/y8PEaGRBzpWk5YIWefDf901xosgi4L+DMr2fxb7wRJOLb88Y+MmBuaN5ODa6FGMo7Ql7xRwgbVleS+J46mr2HG7ITTSLvn5on7K3cAfvUQsFfcesYLoHGbL6Lf7VY7HxAEMxrj9QJyp3LWrHw7kTdxGsT34ZQCcbI4NM0h++LVer5yjlMgOM8yf5ehc6hMIj2s417HNBKWMeojyZG3ThvtmQmhvxVyrWdFhntNB0tB0RxMiINQEBHLV6S/OHg9TKEhcPn1csG8H2QjXf1k88cGjuFu6xzCam+0Hfk/2DDZmkRVQ== paul@newton"
+key.name = "newton/curry"
+db.session.add(key)
 
 repo = Repository()
 repo.slug = "testrepo"
@@ -25,6 +30,13 @@ db.session.add(repo)
 
 mail = Email()
 mail.email = "paulbienkowski@aol.com"
+mail.is_default = True
+mail.user = opatut
+db.session.add(mail)
+
+mail = Email()
+mail.email = "opatutlol@aol.com"
+mail.is_gravatar = True
 mail.user = opatut
 db.session.add(mail)
 
@@ -103,3 +115,6 @@ wiki_sub.parent_page = wiki_main
 db.session.add(wiki_sub)
 
 db.session.commit()
+
+PublicKey.generate_authorized_keys_file()
+repo.install_all_hooks()

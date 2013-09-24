@@ -51,12 +51,9 @@ def git_committer_time(commit):
 # find a user
 @app.template_filter()
 def git_user(u):
-    user = User.query.filter_by(email=u.email).first()
-    if not user:
-        mail = Email.query.filter_by(email=u.email).first()
-        if not mail: return AnonymousUser(u.name, u.email)
-        user = mail.user
-    return user
+    mail = Email.query.filter_by(email=u.email).first()
+    if not mail: return AnonymousUser(u.name, u.email)
+    return mail.user
 
 # format a timestamp in default time format (00:00:00)
 @app.template_filter()
@@ -76,7 +73,7 @@ def datetime(s, with_title=True):
 # format a timestamp as human readable date
 @app.template_filter()
 def date_human(s, with_title=True):
-    return date_title(s, "today" if d.today() == s.date() else s.strftime("%B %d, %Y"), with_title)
+    return date_title(s, "today" if dt.utcnow().date() == s.date() else s.strftime("%B %d, %Y"), with_title)
 
 @app.template_filter()
 def filetype(blob):

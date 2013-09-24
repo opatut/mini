@@ -1,9 +1,9 @@
 from mini import app, db
-from mini.util import run
+from mini.util import run, get_hooks_path
 from mini.models.user import User
 from datetime import datetime
 from os.path import abspath, join, isdir
-import git
+import git, os
 
 class Repository(db.Model):
     __tablename__ = "repository"
@@ -80,3 +80,23 @@ class Repository(db.Model):
 
     def get_root_wiki_pages(self):
         return [page for page in self.wiki_pages if not page.parent_page]
+
+    def get_hook_file(self, hook):
+        return abspath(join(self.path, "hooks", hook))
+
+    def install_hook(self, hook):
+        content = "#!/bin/bash\npython2 {hooks_file} {hook} {slug} \"$@\"".format(
+            hooks_file=get_hooks_path(), hook=hook, slug=self.slug)
+
+        path = self.get_hook_file(hook)
+        with open(path, "w") as f:
+            f.write(content)
+            f.close()
+            os.chmod(path, 0755) # set executable
+
+    def uninstall_hook(self, hook):
+        os.remove(self.get_hook_file(hook))
+
+    def install_all_hooks(self):
+        for hook in ["pre-receive", "post-receive"]:
+            self.install_hook(hook)

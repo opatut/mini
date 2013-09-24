@@ -22,12 +22,15 @@ body {
 }
 
 .navbar {
+    margin-bottom: 0px;
+}
+
+.flashes {
     margin-bottom: 10px;
 }
 
-.navbar-inverse .navbar-inner {
-    background: #1d1d1d;
-    text-shadow: none !important;
+.flashes .container {
+    padding-right: 24px;
 }
 
 .page-header {
@@ -100,10 +103,7 @@ textarea.code {
 }
 
 .login {
-    max-width: 600px;
-}
-.login * {
-    margin-bottom: 0;
+    max-width: 30em;
 }
 
 form {
@@ -167,17 +167,59 @@ ul.nav-tabs li a i {
   border-color: #d0e3f0;
 }
 
-.btn-mini {
-    padding: 3px 5px;
-    font-size: 11px;
-    line-height: 1.3;
-}
-
-
 .user .avatar {
     vertical-align: -3px;
     margin: 0 1px;
-    border-radius: 2px;
+}
+
+.avatar {
+    border-radius: 3px;
+}
+
+.current-user {
+    display: inline-block;
+    margin-right: 10px;
+}
+.current-user .avatar {
+    margin-right: 0.3em;
+}
+
+.navbar-brand,
+.navbar-nav > li > a {
+    height: 36px;
+    line-height: 36px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar-brand img {
+    margin-right: 20px;
+    vertical-align: baseline;
+}
+
+.navbar-nav > li > a {
+    padding: 0 10px;
+}
+
+.navbar {
+    border: 0;
+}
+
+.navbar-nav > li:hover {
+    background: #333;
+}
+
+.navbar {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.navbar-nav > li > a > i {
+    font-size: 14px;
+    vertical-align: -2px;
+}
+
+.navbar {
+    min-height: 0;
 }
 
 .user.anonymous {
@@ -452,3 +494,54 @@ ul.wiki-pages li.current > a {
     border-radius: 0;
 }
 
+
+
+
+.user-list .user {
+    padding: 10px;
+}
+
+.user-list .user .name {
+    font-weight: bold;
+}
+
+.user-list .user .info,
+.user-list .user .username {
+    font-size: 0.85em;
+}
+
+.user-list .user .info {
+    color: #666;
+}
+
+.user-list .user .avatar {
+    float: left;
+    margin-right: 10px;
+}
+
+.settings {
+    margin-bottom: 2em;
+}
+
+.settings h3.form-title {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #CCC;
+}
+
+.emails .avatar {
+    margin-right: 5px;
+}
+
+.emails tr * {
+    vertical-align: middle !important;
+}
+
+.emails .address {
+    white-space: nowrap;
+}
+
+.emails .address span {
+    white-space: normal;
+    display: inline-block;
+}
