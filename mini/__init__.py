@@ -25,9 +25,6 @@ from mini.filters import *
 from mini.forms import *
 from mini.models import *
 from mini.views import *
-from mini.hooks import *
-
-hooks = Hooks()
 
 @app.errorhandler(404)
 @app.errorhandler(403)
