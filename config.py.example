@@ -1,0 +1,21 @@
+# Database settings
+SQLALCHEMY_DATABASE_URI = "sqlite:////path/to/database.db"
+SQLALCHEMY_ECHO = False
+
+# Secret key for password hashing etc.
+SECRET_KEY = "...change...me..."
+
+# Path to where the repositories are stored
+GIT_REPOSITORY_DIRECTORY = "data/repositories/"
+
+# For display of the clone URLs, does not effect the application
+GIT_USER = "git"
+
+# For display of the clone URLs
+DOMAIN = "domain.name.org"
+
+# File to write public keys to, needs to be read out by sshd
+# Note: authorized_keys2 is used to not override manually added keys. This file
+#       is used, too, by sshd default settings. If not, adjust this path or
+#       the sshd_config `AuthorizedKeysFile`.
+AUTHORIZED_KEYS = "/srv/git/.ssh/authorized_keys2"
