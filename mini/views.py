@@ -5,6 +5,10 @@ from flask import render_template, flash, abort, url_for, request, redirect
 from flask.ext.login import current_user
 import git # for type checks
 
+@app.context_processor
+def inject():
+    return dict(REPOSITORY_ROLES=REPOSITORY_ROLES)
+
 ################################################################################
 # GENERAL                                                                      #
 ################################################################################
@@ -154,13 +158,13 @@ def repository(slug):
 @app.route("/<slug>/history/")
 def history(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("read"))
+    access.check(repository.has_permission(current_user, "read"))
     return render_template("git/history.html", repository=repository)
 
 @app.route("/<slug>/history/<rev>/")
 def commit(slug, rev):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("read"))
+    access.check(repository.has_permission(current_user, "read"))
 
     commit = repository.get_commit(rev)
     return render_template("git/commit.html", repository=repository, commit=commit, rev=rev)
@@ -174,7 +178,7 @@ def commit(slug, rev):
 @app.route("/<slug>/browse/<rev>/<path:path>")
 def browse(slug, rev="", path=""):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("read"))
+    access.check(repository.has_permission(current_user, "read"))
 
     if not rev:
         rev = repository.git.heads[0].name
@@ -199,7 +203,7 @@ def browse(slug, rev="", path=""):
 @app.route("/<slug>/raw/<rev>/<path:path>")
 def file_content(slug, rev, path):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("read"))
+    access.check(repository.has_permission(current_user, "read"))
 
     commit = repository.get_commit(rev)
     if not commit: abort(404)
@@ -213,11 +217,46 @@ def file_content(slug, rev, path):
 # ADMIN                                                                        #
 ################################################################################
 
-@app.route("/<slug>/admin")
+@app.route("/<slug>/admin", methods=("GET", "POST"))
 def admin(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("admin"))
-    return render_template("admin.html", repository=repository)
+    access.check(repository.has_permission(current_user, "admin"))
+
+    form = AddPermissionForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if not user:
+            flash("Username not found. Please enter the nickname, not the real name!", "error")
+        elif not repository.set_permission(user, form.access.data):
+            flash("You cannot add yourself to this list!", "error")
+        else:
+            flash("Permission %s for user %s added." % (user.get_display_name(), form.access.data), "success")
+            return redirect(url_for("admin", slug=slug))
+
+    return render_template("git/admin.html", repository=repository, form=form)
+
+@app.route("/<slug>/admin/permission/<id>/<level>/")
+def admin_set_permission(slug, id, level):
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "admin"))
+
+    user = (None if (id==0) else User.query.filter_by(id=id).first())
+
+    if level == "remove" and user:
+        permission = repository.get_explicit_permission(user)
+        if permission:
+            db.session.delete(permission)
+            db.session.commit()
+        flash("The permission level has been removed.", "success")
+    elif level in REPOSITORY_ROLES:
+        if not repository.set_permission(user, level):
+            flash("You cannot change your own permissions, sorry. Make someone else admin for that!", "error")
+        else:
+            flash("The permission level has been changed.", "success")
+    else:
+        abort(404)
+    return redirect(url_for("admin", slug=slug))
 
 ################################################################################
 # ISSUES                                                                       #
@@ -226,29 +265,31 @@ def admin(slug):
 @app.route("/<slug>/issues/")
 def issues(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("read"))
+    access.check(repository.has_permission(current_user, "read"))
     return render_template("issues/list.html", issues=repository.issues, repository=repository)
 
 @app.route("/<slug>/issues/<number>", methods=("GET", "POST"))
 def issue(slug, number):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("read"))
+    access.check(repository.has_permission(current_user, "read"))
     issue = Issue.query.filter_by(repository_id=repository.id, number=number).first_or_404()
 
     if request.method == "POST" and "save-status" in request.args:
+        access.check(issue.can_edit(current_user))
         issue.status = request.form.get("status")
         issue.assignee = User.query.filter_by(id=request.form.get("assignee")).first()
         issue.issue_tags = [tag for tag in repository.issue_tags if str(tag.id) in request.form.getlist("tag")]
 
         if not issue.status in ("open", "discussion", "wip", "invalid", "closed"):
             flash("Please select a valid issue state.", "error")
-        elif not issue.assignee or not issue.assignee.has_permission(repository.get_permission("read")):
+        elif not issue.assignee or not repository.has_permission(issue.assignee, "read"):
             flash("Please select a user with read permissions on the repository.", "error")
         else:
             flash("Issue saved.", "success")
             db.session.commit()
             return redirect(issue.get_url())
     elif request.method == "POST" and "post-comment" in request.args:
+        access.check(repository.has_permission(current_user, "comment"))
         comment = IssueComment()
         comment.author = current_user
         comment.issue = issue
@@ -262,15 +303,13 @@ def issue(slug, number):
             flash("Please insert a comment.", "error")
     elif request.method == "GET" and "comment-remove" in request.args:
         comment = IssueComment.query.filter_by(id=request.args.get("comment-remove")).first_or_404()
-        if not comment.can_delete(current_user):
-            abort(403)
-        elif not comment.issue == issue or not (comment.author == current_user or access.has_permission(repository.get_permission("admin"))):
-            flash("You don't have permission to remove this comment.", "error")
-        else:
-            db.session.delete(comment)
-            db.session.commit()
-            flash("Comment removed.", "success")
-            return redirect(issue.get_url())
+        access.check(comment.can_delete(current_user))
+        if not comment.issue == issue:
+            abort(404)
+        db.session.delete(comment)
+        db.session.commit()
+        flash("Comment removed.", "success")
+        return redirect(issue.get_url())
 
     return render_template("issues/issue.html", issue=issue, repository=repository)
 
@@ -287,21 +326,21 @@ def wiki(slug):
 @app.route("/<slug>/wiki/<page>")
 def wiki_page(slug, page=""):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("read"))
+    access.check(repository.has_permission(current_user, "read"))
     wikipage = WikiPage.query.filter_by(slug=page).first_or_404()
     return render_template("wiki/page.html", repository=repository, page=wikipage, action="view")
 
 @app.route("/<slug>/wiki/<page>/edit", methods=("POST", "GET"))
 def wiki_edit(slug, page=""):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("write"))
+    access.check(repository.has_permission(current_user, "write"))
     wikipage = WikiPage.query.filter_by(slug=page).first_or_404()
     return wiki_page_form(repository, wikipage, "edit")
 
 @app.route("/<slug>/wiki/<page>/delete", methods=("POST", "GET"))
 def wiki_delete(slug, page=""):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("write"))
+    access.check(repository.has_permission(current_user, "write"))
     wikipage = WikiPage.query.filter_by(slug=page).first_or_404()
     for child in wikipage.child_pages:
         child.parent_page = wikipage.parent_page
@@ -313,7 +352,7 @@ def wiki_delete(slug, page=""):
 @app.route("/<slug>/wiki/new", methods=("POST", "GET"))
 def wiki_new(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
-    access.check(repository.get_permission("write"))
+    access.check(repository.has_permission(current_user, "write"))
     wikipage = WikiPage()
     wikipage.repository = repository
     return wiki_page_form(repository, wikipage, "new")

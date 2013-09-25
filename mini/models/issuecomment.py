@@ -18,7 +18,7 @@ class IssueComment(db.Model):
         self.created = datetime.utcnow()
 
     def can_edit(self, user):
-        return user == self.author or user.has_permission(self.issue.repository.get_permission("write"))
+        return user == self.author or self.issue.repository.has_permission(user, "write")
 
     def can_delete(self, user):
         return self.can_edit(user) and self.issue.issue_comments[-1] == self

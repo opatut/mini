@@ -1,0 +1,57 @@
+Meta-permissions
+================
+
+logged-in
+    User needs to be logged in.
+
+not-logged-in
+    User must not be logged in.
+
+
+General permission
+==================
+
+login
+    The user may log in.
+
+repositories.create
+    The user can create new repositories.
+
+repositories.delete
+    The user can delete other users.
+
+repositories.all.find
+repositories.all.read
+repositories.all.comment
+repositories.all.write
+repositories.all.moderator
+repositories.all.admin
+    The user has find/read/... role on any repository.
+
+users.delete
+    The user can delete other users.
+
+users.edit
+    The user can edit other users' settings.
+
+users.permissions
+    The user can edit permissions of other users.
+
+users.permissions.self
+    The user can edit their own permissions. USE WITH CARE!
+
+issues.edit
+    The user can edit all issues and edit/delete all issue comments.
+
+
+
+Repository role levels
+======================
+
+[0] none        The user must not know about this repository.
+[1] find        The user can find the repository in the list.
+[2] read        The user can see repository details and clone it.
+[3] comment     The user can create issues or comment on them.
+[4] write       The user can edit repository details and push to it.
+[5] moderator   The user can edit/delete other user's issues/comments on this repository.
+[6] admin       The user can edit repository settings and set other user's role levels.

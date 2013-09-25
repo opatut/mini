@@ -116,10 +116,8 @@ class AccessControl(object):
             return wrapper
         return decorator
 
-    def check(self, permission):
-        if not self.user_has_permission(permission):
-            raise Forbidden()
-
+    def check(self, has_permission):
+        if not has_permission: raise Forbidden()
 
     def view_allowed(self, view):
         if not (view in self.required_permissions):

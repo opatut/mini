@@ -2,7 +2,7 @@
     {% if path == "" %}
         <span class="repo">{{ repository.slug }}</span>
     {% else %}
-        <a class="repo" href="{{ url_for('git.browse', slug=repository.slug, rev=rev, path='') }}">{{ repository.slug }}</a>
+        <a class="repo" href="{{ url_for('browse', slug=repository.slug, rev=rev, path='') }}">{{ repository.slug }}</a>
     {% endif %}
 
     {% set _p = "" %}
@@ -11,7 +11,7 @@
         {% set _p = _p + p + "/" %}
 
         {% if not loop.last %}
-            <a href="{{ url_for('git.browse', slug=repository.slug, rev=rev, path=_p) }}">
+            <a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=_p) }}">
                 {{ p }}
             </a>
         {% else %}

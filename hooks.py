@@ -78,7 +78,7 @@ def git_serve():
 
     repository = get_repository(slug=repo)
 
-    if not user.has_permission(repository.get_permission(permission)):
+    if not repository.has_permission(user, permission):
         die("Permission denied - no " + permission + " access.")
 
     key.access()

@@ -2,6 +2,7 @@ from flask_wtf import Form
 from wtforms import TextField, TextAreaField, PasswordField, ValidationError, SelectField, HiddenField
 from wtforms.validators import Required, EqualTo, Email
 from mini.models import User, PublicKey
+from mini.models.permission import REPOSITORY_ROLES
 from mini.util import hash_password, verify_key
 from flask import Markup, request
 
@@ -90,3 +91,7 @@ class NewPublicKeyForm(Form):
             UniqueObject(PublicKey, "key", "This public key is already in use.")
         ])
     name = TextField("Name for this entry", validators=[Required()])
+
+class AddPermissionForm(Form):
+    access = SelectField("Access level", choices=[(x,x) for x in REPOSITORY_ROLES])
+    username = TextField("Username", validators=[Required()])

@@ -1,6 +1,6 @@
-{% extends "_repository_base.html" %}
+{% extends "_base_repository.html" %}
 
-{% set raw_url = url_for('git.file_content', slug=repository.slug, rev=rev, path=file.path) %}
+{% set raw_url = url_for('file_content', slug=repository.slug, rev=rev, path=file.path) %}
 
 {% block repository_content %}
 
@@ -13,7 +13,7 @@
 </div>
 
 {% set path = file.path %}
-<p>{% include "_path.html" %}</p>
-{% include "_render_file.html" %}
+<p>{% include "git/_path.html" %}</p>
+{% include "git/_render_file.html" %}
 {% endblock %}
 

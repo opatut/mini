@@ -21,7 +21,7 @@
         <li{{ ' class="active"'|safe if request.endpoint == "browse"  else "" }}><a href="{{ url_for('browse', slug=repository.slug) }}"><i class="icon-file-alt"></i> Browse</a></li>
         <li{{ ' class="active"'|safe if request.endpoint.startswith("issue")  else "" }}><a href="{{ url_for('issues', slug=repository.slug) }}"><i class="icon-exclamation-sign"></i> Issues</a></li>
         <li{{ ' class="active"'|safe if request.endpoint.startswith("wiki")    else "" }}><a href="{{ url_for('wiki', slug=repository.slug) }}"><i class="icon-book"></i> Wiki</a></li>
-        {% if current_user.has_permission(repository.get_permission("admin")) %}
+        {% if repository.has_permission(current_user, "admin") %}
         <li{{ ' class="active"'|safe if request.endpoint == "admin"   else "" }}><a href="{{ url_for('admin', slug=repository.slug) }}"><i class="icon-wrench"></i> Admin</a></li>
         {% endif %}
     </ul>

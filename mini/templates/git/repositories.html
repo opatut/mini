@@ -13,7 +13,7 @@
 
 
 <ul class="repositories">
-{% for repository in repositories %}
+{% for repository in repositories if repository.has_permission(current_user, "find") %}
     <li>
         <div class="content">
             <div class="title" style="margin-bottom: 3px;">

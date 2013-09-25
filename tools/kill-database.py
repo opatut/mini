@@ -8,6 +8,19 @@ from mini.models import *
 db.drop_all()
 db.create_all()
 
+tester = User()
+tester.name = "Peter Langbein"
+tester.username = "peter"
+tester.set_password("lol")
+db.session.add(tester)
+
+mail = Email()
+mail.email = "test@example.com"
+mail.is_gravatar = True
+mail.is_default = True
+mail.user = tester
+db.session.add(mail)
+
 opatut = User()
 opatut.name = "Paul Bienkowski"
 opatut.username = "opatut"

@@ -1,8 +1,10 @@
 from mini import app, db
 from mini.util import run, get_hooks_path
 from mini.models.user import User
+from mini.models.permission import Permission
 from datetime import datetime
 from os.path import abspath, join, isdir
+from flask.ext.login import current_user
 import git, os
 
 class Repository(db.Model):
@@ -71,12 +73,39 @@ class Repository(db.Model):
         else:
             return None
 
-    # find, read, write, admin
-    def get_permission(self, type):
-        return "git.repository.%s.%s" % (self.id, type)
+    @property
+    def implicit_permission(self):
+        permission = Permission.query.filter_by(repository=self, user=None).first()
+        if not permission:
+            permission = Permission(None, self, "none")
+            db.session.add(permission)
+            db.session.commit()
+        return permission
 
-    def get_users_with_permission(self, type):
-        return [user for user in User.query.all() if user.has_permission(self.get_permission(type))]
+    def get_explicit_permission(self, user):
+        if not user: return self.implicit_permission
+        return Permission.query.filter_by(repository_id=self.id, user_id=user.id).first()
+
+    def set_permission(self, user, access):
+        if user == current_user: return False # never allow this
+
+        permission = self.get_explicit_permission(user)
+
+        if not permission:
+            permission = Permission(user, self, access)
+            db.session.add(permission)
+        else:
+            permission.access = access
+
+        db.session.commit()
+        return True
+
+    def has_permission(self, user, access):
+        return user.has_permission("repositories.all.%s" % access) or \
+            (self.get_explicit_permission(user) or self.implicit_permission).satisfies(access)
+
+    def get_users_with_permission(self, access):
+        return [user for user in User.query.all() if self.has_permission(user, access)]
 
     def get_root_wiki_pages(self):
         return [page for page in self.wiki_pages if not page.parent_page]

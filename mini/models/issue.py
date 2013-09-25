@@ -32,4 +32,4 @@ class Issue(db.Model):
         return comments
 
     def can_edit(self, user):
-        return user == self.author or user.has_permission(self.repository.get_permission("write"))
+        return user == self.author or self.repository.has_permission(user, "moderator")

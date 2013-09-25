@@ -14,7 +14,9 @@ class User(db.Model, AnonymousUser):
     username = db.Column(db.String(80), unique = True)
     password = db.Column(db.String(128))
     created = db.Column(db.DateTime)
+
     permissions = db.Column(db.Text)
+    restrictions = db.Column(db.Text)
 
     location = db.Column(db.String(200))
     about = db.Column(db.Text)
@@ -37,11 +39,13 @@ class User(db.Model, AnonymousUser):
         return self.gravatar_email.get_avatar(size)
 
     def has_permission(self, permission):
-        if permission == "login":
+        if permission == "logged-in":
             return True
 
-        if permission == "nologin":
+        if permission == "not-logged-in":
             return False
+
+        if not self.permissions: return False
 
         for line in self.permissions.splitlines():
             if line and fnmatch.fnmatch(permission, line):

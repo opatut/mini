@@ -18,4 +18,4 @@ class WikiPage(db.Model):
         return url_for("wiki_page", slug=self.repository.slug, page=self.slug)
 
     def can_edit(self, user):
-        return user.has_permission(self.repository.get_permission("write"))
+        return self.repository.has_permission(user, "write")

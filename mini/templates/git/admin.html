@@ -1,0 +1,104 @@
+{% extends "_base_repository.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block repository_content %}
+
+{% if repository.implicit_permission.access == "admin" %}
+    <div class="alert alert-danger">
+        <strong>Warning!</strong> Everyone will be able
+        to access this page, restrict your permissions and
+        lock you out of this repository. Only use "Admin" as implicit
+        access level when you trust all other users.
+    </div>
+{% endif %}
+
+<br/>
+
+<div class="row">
+    <div class="col-md-8 settings">
+        <h3 class="form-title">User permissions</h3>
+
+        <table class="table">
+            <thead>
+                <tr><th>User</th><th>Level of access</th></tr>
+            </thead>
+            <tbody>
+                {% for permission in repository.permissions %}
+                <tr>
+                    <td>
+                        {% if permission.user %}
+                        {{ permission.user.get_link() }}
+                        {% else %}
+                            all other users
+                        {% endif %}
+                    </td>
+
+                    {% set colors = { "none": "inverse", "find": "info", "comment": "success", "read": "success", "write": "warning", "moderator": "warning", "admin": "danger" } %}
+                    <td>
+                    {% for access in REPOSITORY_ROLES + ["remove"] %}
+                        {% if access == "remove" %}&nbsp;&nbsp;{% endif %}
+                        {% set disabled = (access == "remove" and not permission.user) or (permission.user == current_user) %}
+                        <a href="{{ url_for('admin_set_permission', slug=repository.slug, id=permission.user.id if permission.user else 0, level=access) }}"
+                            class="btn btn-xs btn-{{ colors[access] if permission.access == access else 'default' }}{% if disabled %} disabled{% endif %}">
+                            {{ access }}
+                        </a>
+                    {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p>
+            This is a list of all the available permission levels.
+        </p>
+
+        <table class="table table-bordered table-striped table-condensed table-hover">
+            <tr>
+                <th><span class="badge">None</span></th>
+                <td>no access to repository</td>
+            </tr>
+            <tr>
+                <th><span class="badge badge-info">Find</span></th>
+                <td>repository shown in list, no access</td>
+            </tr>
+            <tr>
+                <th><span class="badge badge-success">Read</span></th>
+                <td>file browser, commit list, <b>git clone / fetch / pull</b></td>
+            </tr>
+            <tr>
+                <th><span class="badge badge-warning">Write</span></th>
+                <td><span class="badge badge-success">Read</span> + <b>git push</b></td>
+            </tr>
+            <tr>
+                <th><span class="badge badge-important">Admin</span></th>
+                <td><span class="badge badge-success">Read</span> + <span class="badge badge-warning">Write</span> + permission management</td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="col-md-4 settings">
+        <h3 class="form-title">Add a user</h3>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form_errors(form) }}
+
+            <div class="form-group">
+                {{ form.username.label(class="sr-only") }}
+                {{ form.username(placeholder = "Username", class="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.access.label(class="sr-only") }}
+                {{ form.access(class="form-control") }}
+            </div>
+
+            <div class="form-group text-right">
+                <input type="submit" value="Add user" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
