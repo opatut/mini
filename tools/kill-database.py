@@ -38,6 +38,9 @@ repo = Repository()
 repo.slug = "testrepo"
 repo.title = "Testing Repository"
 repo.upstream = ""
+repo.description = """This is a repository that was just created for testing the webapp
+and is not intended to be used whatsoever. It may contain a lot of useless commits
+and files, use at your own risk."""
 repo.init()
 db.session.add(repo)
 

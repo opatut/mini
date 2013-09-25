@@ -8,7 +8,6 @@
 
 <div class="table-responsive">
     <table class="table issue-table">
-        <thead>
         <tr>
             <th></th>
             <th>Title</th>
@@ -16,8 +15,6 @@
             <th>Status</th>
             <th>Tags</th>
         </tr>
-    </thead>
-    <tbody>
     {% for issue in issues %}
         <tr class="issue {{ issue.status }}">
             <td class="number">
@@ -38,7 +35,6 @@
             </td>
         </tr>
     {% endfor %}
-    </tbody>
 </table>
 </div>
 

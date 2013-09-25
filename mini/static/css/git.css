@@ -1,20 +1,18 @@
-.repositories {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.repositories li {
+.repository {
     background: #F6F6F6;
-    padding: 8px;
+    padding: 12px;
+    margin-bottom: 30px;
 }
 
-.repositories li .title {
+.repository .title {
     font-size: 1.2em;
 }
 
-.repositories li .title small {
+.repository .title small {
     color: #888;
+}
+
+.repositories .details {
 }
 
 pre.normal {

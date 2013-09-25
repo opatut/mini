@@ -3,15 +3,12 @@
 {% block repository_content %}
 <div  style="width: 100%">
     <table class="table">
-        <thead>
         <tr>
             <th>Author</th>
             <th>Commit</th>
             <th>Message</th>
             <th>Date</th>
         </tr>
-    </thead>
-    <tbody>
     {% for commit in repository.get_commits()|reverse %}
         <tr>
             <td>{{ (commit.author|git_user).get_link() }}</td>
@@ -20,7 +17,6 @@
             <td>{{ commit|git_committer_time|date_human }}</td>
         </tr>
     {% endfor %}
-    </tbody>
-</table>
+    </table>
 </div>
 {% endblock %}

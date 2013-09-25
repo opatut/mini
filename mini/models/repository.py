@@ -12,6 +12,7 @@ class Repository(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(64), unique=True, default="")
     title = db.Column(db.String(128), default="")
+    description = db.Column(db.Text)
     upstream = db.Column(db.String(256)) # URL BRANCH
     created = db.Column(db.DateTime)
     next_issue_number = db.Column(db.Integer, default=1)

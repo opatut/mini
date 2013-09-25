@@ -2,7 +2,6 @@
 {% from "_formhelpers.html" import form_errors %}
 
 {% block repository_actions %}
-    <a href="{{ url_for('wiki_new', slug=repository.slug) }}" class="btn btn-success btn-sm">New Page</a>
 {% endblock %}
 
 {% block repository_content %}
@@ -40,7 +39,11 @@
             </div>
         </div>
         <div class="col-md-3">
-            <h4>Wiki pages</h4>
+            <hr class="visible-xs visible-sm"/>
+            <a href="{{ url_for('wiki_new', slug=repository.slug) }}" class="btn btn-success">Create a new page</a>
+            <hr />
+
+            <h3>Wiki pages</h3>
             <ul class="wiki-pages">
                 {% for p in repository.get_root_wiki_pages() recursive %}
                     <li class="{{ 'current' if page == p else '' }}">
