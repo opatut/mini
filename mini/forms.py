@@ -72,7 +72,7 @@ class WikiPageForm(Form):
         if page.parent_page: self.parent_page_id.default = page.parent_page.id
 
 class GeneralSettingsForm(MultiForm):
-    name = TextField("Real name", validators=[Required()])
+    name = TextField("Real name")
     location = TextField("Location", validators=[])
     about = TextAreaField("About", validators=[])
 

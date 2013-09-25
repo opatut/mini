@@ -1,0 +1,37 @@
+{% extends "_base.html" %}
+
+{% block title %}{{ user.get_display_name() }}{% endblock %}
+
+{% block content %}
+
+<div class="profile-sidebar">
+    <img src="{{ user.get_avatar(200) }}" class="avatar img-responsive" />
+    <h3>{{ user.get_display_name() }}</h3>
+
+    <ul class="list-unstyled">
+        {% if user.name     %}<li><i class="icon-user"></i> {{ user.username }}</li>{% endif %}
+        {% if user.location %}<li><i class="icon-home"></i> {{ user.location }}</li>{% endif %}
+    </ul>
+
+    {% if user == current_user %}
+    <hr />
+    <p><a class="btn btn-primary" href="{{ url_for('settings') }}">Profile settings</a></p>
+    {% endif %}
+</div>
+
+<div class="profile">
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Recent activity</h3>
+            <p>coming soon</p>
+        </div>
+        <div class="col-md-6">
+            <h3>Statistics</h3>
+            <p>coming soon</p>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -184,21 +184,48 @@ ul.nav-tabs li a i {
     margin-right: 0.3em;
 }
 
-.navbar-brand,
-.navbar-nav > li > a {
+.navbar-header button.navbar-toggle {
+    width: 36px;
     height: 36px;
-    line-height: 36px;
-    padding-top: 0;
-    padding-bottom: 0;
+    line-height: 20px;
+    font-size: 20px;
+    padding: 6px;
 }
 
-.navbar-brand img {
-    margin-right: 20px;
-    vertical-align: baseline;
+.sidebar-nav {
+    margin-bottom: 2em;
 }
 
-.navbar-nav > li > a {
-    padding: 0 10px;
+.sub-nav .tab-label {
+    display: none;
+}
+
+.sub-nav .active .tab-label {
+    display: inline;
+}
+
+@media (min-width: 768px) {
+    .sub-nav .tab-label {
+        display: inline;
+    }
+
+    .navbar-brand,
+    .navbar-nav > li > a {
+        height: 36px;
+        line-height: 36px;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin: 0;
+    }
+
+    .navbar-brand img {
+        margin-right: 20px;
+        vertical-align: baseline;
+    }
+
+    .navbar-nav > li > a {
+        padding: 0 10px;
+    }
 }
 
 .navbar {
@@ -569,21 +596,30 @@ ul.wiki-pages li.current > a {
   background-image: none;
 }
 
-.btn-danger.disabled,
-.btn-danger[disabled],
-fieldset[disabled] .btn-danger,
-.btn-danger.disabled:hover,
-.btn-danger[disabled]:hover,
-fieldset[disabled] .btn-danger:hover,
-.btn-danger.disabled:focus,
-.btn-danger[disabled]:focus,
-fieldset[disabled] .btn-danger:focus,
-.btn-danger.disabled:active,
-.btn-danger[disabled]:active,
-fieldset[disabled] .btn-danger:active,
-.btn-danger.disabled.active,
-.btn-danger[disabled].active,
-fieldset[disabled] .btn-danger.active {
-  background-color: #d9534f;
-  border-color: #d43f3a;
+
+
+.profile-sidebar ul.list-unstyled li {
+    margin-bottom: 5px;
+}
+
+.profile-sidebar i {
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    width: 14px;
+}
+
+.profile-sidebar {
+    width: 200px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .profile-sidebar {
+        float: left;
+    }
+
+    .profile {
+        margin-left: 220px;
+    }
 }

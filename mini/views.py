@@ -147,6 +147,11 @@ def settings_email_action(action, id):
     db.session.commit()
     return redirect(url_for("settings", tab="emails"))
 
+@app.route("/user/<username>")
+def user(username=""):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template("user.html", user=user)
+
 ################################################################################
 # HISTORY                                                                      #
 ################################################################################
@@ -214,7 +219,7 @@ def file_content(slug, rev, path):
     return response
 
 ################################################################################
-# ADMIN                                                                        #
+# REPOSITORY ADMIN                                                             #
 ################################################################################
 
 @app.route("/<slug>/admin", methods=("GET", "POST"))

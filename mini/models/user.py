@@ -5,6 +5,7 @@ from mini.util import *
 from mini.models import Email
 from datetime import datetime
 from flask.ext.login import current_user, login_user, logout_user
+from flask import url_for
 import fnmatch
 
 class User(db.Model, AnonymousUser):
@@ -60,7 +61,7 @@ class User(db.Model, AnonymousUser):
         return Markup('<span class="user"><a href="{2}"><img class="avatar" src="{0}" /></a> {1}</span>'.format(self.get_avatar(16), self.get_display_name(), self.get_url()))
 
     def get_url(self):
-        return "#TODO"
+        return url_for("user", username=self.username)
 
     @staticmethod
     def get_current():

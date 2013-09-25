@@ -31,39 +31,61 @@
                     <div class="container">
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-menu">
                                 <span class="sr-only">Toggle navigation</span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
+
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-login">
+                                <span class="sr-only">Login</span>
+                                <i class="icon-user" style="color: white;"></i>
+                            </button>
+
                             <a class="navbar-brand" href="{{ url_for('index') }}">
                                 <img src="{{ url_for('static', filename='gfx/header.png') }}" />
                             </a>
                         </div>
 
-                        <div class="collapse navbar-collapse navbar-ex1-collapse">
+                        <div class="collapse navbar-collapse navbar-collapse-menu">
                             <ul class="nav navbar-nav">
                                 <li><a href="{{ url_for('repositories') }}">Repositories</a></li>
                                 <li><a href="{{ url_for('users') }}">Users</a></li>
                                 <li><a href="{{ url_for('settings') }}">Settings</a></li>
-                                <li><a href="{{ url_for('admin', slug='none') }}">Admin</a></li>
                             </ul>
 
-                            <ul class="nav navbar-nav pull-right">
+                            <ul class="nav navbar-nav navbar-right">
                             {% if current_user.is_active() %}
-                                <li>
+                                <li class="hidden-xs hidden-sm">
                                     <a class="current-user" href="{{ current_user.get_url() }}">
                                         <img class="avatar" src="{{ current_user.get_avatar(20) }}" />
                                         {{ current_user.username }}
                                     </a>
                                 </li>
-                                <li><a href="{{ url_for('logout') }}"><i class="icon-off"></i></a>
+                                <li>
+                                    <a href="{{ url_for('logout') }}" class="hidden-xs hidden-sm"><i class="icon-off"></i></a>
+                                    <a href="{{ url_for('logout') }}" class="visible-xs visible-sm">Logout</span></a>
+                                </li>
                             {% else %}
                                 <li><a href="{{ url_for('login') }}">Login</a></li>
                             {% endif %}
                             </ul>
                         </div>
+                            <div class="collapse navbar-collapse navbar-collapse-login">
+                                <ul class="nav navbar-nav hidden-md hidden-lg">
+                                {% if current_user.is_active() %}
+                                    <li><a href="{{ current_user.get_url() }}">
+                                        Profile
+                                        <img src="{{ current_user.get_avatar(24) }}" class="pull-right" />
+                                    </a></li>
+                                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                                {% else %}
+                                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                                {% endif %}
+                                </ul>
+                        </div>
+
                     </div>
                 </nav>
 

@@ -29,6 +29,7 @@
     {% include "git/_path.html" %}
 </h4>
 
+<div class="table-responsive">
 <table class="table table-bordered table-striped tree-table">
     <thead>
         <tr>
@@ -69,6 +70,7 @@
 {% endif %}
     </tbody>
 </table>
+</div>
 
 {# SHOW README IF ANY #}
 {% set file = tree|find_readme %}
