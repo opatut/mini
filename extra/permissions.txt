@@ -24,7 +24,7 @@ repositories.all.find
 repositories.all.read
 repositories.all.comment
 repositories.all.write
-repositories.all.moderator
+repositories.all.mod
 repositories.all.admin
     The user has find/read/... role on any repository.
 
@@ -53,5 +53,5 @@ Repository role levels
 [2] read        The user can see repository details and clone it.
 [3] comment     The user can create issues or comment on them.
 [4] write       The user can edit repository details and push to it.
-[5] moderator   The user can edit/delete other user's issues/comments on this repository.
+[5] mod         The user can edit/delete other user's issues/comments on this repository.
 [6] admin       The user can edit repository settings and set other user's role levels.

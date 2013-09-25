@@ -590,10 +590,13 @@ ul.wiki-pages li.current > a {
   border-color: #333;
 }
 
-.btn-danger:active,
-.btn-danger.active,
-.open .dropdown-toggle.btn-danger {
-  background-image: none;
+.label-inverse {
+  background-color: #333;
+}
+
+.label-inverse[href]:hover,
+.label-inverse[href]:focus {
+  background-color: #444;
 }
 
 

@@ -3,7 +3,7 @@ from mini import db
 # Used to map user<->repository permissions
 # For the
 
-REPOSITORY_ROLES = ["none", "find", "read", "comment", "write", "moderator", "admin"]
+REPOSITORY_ROLES = ["none", "find", "read", "comment", "write", "mod", "admin"]
 
 class Permission(db.Model):
     id = db.Column(db.Integer, primary_key = True)
