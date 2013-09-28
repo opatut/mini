@@ -462,12 +462,22 @@ blockquote * {
     margin-right: 5px;
 }
 
-.issue-table .issue             .status-icon { font-size: 14px; margin-left: 5px; }
-.issue-table .issue.closed      .status-icon { color: #A00; }
-.issue-table .issue.open        .status-icon { color: #0A0; }
-.issue-table .issue.wip         .status-icon { color: #0A0; }
-.issue-table .issue.discussion  .status-icon { color: #0A0; }
-.issue-table .issue.invalid     .status-icon { color: #777; }
+th.compact,
+td.compact {
+    padding-left: 0;
+    padding-right: 0;
+    width: 10px;
+    white-space: nowrap;
+}
+
+.issue-table .issue .status-icon {
+    font-size: 14px;
+    margin-right: 5px;
+    color: #0A0;
+}
+
+.issue-table .issue.invalid .status-icon { color: #A00; }
+.issue-table .issue.closed .status-icon { color: #A00; }
 
 .issue-table .number {
     color: #AAA;

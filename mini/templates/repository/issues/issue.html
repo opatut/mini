@@ -136,6 +136,7 @@
             {{ render_comment(comment) }}
         {% endfor %}
 
+        {% if issue.can_comment(current_user) %}
         <form method="POST" action="?post-comment">
             <div class="comment">
                 <a class="comment-avatar" href="#">
@@ -151,6 +152,15 @@
                 </div>
             </div>
         </form>
+        {% elif current_user.is_anonymous() %}
+        <div class="alert alert-warning">
+            Please <a href="{{ url_for('login') }}">log in</a> or register to comment.
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Comments are disabled for you on this repository.
+        </div>
+        {% endif %}
     </div>
 </div>
 

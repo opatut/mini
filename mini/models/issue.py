@@ -32,4 +32,7 @@ class Issue(db.Model):
         return comments
 
     def can_edit(self, user):
-        return user == self.author or self.repository.has_permission(user, "mod")
+        return not user.is_anonymous() and (user == self.author or self.repository.has_permission(user, "mod"))
+
+    def can_comment(self, user):
+        return not user.is_anonymous() and (user == self.author or self.repository.has_permission(user, "comment"))

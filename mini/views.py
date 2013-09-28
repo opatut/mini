@@ -294,7 +294,7 @@ def issue(slug, number):
             db.session.commit()
             return redirect(issue.get_url())
     elif request.method == "POST" and "post-comment" in request.args:
-        access.check(repository.has_permission(current_user, "comment"))
+        access.check(issue.can_comment(current_user))
         comment = IssueComment()
         comment.author = current_user
         comment.issue = issue

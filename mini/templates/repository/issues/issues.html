@@ -9,22 +9,24 @@
 <div class="table-responsive">
     <table class="table issue-table">
         <tr>
-            <th></th>
+            <th class="compact"></th>
             <th>Title</th>
+            <th class="compact"></th>
             <th>Assignee</th>
             <th>Status</th>
             <th>Tags</th>
         </tr>
     {% for issue in issues %}
         <tr class="issue {{ issue.status }}">
-            <td class="number">
-                <!-- <span class="status-icon"></span> -->
+            <td class="number compact">
+                <i class="status-icon icon-{{ {"open":"circle-blank", "closed":"ok-circle", "invalid":"ban-circle", "wip":"circle-blank", "discussion":"circle-blank"}[issue.status] }}"></i>
                 #{{ issue.number }}
-                <i class="status-icon icon-{{ {"open":"circle-blank", "closed":"ok-circle", "invalid":"ban-circle", "wip":"gear", "discussion":"comments"}[issue.status] }}"></i>
             </td>
             <td class="title">
                 <a href="{{ issue.get_url() }}">{{ issue.title }}</a>
-                {% if issue.issue_comments %}<span class="pull-right">{{ issue.issue_comments|length }} <i class="icon-comment-alt"></i></span>{% endif %}
+            </td>
+            <td class="text-right compact">
+                {% if issue.issue_comments %}{{ issue.issue_comments|length }} <i class="icon-comment-alt"></i>{% endif %}
             </td>
             <td class="assignee">
                 {{ issue.assignee.get_link() if issue.assignee else "&mdash;"|safe }}
