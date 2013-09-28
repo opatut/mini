@@ -1,4 +1,4 @@
-{% extends "git/_base_commit.html" %}
+{% extends "repository/content/_base_commit.html" %}
 
 {% block repository_actions %}
     <a href="{{ url_for('browse', slug=repository.slug, rev=rev) }}" class="btn btn-primary btn-sm">Browse files @ {{ commit.hexsha|shortsha }}</a>

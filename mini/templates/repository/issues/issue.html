@@ -1,4 +1,4 @@
-{% extends "_base_repository.html" %}
+{% extends "repository/_base.html" %}
 
 {% block repository_actions %}
     <a href="{{ url_for('issues', slug=repository.slug) }}" class="btn btn-default btn-sm">&laquo; Back to list</a>

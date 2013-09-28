@@ -1,4 +1,4 @@
-{% extends "git/_base_commit.html" %}
+{% extends "repository/content/_base_commit.html" %}
 
 {% block repository_actions %}
     <a href="{{ url_for('commit', slug=repository.slug, rev=rev if rev else branch) }}" class="btn btn-primary btn-sm">Commit details</a>
@@ -25,7 +25,7 @@
     </span>
     </span>
 
-    {% include "git/_path.html" %}
+    {% include "repository/content/_path.html" %}
 </h4>
 
 <div class="table-responsive">
@@ -74,7 +74,7 @@
 {# SHOW README IF ANY #}
 {% set file = tree|find_readme %}
 {% if file %}
-    {% include "render_file.html" %}
+    {% include "repository/content/_render_file.html" %}
 {% elif path == "" %}
     <p>You should add a readme file.</p>
 {% endif %}

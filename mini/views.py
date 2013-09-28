@@ -20,11 +20,11 @@ def index():
 @app.route("/settings/")
 @access.require("settings.core")
 def settings():
-    return render_template("settings.html")
+    return render_template("account/settings.html")
 
 @app.route("/repositories")
 def repositories():
-    return render_template("git/repositories.html", repositories=Repository.query.all())
+    return render_template("repositories.html", repositories=Repository.query.all())
 
 @app.route("/users")
 def users():
@@ -46,7 +46,7 @@ def login():
     elif request.method == "POST":
         flash("Invalid login information, try again.", "error")
 
-    return render_template("login.html", form=form)
+    return render_template("account/login.html", form=form)
 
 @app.route("/logout/")
 @access.require("login")
@@ -119,7 +119,7 @@ def settings(tab="general"):
     else:
         abort(404)
 
-    return render_template("settings.html", tab=tab, **args)
+    return render_template("account/settings.html", tab=tab, **args)
 
 @app.route("/settings/emails/<id>/<action>/")
 @access.require("login")
@@ -150,7 +150,7 @@ def settings_email_action(action, id):
 @app.route("/user/<username>")
 def user(username=""):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template("user.html", user=user)
+    return render_template("account/profile.html", user=user)
 
 ################################################################################
 # HISTORY                                                                      #
@@ -164,7 +164,7 @@ def repository(slug):
 def history(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "read"))
-    return render_template("git/history.html", repository=repository)
+    return render_template("repository/content/history.html", repository=repository)
 
 @app.route("/<slug>/history/<rev>/")
 def commit(slug, rev):
@@ -172,7 +172,7 @@ def commit(slug, rev):
     access.check(repository.has_permission(current_user, "read"))
 
     commit = repository.get_commit(rev)
-    return render_template("git/commit.html", repository=repository, commit=commit, rev=rev)
+    return render_template("repository/content/commit.html", repository=repository, commit=commit, rev=rev)
 
 ################################################################################
 # BROWSE                                                                       #
@@ -199,9 +199,9 @@ def browse(slug, rev="", path=""):
         target = target / path
 
     if isinstance(target, git.Blob):
-        return render_template("git/file.html", repository=repository, file=target, commit=commit, rev=rev, path=path)
+        return render_template("repository/content/file.html", repository=repository, file=target, commit=commit, rev=rev, path=path)
     elif isinstance(target, git.Tree):
-        return render_template("git/browse.html", repository=repository, tree=target, commit=commit, rev=rev, path=path)
+        return render_template("repository/content/browse.html", repository=repository, tree=target, commit=commit, rev=rev, path=path)
     else:
         raise Exception("Should reaaally never happen.")
 
@@ -239,7 +239,7 @@ def admin(slug):
             flash("Permission %s for user %s added." % (user.get_display_name(), form.access.data), "success")
             return redirect(url_for("admin", slug=slug))
 
-    return render_template("git/admin.html", repository=repository, form=form)
+    return render_template("repository/admin/permissions.html", repository=repository, form=form)
 
 @app.route("/<slug>/admin/permission/<id>/<level>/")
 def admin_set_permission(slug, id, level):
@@ -271,7 +271,7 @@ def admin_set_permission(slug, id, level):
 def issues(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "read"))
-    return render_template("issues/list.html", issues=repository.issues, repository=repository)
+    return render_template("repository/issues/issues.html", issues=repository.issues, repository=repository)
 
 @app.route("/<slug>/issues/<number>", methods=("GET", "POST"))
 def issue(slug, number):
@@ -316,7 +316,7 @@ def issue(slug, number):
         flash("Comment removed.", "success")
         return redirect(issue.get_url())
 
-    return render_template("issues/issue.html", issue=issue, repository=repository)
+    return render_template("repository/issues/issue.html", issue=issue, repository=repository)
 
 ################################################################################
 # WIKI                                                                         #
@@ -333,7 +333,7 @@ def wiki_page(slug, page=""):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "read"))
     wikipage = WikiPage.query.filter_by(slug=page).first_or_404()
-    return render_template("wiki/page.html", repository=repository, page=wikipage, action="view")
+    return render_template("repository/wiki/page.html", repository=repository, page=wikipage, action="view")
 
 @app.route("/<slug>/wiki/<page>/edit", methods=("POST", "GET"))
 def wiki_edit(slug, page=""):
@@ -378,4 +378,4 @@ def wiki_page_form(repository, wikipage, action):
                 flash("The changes made to the page were saved.", "success")
             return redirect(wikipage.get_url())
 
-    return render_template("wiki/page.html", repository=repository, page=wikipage, form=form, action=action)
+    return render_template("repository/wiki/page.html", repository=repository, page=wikipage, form=form, action=action)

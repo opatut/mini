@@ -1,4 +1,4 @@
-{% extends "_base_repository.html" %}
+{% extends "repository/_base.html" %}
 
 {% set raw_url = url_for('file_content', slug=repository.slug, rev=rev, path=file.path) %}
 
@@ -14,8 +14,8 @@
 </div>
 
 {% set path = file.path %}
-<p>{% include "git/_path.html" %}</p>
+<p>{% include "repository/content/_path.html" %}</p>
 
-{% include "git/_render_file.html" %}
+{% include "repository/content/_render_file.html" %}
 {% endblock %}
 
