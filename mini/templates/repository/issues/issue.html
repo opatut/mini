@@ -1,7 +1,9 @@
 {% extends "repository/_base.html" %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block repository_actions %}
     <a href="{{ url_for('issues', slug=repository.slug) }}" class="btn btn-default btn-sm">&laquo; Back to list</a>
+    <a href="{{ url_for('issue_new', slug=repository.slug) }}" class="btn btn-success btn-sm">New issue</a>
 {% endblock %}
 
 {% block repository_content %}
@@ -10,7 +12,7 @@
 
 <div class="row">
     <div class="col-md-3 col-md-push-9">
-        <form method="POST" action="?save-status">
+        <form method="POST" action="?save-status" id="issue-status-form">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><strong>Issue Status</strong></h3>
@@ -18,7 +20,7 @@
                 <div class="panel-body">
                     <div class="form-group">
                         <label>Status</label>
-                        <select class="issue-status-select input-sm form-control {{issue.status}}" name="status">
+                        <select class="issue-status-select input-sm form-control {{issue.status}}" name="status" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
                             {% for s in ["open", "discussion", "wip", "invalid", "closed"] %}
                                 <option {% if issue.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
                             {% endfor %}
@@ -27,7 +29,7 @@
 
                     <div class="form-group">
                         <label>Assignee</label>
-                        <select class="issue-assignee-select input-sm form-control" name="assignee">
+                        <select class="issue-assignee-select input-sm form-control" name="assignee" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
                             {% for user in repository.get_users_with_permission("read") %}
                                 <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_display_name()}}</option>
                             {% endfor %}
@@ -37,10 +39,10 @@
                     <div class="form-group">
                         <strong>Labels</strong>
                         <ul class="issue-tag-select">
-                            {% for tag in repository.issue_tags %}
+                            {% for tag in repository.issue_tags if tag in issue.issue_tags or issue.can_edit(current_user) %}
                                 <li class="{{ 'active' if tag in issue.issue_tags else 'inactive' }}">
                                     <label>
-                                        <input type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} name="tag" value="{{ tag.id }}" />
+                                        <input {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %} type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} name="tag" value="{{ tag.id }}" />
                                         <span class="color" style="background: #{{ tag.color }}"></span>
                                         <span class="tag">{{ tag.tag }}</span>
                                     </label>
@@ -49,9 +51,11 @@
                         </ul>
                     </div>
                 </div>
-                <div class="panel-footer" align="right">
+                {% if issue.can_edit(current_user) %}
+                <div class="panel-footer" align="right" id="issue-status-footer">
                     <input type="submit" value="Save" class="btn btn-success btn-sm" />
                 </div>
+                {% endif %}
             </div>
         </form>
     </div>
@@ -65,12 +69,24 @@
             <div class="comment-content">
                 {% if mode == "issue" %}
                     <div class="comment-heading">
-                        <div class="pull-right">
+                    {% if action == "view" %}
+                        <div class="pull-right" style="padding-top: 2px;">
                             {% if comment.can_edit(current_user) %}
-                            <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{{ url_for('issue_edit', slug=repository.slug, number=issue.number) }}" class="btn btn-primary btn-sm">Edit</a>
                             {% endif %}
                         </div>
                         <h3>{{ comment.title }}</h3>
+                    {% elif action == "edit" %}
+                    <div class="row" style="margin-bottom: -5px">
+                        <div class="col-md-9">
+                            {{ form.title(placeholder=form.title.label.text, class="form-control") }}
+                        </div>
+                        <div class="col-md-3 text-right" style="padding-top: 2px;">
+                            <a href="{{ url_for('issue', slug=repository.slug, number=issue.number) }}" class="btn btn-danger btn-sm">Cancel</a>
+                            <input type="submit" value="Save" class="btn btn-success btn-sm" />
+                        </div>
+                    </div>
+                    {% endif %}
                     </div>
                 {% endif %}
 
@@ -96,13 +112,25 @@
                     {{ comment.created|date_human }} at {{ comment.created|time }}
                 </div>
                 <div class="comment-body markdown">
-                    {{ comment.text|markdown }}
+                    {% if mode == "issue" and action == "edit" %}
+                        {{ form.text(class="form-control", rows=7, placeholder=form.text.label.text) }}
+                    {% else %}
+                        {{ comment.text|markdown }}
+                    {% endif%}
                 </div>
             </div>
         </div>
         {% endmacro %}
 
-        {{ render_comment(issue, "issue") }}
+        {% if action == "edit" %}
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {{ form_errors(form) }}
+                {{ render_comment(issue, "issue") }}
+            </form>
+        {% else %}
+            {{ render_comment(issue, "issue") }}
+        {% endif %}
 
         {% for comment in issue.get_sorted_comments() %}
             {{ render_comment(comment) }}

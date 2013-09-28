@@ -316,7 +316,46 @@ def issue(slug, number):
         flash("Comment removed.", "success")
         return redirect(issue.get_url())
 
-    return render_template("repository/issues/issue.html", issue=issue, repository=repository)
+    return render_template("repository/issues/issue.html", repository=repository, issue=issue, action="view")
+
+@app.route("/<slug>/issues/<number>/edit", methods=("GET", "POST"))
+def issue_edit(slug, number):
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "comment"))
+    issue = Issue.query.filter_by(repository_id=repository.id, number=number).first_or_404()
+    access.check(issue.can_edit(current_user))
+
+    form = EditIssueForm(obj=issue)
+
+    if form.validate_on_submit():
+        form.populate_obj(issue)
+        db.session.commit()
+        flash("The issue was updated.", "success")
+        return redirect(url_for("issue", slug=repository.slug, number=issue.number))
+
+    return render_template("repository/issues/issue.html", repository=repository, issue=issue, form=form, action="edit")
+
+@app.route("/<slug>/issues/new", methods=("GET", "POST"))
+def issue_new(slug):
+    access.check(current_user.has_permission("login"))
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "comment"))
+
+    form = EditIssueForm()
+    if form.validate_on_submit():
+        issue = Issue()
+        form.populate_obj(issue)
+        issue.number = repository.next_issue_number
+        repository.next_issue_number += 1
+        issue.status = "open"
+        issue.author = current_user
+        issue.repository = repository
+        db.session.add(issue)
+        db.session.commit()
+        flash("Your issue was created.", "success")
+        return redirect(url_for("issue", slug=repository.slug, number=issue.number))
+
+    return render_template("repository/issues/new.html", repository=repository, form=form)
 
 ################################################################################
 # WIKI                                                                         #

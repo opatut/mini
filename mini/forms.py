@@ -95,3 +95,7 @@ class NewPublicKeyForm(Form):
 class AddPermissionForm(Form):
     access = SelectField("Access level", choices=[(x,x) for x in REPOSITORY_ROLES])
     username = TextField("Username", validators=[Required()])
+
+class EditIssueForm(Form):
+    title = TextField("Issue title", validators=[Required()])
+    text = TextAreaField("Description")

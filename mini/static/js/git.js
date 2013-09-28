@@ -16,4 +16,15 @@ $(document).ready(function() {
             .addClass($(this).attr("data-mode"));
     });
 
+    $("#issue-status-footer").hide();
+    var issue_status_original_data = $("#issue-status-form").serialize();
+
+    $("#issue-status-form :input").on("change", function() {
+        if ($("#issue-status-form").serialize() == issue_status_original_data) {
+            $("#issue-status-footer").slideUp(100);
+        } else {
+            $("#issue-status-footer").slideDown(100);
+        }
+    });
+
 });
