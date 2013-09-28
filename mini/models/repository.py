@@ -74,6 +74,16 @@ class Repository(db.Model):
         else:
             return None
 
+    def is_branch(self, name):
+        return len([x for x in self.git.branches if x.name==name or x.path==name])>0
+
+    def find_commit_containing(self, rev, file):
+        commits = []
+        for commit in git.Commit.iter_items(self.git, rev, file.path):
+            commits.append(commit)
+        commits.sort(key = lambda o: o.committed_date, reverse = True)
+        return commits[0]
+
     @property
     def implicit_permission(self):
         permission = Permission.query.filter_by(repository=self, user=None).first()

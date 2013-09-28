@@ -11,9 +11,7 @@
         {% set _p = _p + p + "/" %}
 
         {% if not loop.last %}
-            <a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=_p) }}">
-                {{ p }}
-            </a>
+            <a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=_p) }}">{{ p }}</a>
         {% else %}
             <span>{{ p }}</span>
         {% endif %}

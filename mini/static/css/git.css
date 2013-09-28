@@ -114,6 +114,10 @@ pre.normal {
     border: 1px solid #DDD;
 }
 
+.codefile .highlight {
+    background: none;
+}
+
 .codefile pre {
     background: none;
     border: none;

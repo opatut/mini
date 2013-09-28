@@ -7,8 +7,7 @@
 {% block commit_content %}
 
 <h4>
-    {#% set isbranch = (rev in repository.git.branches) %#}
-    {% set isbranch = false %}
+    {% set isbranch = repository.is_branch(rev) %}
 
     <span class="branch-select">
     <span class="input-group">
@@ -16,7 +15,7 @@
 
         <select class="form-control input-sm" id="branch-select">
             {% for branch in repository.git.branches %}
-                <option value="{{ url_for('browse', slug=repository.slug, rev=branch, path=path) }}" {% if branch.commit == commit %}selected="SELECTED"{% endif %}>{{ branch.name }}</option>
+                <option value="{{ url_for('browse', slug=repository.slug, rev=branch, path=path) }}" {% if rev==branch.name or rev==branch.path %}selected="SELECTED"{% endif %}>{{ branch.name }}</option>
             {% endfor %}
 
             {% if not isbranch %}
@@ -55,7 +54,7 @@
 
 {% if tree.trees or tree.blobs %}
 {% for file in tree.trees + tree.blobs %}
-    {% set last = commit %} {# repository.findCommitContaining(rev, file) #}
+    {% set last = repository.find_commit_containing(rev, file) %}
     <tr class="{% if file.type == "TREE" %}folder{% else %}file{% endif %}">
         <td><i class="fam-16 fam-{{ file | filetype }}"></i></td>
         <td><a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=file.path) }}">{{ file.name }}</a></td>

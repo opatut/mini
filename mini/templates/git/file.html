@@ -5,15 +5,17 @@
 {% block repository_content %}
 
 <div class="page-header">
-    <h3>{{ file.name }}</h3>
-</div>
+    <div class="pull-right">
+        {% block file_actions %}{% endblock %}
+        <a href="{{ raw_url }}" class="btn btn-primary btn-small"><i class="icon-hdd"></i> Download</a>
+    </div>
 
-<div class="pull-right" style="margin-top: -5px;">
-    <a href="{{ raw_url }}" class="btn btn-default btn-small"><i class="icon-hdd"></i> Download</a>
+    <h3>{{ file.name }}</h3>
 </div>
 
 {% set path = file.path %}
 <p>{% include "git/_path.html" %}</p>
+
 {% include "git/_render_file.html" %}
 {% endblock %}
 

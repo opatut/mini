@@ -9,7 +9,7 @@
     {% else %}
         <style>
             {# vs tango autumn borland #}
-            {{ "borland" | highlightsheet }}
+            {{ "vs" | highlightsheet }}
         </style>
         <div class="codefile">
             {{ file.data_stream.read() | highlight(file.name) }}
