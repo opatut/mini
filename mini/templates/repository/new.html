@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Create repository</h1>
+</div>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form_errors(form) }}
+
+    <div class="form-group">
+        {{ form.title.label }}
+        {{ form.title(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.slug.label }}
+        {{ form.slug(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.clone.label }}
+        {{ form.clone(class="form-control") }}
+        <div class="help-block">
+            If you leave this empty, a clean repository will be initialized for you.
+            Otherwise, this needs to be a
+            <a href="https://www.kernel.org/pub/software/scm/git/docs/git-clone.html#URLS" target="_blank">valid git remote URL</a>
+            with public access.
+        </div>
+    </div>
+    <div class="form-group">
+        {{ form.description.label }}
+        {{ form.description(class="form-control", rows=6) }}
+    </div>
+    <div class="form-group">
+        <input class="btn btn-success" value="Save" type="submit" />
+    </div>
+</form>
+
+{% endblock %}

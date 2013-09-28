@@ -1,0 +1,20 @@
+{% extends "repository/_base.html" %}
+
+{% block repository_content %}
+
+<div class="alert alert-info">
+    <strong>Empty repository:</strong>
+    This repository does not yet contain any files. To start, clone it to your
+    local system, and push some commits back online.
+</div>
+
+<h3>Clone this repository</h3>
+<pre>git clone {{ repository.git_url }}
+</pre>
+
+<h3>Push from an existing repository</h3>
+<pre>git remote add origin {{ repository.git_url }}
+git push -u origin master
+</pre>
+
+{% endblock %}

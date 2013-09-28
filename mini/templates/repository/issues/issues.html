@@ -36,6 +36,12 @@
                 {% for tag in issue.issue_tags %}{{ tag.render() }} {% endfor %}
             </td>
         </tr>
+    {% else %}
+        <tr>
+            <td colspan="6">
+                <div class="alert alert-info">You have no issues. Yay!</div>
+            </td>
+        </tr>
     {% endfor %}
 </table>
 </div>

@@ -30,6 +30,7 @@
                     <div class="form-group">
                         <label>Assignee</label>
                         <select class="issue-assignee-select input-sm form-control" name="assignee" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
+                            <option {% if not issue.assignee %}selected="SELECTED" {% endif %}value="0">nobody</option>
                             {% for user in repository.get_users_with_permission("read") %}
                                 <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_display_name()}}</option>
                             {% endfor %}
@@ -93,8 +94,13 @@
                 <div class="comment-meta">
                     {% if mode == "comment" %}
                     <ul class="meta-actions">
-                        {% if comment.can_delete(current_user) %}
-                            <li><a href="?comment-remove={{ comment.id }}"><i class="icon-remove"></i></a></li>
+                        {% if not edit_comment_id == comment.id %}
+                            {% if comment.can_edit(current_user) %}
+                                <li><a href="?edit-comment={{ comment.id }}"><i class="icon-pencil"></i></a></li>
+                            {% endif %}
+                            {% if comment.can_delete(current_user) %}
+                                <li><a href="?remove-comment={{ comment.id }}"><i class="icon-remove"></i></a></li>
+                            {% endif %}
                         {% endif %}
                     </ul>
 
@@ -114,6 +120,17 @@
                 <div class="comment-body markdown">
                     {% if mode == "issue" and action == "edit" %}
                         {{ form.text(class="form-control", rows=7, placeholder=form.text.label.text) }}
+                    {% elif mode == "comment" and edit_comment_id == comment.id %}
+                    <form method="POST">
+                        {{ form_comment.hidden_tag() }}
+                        {{ form_errors(form_comment) }}
+                        <div class="form-group" style="margin-bottom: 5px;">
+                            {{ form_comment.text(rows=5, class="form-control", placeholder=form_comment.text.label.text) }}
+                        </div>
+                        <div class="form-group text-right" style="margin: 0">
+                            <a href="{{ issue.get_url() }}#comment-{{ comment.id }}" class="btn btn-default btn-sm">Cancel</a>
+                            <input type="submit" class="btn btn-success btn-sm" value="Save" />
+                        </div>
                     {% else %}
                         {{ comment.text|markdown }}
                     {% endif%}

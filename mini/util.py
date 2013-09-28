@@ -19,6 +19,10 @@ def run(p):
 
     return res.decode("utf-8", "replace")
 
+def repository_path(slug):
+    from mini import app
+    return abspath(join(app.config["GIT_REPOSITORY_DIRECTORY"], slug + ".git"))
+
 def get_slug(s):
     s = s.lower()
     s = re.sub(r"[\s_+]+", "-", s)
@@ -106,11 +110,9 @@ class AccessControl(object):
 
     def require(self, permission):
         def decorator(f):
-            print("Decorating function %s for permission %s" % (f, permission))
             from functools import wraps
             @wraps(f)
             def wrapper(*args, **kwargs):
-                print("Wrapped function %s for permission %s" % (f, permission))
                 self.check(permission)
                 return f(*args, **kwargs)
 

@@ -16,6 +16,14 @@
             <td><div class="nobreak">{{ (commit.message*5)|first_line|shorten(120) }}</div></td>
             <td>{{ commit|git_committer_time|date_human }}</td>
         </tr>
+    {% else %}
+        <tr>
+            <td colspan="4">
+                <div class="alert alert-info">
+                    The repository does not have any commits yet.
+                </div>
+            </td>
+        </tr>
     {% endfor %}
     </table>
 </div>

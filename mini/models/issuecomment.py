@@ -21,4 +21,4 @@ class IssueComment(db.Model):
         return user == self.author or self.issue.repository.has_permission(user, "write")
 
     def can_delete(self, user):
-        return self.can_edit(user) and self.issue.issue_comments[-1] == self
+        return self.can_edit(user)

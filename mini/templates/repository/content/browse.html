@@ -75,8 +75,8 @@
 {% set file = tree|find_readme %}
 {% if file %}
     {% include "repository/content/_render_file.html" %}
-{% elif path == "" %}
-    <p>You should add a readme file.</p>
+{% elif path == "" and repository.has_permission(current_user, "write") %}
+    <div class="alert alert-info">If you add a readme file, for example <b>README.md</b>, to this repository, it will be shown here.</div>
 {% endif %}
 
 {% endblock %}

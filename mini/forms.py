@@ -1,7 +1,7 @@
 from flask_wtf import Form
 from wtforms import TextField, TextAreaField, PasswordField, ValidationError, SelectField, HiddenField
-from wtforms.validators import Required, EqualTo, Email
-from mini.models import User, PublicKey
+from wtforms.validators import Required, EqualTo, Email, Regexp, URL, Optional
+from mini.models import User, PublicKey, Repository
 from mini.models.permission import REPOSITORY_ROLES
 from mini.util import hash_password, verify_key
 from flask import Markup, request
@@ -29,9 +29,10 @@ class UniqueObject(object):
         self.type = type
         self.column = column
         self.message = message
+        self.allowed_objects = []
 
     def __call__(self, form, field):
-        if self.type.query.filter_by(**{self.column:field.data.strip()}).first():
+        if len([x for x in self.type.query.filter_by(**{self.column:field.data.strip()}).all() if not x in self.allowed_objects]):
             raise ValidationError(self.message)
 
 
@@ -99,3 +100,21 @@ class AddPermissionForm(Form):
 class EditIssueForm(Form):
     title = TextField("Issue title", validators=[Required()])
     text = TextAreaField("Description")
+
+class EditCommentForm(Form):
+    text = TextAreaField("Comment", validators=[Required()])
+
+class RepositorySettingsForm(Form):
+    title = TextField("Title", validators=[Required()])
+    slug = TextField("Path name", validators=[Required(),
+        Regexp("^[a-z0-9A-Z_-]+$", message="Must only contain alphanumeric characters, dashes and underscores."),
+        UniqueObject(Repository, "slug")])
+    description = TextAreaField("Description")
+
+    def set_repository(self, repository):
+        for validator in self.slug.validators:
+            if isinstance(validator, UniqueObject):
+                validator.allowed_objects.append(repository)
+
+class RepositoryCreateForm(RepositorySettingsForm):
+    clone = TextField("Clone from URL", validators=[Optional(), URL()])

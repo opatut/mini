@@ -8,6 +8,11 @@
 
 {% block content %}
     <div class="page-header">
+        <div class="pull-right">
+            {% if current_user.has_permission("repository.create") %}
+            <a href="{{ url_for('repository_new') }}" class="btn btn-primary">New repository</a>
+            {% endif %}
+        </div>
         <h1>Repository List</h1>
     </div>
 
@@ -33,6 +38,9 @@
             </div>
         </div>
     </div>
+    {% if loop.index%2==0 and not loop.last %}
+        </div><div class="row">
+    {% endif %}
 {% endfor %}
 </div>
 {% endblock %}

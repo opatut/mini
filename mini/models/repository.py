@@ -1,11 +1,12 @@
 from mini import app, db
-from mini.util import run, get_hooks_path
+from mini.util import run, get_hooks_path, repository_path
 from mini.models.user import User
 from mini.models.permission import Permission
 from datetime import datetime
 from os.path import abspath, join, isdir
+from flask import flash
 from flask.ext.login import current_user
-import git, os
+import git, os, shutil
 
 class Repository(db.Model):
     __tablename__ = "repository"
@@ -27,7 +28,7 @@ class Repository(db.Model):
 
     @property
     def path(self):
-        return abspath(join(app.config["GIT_REPOSITORY_DIRECTORY"], self.slug + ".git"))
+        return repository_path(self.slug)
 
     @property
     def git_url(self):
@@ -39,12 +40,20 @@ class Repository(db.Model):
 
     def init(self):
         if self.exists: return
-        self._git = git.Repo.init(self.path, bare=True)
+        try:
+            self._git = git.Repo.init(self.path, bare=True)
+            return True
+        except git.GitCommandError, e:
+            return False
 
     def clone_from(self, url, branch = ""):
         if self.exists: return
         self.upstream = (url + " " + branch).strip()
-        self._git = git.Repo.clone_from(self.upstream, self.path, bare=True)
+        try:
+            self._git = git.Repo.clone_from(self.upstream, self.path, bare=True)
+            return True
+        except git.GitCommandError, e:
+            return False
 
     @property
     def git(self):
@@ -63,6 +72,7 @@ class Repository(db.Model):
         return self._commits
 
     def get_commit(self, rev):
+        if not rev: return None
         node = self.git.rev_parse(rev)
 
         if type(node) == git.Blob or type(node) == git.Tree:
@@ -140,3 +150,7 @@ class Repository(db.Model):
     def install_all_hooks(self):
         for hook in ["pre-receive", "post-receive"]:
             self.install_hook(hook)
+
+    def move_to(self, slug):
+        shutil.move(self.path, repository_path(slug))
+        self.slug = slug

@@ -186,7 +186,10 @@ def browse(slug, rev="", path=""):
     access.check(repository.has_permission(current_user, "read"))
 
     if not rev:
-        rev = repository.git.heads[0].name
+        if len(repository.git.heads):
+            rev = repository.git.heads[0].name
+        else:
+            return render_template("repository/content/empty.html", repository=repository)
     path = path.rstrip("/")
 
     commit = repository.get_commit(rev)
@@ -203,7 +206,7 @@ def browse(slug, rev="", path=""):
     elif isinstance(target, git.Tree):
         return render_template("repository/content/browse.html", repository=repository, tree=target, commit=commit, rev=rev, path=path)
     else:
-        raise Exception("Should reaaally never happen.")
+        raise exception("should reaaally never happen.")
 
 @app.route("/<slug>/raw/<rev>/<path:path>")
 def file_content(slug, rev, path):
@@ -222,24 +225,63 @@ def file_content(slug, rev, path):
 # REPOSITORY ADMIN                                                             #
 ################################################################################
 
-@app.route("/<slug>/admin", methods=("GET", "POST"))
-def admin(slug):
+@app.route("/repositories/new", methods=("GET", "POST"))
+def repository_new():
+    access.check(current_user.has_permission("repository.create"))
+    form = RepositoryCreateForm()
+    if form.validate_on_submit():
+        repository = Repository()
+        form.populate_obj(repository)
+        if form.clone.data and not repository.clone_from(form.clone.data):
+            flash("Could not clone the upstream repository.", "error")
+        elif not form.clone.data and not repository.init():
+            flash("Failed to initialize repository. Ask an admin about this!", "error")
+        else:
+            repository.set_permission(current_user, "admin")
+            db.session.add(repository)
+            db.session.commit()
+            flash("Repository created.", "success")
+            return redirect(url_for("repository", slug=repository.slug))
+    return render_template("repository/new.html", form=form)
+
+@app.route("/<slug>/admin/", methods=("GET", "POST"))
+@app.route("/<slug>/admin/<tab>", methods=("GET", "POST"))
+def admin(slug, tab="general"):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "admin"))
 
-    form = AddPermissionForm()
+    args = {}
 
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if not user:
-            flash("Username not found. Please enter the nickname, not the real name!", "error")
-        elif not repository.set_permission(user, form.access.data):
-            flash("You cannot add yourself to this list!", "error")
-        else:
-            flash("Permission %s for user %s added." % (user.get_display_name(), form.access.data), "success")
-            return redirect(url_for("admin", slug=slug))
+    if tab == "general":
+        form = RepositorySettingsForm(obj=repository)
+        form.set_repository(repository)
+        args["form"] = form
 
-    return render_template("repository/admin/permissions.html", repository=repository, form=form)
+        if form.validate_on_submit():
+            if form.slug.data != repository.slug:
+                repository.move_to(form.slug.data)
+                flash("Your repository has been moved to %s. Please update your remotes." % form.slug.data, "warning")
+            form.populate_obj(repository)
+            db.session.commit()
+            flash("Repository settings have been saved.", "success")
+            return redirect(url_for("admin", slug=repository.slug, tab="general"))
+    elif tab == "permissions":
+        form = AddPermissionForm()
+        args["form"] = form
+
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if not user:
+                flash("Username not found. Please enter the nickname, not the real name!", "error")
+            elif not repository.set_permission(user, form.access.data):
+                flash("You cannot add yourself to this list!", "error")
+            else:
+                flash("Permission %s for user %s added." % (user.get_display_name(), form.access.data), "success")
+                return redirect(url_for("admin", slug=slug))
+    else:
+        abort(404)
+
+    return render_template("repository/admin/admin.html", repository=repository, tab=tab, **args)
 
 @app.route("/<slug>/admin/permission/<id>/<level>/")
 def admin_set_permission(slug, id, level):
@@ -279,6 +321,8 @@ def issue(slug, number):
     access.check(repository.has_permission(current_user, "read"))
     issue = Issue.query.filter_by(repository_id=repository.id, number=number).first_or_404()
 
+    args = {}
+
     if request.method == "POST" and "save-status" in request.args:
         access.check(issue.can_edit(current_user))
         issue.status = request.form.get("status")
@@ -306,8 +350,19 @@ def issue(slug, number):
             return redirect(issue.get_url())
         else:
             flash("Please insert a comment.", "error")
-    elif request.method == "GET" and "comment-remove" in request.args:
-        comment = IssueComment.query.filter_by(id=request.args.get("comment-remove")).first_or_404()
+    elif "edit-comment" in request.args:
+        comment = IssueComment.query.filter_by(id=request.args.get("edit-comment")).first_or_404()
+        access.check(comment.can_edit(current_user))
+        form = EditCommentForm(obj=comment)
+        args["form_comment"] = form
+        args["edit_comment_id"] = comment.id
+        if form.validate_on_submit():
+            form.populate_obj(comment)
+            db.session.commit()
+            flash("The comment has been saved.", "success")
+            return redirect(issue.get_url() + "#comment-%s" % comment.id)
+    elif request.method == "GET" and "remove-comment" in request.args:
+        comment = IssueComment.query.filter_by(id=request.args.get("remove-comment")).first_or_404()
         access.check(comment.can_delete(current_user))
         if not comment.issue == issue:
             abort(404)
@@ -316,7 +371,7 @@ def issue(slug, number):
         flash("Comment removed.", "success")
         return redirect(issue.get_url())
 
-    return render_template("repository/issues/issue.html", repository=repository, issue=issue, action="view")
+    return render_template("repository/issues/issue.html", repository=repository, issue=issue, action="view", **args)
 
 @app.route("/<slug>/issues/<number>/edit", methods=("GET", "POST"))
 def issue_edit(slug, number):

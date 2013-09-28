@@ -33,6 +33,11 @@ body {
     padding-right: 24px;
 }
 
+.flashes .alert {
+    margin: 0px;
+    margin-bottom: 2px;
+}
+
 .page-header {
     height: auto;
     padding: 0;

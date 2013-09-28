@@ -1,0 +1,150 @@
+{% extends "repository/_base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block repository_content %}
+
+<br />
+<div class="row">
+    <div class="col-md-2 col-sm-4">
+        <ul class="nav nav-pills nav-stacked sidebar-nav">
+            {% for _tab, _label in [
+                ("general", "General"),
+                ("permissions", "Permissions")] %}
+
+                <li{% if tab==_tab %} class="active"{% endif %}><a href="{{ url_for('admin', slug=repository.slug, tab=_tab) }}">{{ _label }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="col-md-10 col-sm-8 settings">
+        {% if tab == "general" %}
+            <h3 class="form-title">General Settings</h3>
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {{ form_errors(form) }}
+
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.slug.label }}
+                    {{ form.slug(class="form-control") }}
+                    <div class="help-block"><strong>Warning:</strong> All users will have to update their git remote URLs if you move the repository.</div>
+                </div>
+                <div class="form-group">
+                    {{ form.description.label }}
+                    {{ form.description(class="form-control", rows=6) }}
+                </div>
+                <div class="form-group">
+                    <input class="btn btn-success" value="Save" type="submit" />
+                </div>
+            </form>
+        {% elif tab == "permissions" %}
+            {% if repository.implicit_permission.access == "admin" %}
+                <div class="alert alert-danger">
+                    <strong>Warning!</strong> Everyone will be able
+                    to access this page, restrict your permissions and
+                    lock you out of this repository. Only use "Admin" as implicit
+                    access level when you trust all other users.
+                </div>
+            {% endif %}
+                <h3 class="form-title">User permissions</h3>
+
+                <table class="table">
+                    <tr><th>User</th><th>Level of access</th></tr>
+                        {% for permission in repository.permissions %}
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                {% if permission.user %}
+                                {{ permission.user.get_link() }}
+                                {% else %}
+                                    all other users
+                                {% endif %}
+                            </td>
+
+                            {% set colors = { "none": "inverse", "find": "info", "comment": "success", "read": "success", "write": "warning", "mod": "warning", "admin": "danger" } %}
+                            <td>
+                            {% for access in REPOSITORY_ROLES + ["remove"] %}
+                                {% if access == "remove" %}{% endif %}
+                                {% set disabled = (access == "remove" and not permission.user) or (permission.user == current_user) %}
+                                <a href="{{ url_for('admin_set_permission', slug=repository.slug, id=permission.user.id if permission.user else 0, level=access) }}"
+                                    class="btn btn-xs btn-{{ colors[access] if permission.access == access else 'default' }}{% if disabled %} disabled{% endif %}"
+                                    style="width: 65px; margin-bottom: 2px;">
+                                    {{ access }}
+                                </a>
+                            {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h4>Add a user</h4>
+                <form method="POST" class="form-inline">
+                    {{ form.hidden_tag() }}
+                    {{ form_errors(form) }}
+
+                    <div class="form-group">
+                        {{ form.username.label(class="sr-only") }}
+                        {{ form.username(placeholder = "Username", class="form-control") }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.access.label(class="sr-only") }}
+                        {{ form.access(class="form-control") }}
+                    </div>
+
+                    <div class="form-group text-right">
+                        <input type="submit" value="Add user" class="btn btn-success" />
+                    </div>
+                </form>
+
+                <hr />
+
+                <h4>List of permissions</h4>
+                <p>
+                    This is a list of all the available permission levels. Each permission
+                    level implicitly allows all previous permissions.
+                </p>
+
+                <table class="table">
+                    <tr>
+                        <th><span class="label label-inverse">none</span></th>
+                        <td>no access to repository</td>
+                    </tr>
+                    <tr>
+                        <th><span class="label label-info">find</span></th>
+                        <td>repository shown in list, no access</td>
+                    </tr>
+                    <tr>
+                        <th><span class="label label-success">read</span></th>
+                        <td>view files, history, issues and wiki</td>
+                    </tr>
+                    <tr>
+                        <th><span class="label label-success">comment</span></th>
+                        <td>create and comment on issues</td>
+                    </tr>
+                    <tr>
+                        <th><span class="label label-warning">write</span></th>
+                        <td>push access, edit wiki</td>
+                    </tr>
+                    <tr>
+                        <th><span class="label label-warning">mod</span></th>
+                        <td>moderate (edit) other user's issues and comments</td>
+                    </tr>
+                    <tr>
+                        <th><span class="label label-danger">admin</span></th>
+                        <td>full access, permission management</td>
+                    </tr>
+                    </table>
+        {% else %}
+            unknown tab
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
