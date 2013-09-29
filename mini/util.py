@@ -1,4 +1,4 @@
-import subprocess, re, base64
+import subprocess, re, base64, struct
 from hashlib import sha512, md5
 from datetime import datetime
 from werkzeug.exceptions import Forbidden
