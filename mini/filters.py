@@ -52,7 +52,7 @@ def git_committer_time(commit):
 @app.template_filter()
 def git_user(u):
     mail = Email.query.filter_by(email=u.email).first()
-    if not mail: return AnonymousUser(u.name, u.email)
+    if not mail: return AnonymousUser(u.name.encode("utf-8").decode("utf-8"), u.email)
     return mail.user
 
 # format a timestamp in default time format (00:00:00)

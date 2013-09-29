@@ -103,7 +103,7 @@ class AnonymousUser(object):
         return self.name
 
     def get_link(self):
-        return Markup('<span class="user anonymous"><img class="avatar" src="{0}" /> {1}</span>'.format(self.get_avatar(16), self.get_display_name()))
+        return Markup(u'<span class="user anonymous"><img class="avatar" src="{0}" /> {1}</span>'.format(self.get_avatar(16), self.get_display_name()))
 
     def get_avatar(self, size=32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)

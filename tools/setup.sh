@@ -9,7 +9,7 @@ pip install --upgrade \
     flask-wtf \
     flask-markdown \
     flask-login \
-    GitPython==0.3.1-beta2 \
+    GitPython==0.3.2.RC1 \
     iso8601 \
     pytz==2013d \
     pygments \
