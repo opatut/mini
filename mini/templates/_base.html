@@ -68,6 +68,7 @@
                                     <a href="{{ url_for('logout') }}" class="visible-xs visible-sm">Logout</span></a>
                                 </li>
                             {% else %}
+                                <li><a href="{{ url_for('register') }}">Register</a></li>
                                 <li><a href="{{ url_for('login') }}">Login</a></li>
                             {% endif %}
                             </ul>
@@ -81,6 +82,7 @@
                                     </a></li>
                                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                                 {% else %}
+                                    <li><a href="{{ url_for('register') }}">Register</a></li>
                                     <li><a href="{{ url_for('login') }}">Login</a></li>
                                 {% endif %}
                                 </ul>
@@ -102,6 +104,18 @@
                     <p>Powered by <a href="https://github.com/opatut/minigit">miniSUITE</a>.</p>
                 </div>
             </footer>
+
+            {% if config.TESTING and g.outbox %}
+            <h2>Emails</h2>
+            {% for email in g.outbox %}
+            <pre>{{ email }}</pre>
+            <br/>
+            {% endfor %}
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            {% endif %}
         </div>
     </body>
 </html>

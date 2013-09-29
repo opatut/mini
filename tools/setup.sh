@@ -13,5 +13,6 @@ pip install --upgrade \
     iso8601 \
     pytz==2013d \
     pygments \
+    flask-sendmail
 #    python-dateutil
 # flask-mail flask-login python-dateutil requests

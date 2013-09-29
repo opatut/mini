@@ -11,8 +11,8 @@
 {% for user in users %}
     <div class="user col-md-3 col-sm-6">
         <a href="{{ user.get_url() }}"><img src="{{ user.get_avatar(48) }}" class="avatar" /></a>
-        <div class="name"><a href="{{ user.get_url() }}">{{ user.name }}</a></div>
-        <div class="username">{{ user.username }}</div>
+        <div class="name"><a href="{{ user.get_url() }}">{{ user.get_display_name() }}</a></div>
+        {% if user.name %}<div class="username">{{ user.username }}</div>{% endif %}
         <div class="info">
             {% if user.location %}
                 <i class="icon-home"></i>

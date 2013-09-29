@@ -1,7 +1,7 @@
-from mini import app, access, db
+from mini import app, access, db, mails
 from mini.forms import *
 from mini.models import *
-from flask import render_template, flash, abort, url_for, request, redirect
+from flask import render_template, flash, abort, url_for, request, redirect, g
 from flask.ext.login import current_user
 import git # for type checks
 
@@ -40,9 +40,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        user.login()
-        flash("Welcome back, %s!" % user.username, "success")
-        return redirect(url_for("index"))
+        if user.status == "normal":
+            user.login()
+            flash("Welcome back, %s!" % user.username, "success")
+            return redirect(url_for("index"))
+        elif user.status == "unverified":
+            flash("You have not yet verified your account. Please check your inbox!", "error")
+        elif user.status == "banned":
+            flash("Your account was disabled by an administrator. Please use the contact page to get in touch.", "error")
     elif request.method == "POST":
         flash("Invalid login information, try again.", "error")
 
@@ -55,11 +60,40 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("index"))
 
-@app.route("/register/")
+@app.route("/register/", methods=("GET", "POST"))
 def register():
     access.check(current_user.has_permission("nologin"))
-    abort(501)
-    #return render_template("register.html")
+
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        user = User()
+        user.username = form.username.data
+        user.set_password(form.password1.data)
+        user.status = "unverified"
+        user.generate_verify_hash()
+        email = Email()
+        email.email = form.email.data
+        email.is_default = True
+        email.is_gravatar = True
+        email.user = user
+        db.session.add(user)
+        db.session.add(email)
+        db.session.commit()
+        mails.registration(user)
+        flash("A verification email has been sent to your address for confirmation.", "success")
+        return redirect(url_for("login"))
+
+    return render_template("account/register.html", form=form)
+
+@app.route("/verify/<username>/<hash>/")
+def verify(username, hash):
+    user = User.query.filter_by(username=username).first_or_404()
+    if user.verify_hash == hash:
+        user.status = "normal"
+        db.session.commit()
+        flash("Your account was verified.", "success")
+        return redirect(url_for("login"))
 
 @app.route("/settings/", methods=("GET", "POST"))
 @app.route("/settings/<tab>/", methods=("GET", "POST"))

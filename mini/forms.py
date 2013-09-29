@@ -5,6 +5,7 @@ from mini.models import User, PublicKey, Repository
 from mini.models.permission import REPOSITORY_ROLES
 from mini.util import hash_password, verify_key
 from flask import Markup, request
+import mini
 
 class ValidLogin(object):
     def __init__(self, pw_field, message_username = "The username or password is incorrect.", message_password = "The username or password is incorrect."):
@@ -122,3 +123,9 @@ class RepositoryCreateForm(RepositorySettingsForm):
 class TagForm(Form):
     tag = TextField("Tag", validators=[Required(), Regexp("^[\w\d_+ /-]+$", message="Invalid character.")])
     color = TextField("Color", validators=[Required(), Regexp("^([a-f0-9A-F]{3}){1,2}$", message="Invalid color code, format is #RGB or #RRGGBB.")])
+
+class RegisterForm(Form):
+    username = TextField("Username", validators=[Required(), UniqueObject(User, "username", message="This username is already in use.")])
+    email = TextField("Email address", validators=[Required(), Email(), UniqueObject(mini.models.Email, "email", message="This email address is already in use.")])
+    password1 = PasswordField("Password", validators=[])
+    password2 = PasswordField("Password", validators=[EqualTo("password1")])

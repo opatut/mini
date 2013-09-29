@@ -3,12 +3,15 @@ from flask import Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
 from flask.ext.login import LoginManager, current_user
+from flask.ext.sendmail import Mail
 from mini.util import AccessControl, AnonymousUser
 
 app = Flask(__name__)
 app.config.from_pyfile('../config.py', silent=True)
 
 db = SQLAlchemy(app)
+
+mail = Mail(app)
 
 Markdown(app, safe_mode="escape")
 
@@ -29,5 +32,6 @@ from mini.views import *
 @app.errorhandler(404)
 @app.errorhandler(403)
 @app.errorhandler(500)
+@app.errorhandler(501)
 def error(error):
     return render_template("_error.html", error=error)

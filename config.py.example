@@ -19,3 +19,20 @@ DOMAIN = "domain.name.org"
 #       is used, too, by sshd default settings. If not, adjust this path or
 #       the sshd_config `AuthorizedKeysFile`.
 AUTHORIZED_KEYS = "/srv/git/.ssh/authorized_keys2"
+
+# Mail configuration (also read flask-mail docs)
+MAIL_DOMAIN = DOMAIN
+MAIL_NAME = DOMAIN
+MAIL_SENDERS = {
+    "default": (MAIL_NAME, "no-reply@" + MAIL_DOMAIN),
+    "notifications": (MAIL_NAME, "notifications@" + MAIL_DOMAIN)
+}
+
+# This is used inside emails as the sender's name (i.e. "Yours, ...")
+MAIL_FROM_NAME = "mini @ " + DOMAIN
+
+# This is the flask-sendmail configuration
+MAIL_MAILER = "/usr/bin/sendmail"
+DEFAULT_MAIL_SENDER = MAIL_SENDERS["default"]
+MAIL_FAIL_SILENTLY = True
+MAIL_SUPPRESS_SEND = True

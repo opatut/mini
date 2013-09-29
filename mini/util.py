@@ -1,4 +1,4 @@
-import subprocess, re, base64, struct
+import subprocess, re, base64, struct, string, random
 from hashlib import sha512, md5
 from datetime import datetime
 from werkzeug.exceptions import Forbidden
@@ -23,6 +23,9 @@ def hex_to_rgb_float(hex):
     if hex[0] == "#": hex = hex[1:]
     n = 2 if len(hex) == 6 else 1
     return [int(hex[i:i+n]*(3-n),16)/255.0 for i in range(0, len(hex), n)]
+
+def random_string(length):
+    return "".join(random.choice(string.ascii_letters + string.digits) for x in range(length))
 
 def rgb_brightness(r, g, b):
     return (0.2126*r) + (0.7152*g) + (0.0722*b)

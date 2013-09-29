@@ -16,6 +16,9 @@ class User(db.Model, AnonymousUser):
     password = db.Column(db.String(128))
     created = db.Column(db.DateTime)
 
+    status = db.Column(db.Enum("unverified", "normal", "banned"))
+    verify_hash = db.Column(db.String(80))
+
     permissions = db.Column(db.Text)
     restrictions = db.Column(db.Text)
 
@@ -27,6 +30,10 @@ class User(db.Model, AnonymousUser):
 
     def set_password(self, cleartext):
         self.password = hash_password(cleartext)
+
+    def generate_verify_hash(self):
+        self.verify_hash = random_string(10)
+        return self.verify_hash
 
     @property
     def default_email(self):
@@ -40,10 +47,10 @@ class User(db.Model, AnonymousUser):
         return self.gravatar_email.get_avatar(size)
 
     def has_permission(self, permission):
-        if permission == "logged-in":
+        if permission == "login":
             return True
 
-        if permission == "not-logged-in":
+        if permission == "nologin":
             return False
 
         if not self.permissions: return False
@@ -55,7 +62,7 @@ class User(db.Model, AnonymousUser):
         return False
 
     def get_display_name(self):
-        return self.name or self.username
+        return self.name if self.name else self.username
 
     def get_link(self):
         return Markup('<span class="user"><a href="{2}"><img class="avatar" src="{0}" /></a> {1}</span>'.format(self.get_avatar(16), self.get_display_name(), self.get_url()))

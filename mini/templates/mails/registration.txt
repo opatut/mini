@@ -1,0 +1,11 @@
+Hello {{ user.username }},
+
+to finish your registration on {{ config.DOMAIN }}, please follow this
+link or paste it into your browser's address bar:
+
+    {{ url_for("verify", username=user.username, hash=user.verify_hash, _external=True) }}
+
+If you have not registered for this account, please just ignore this email!
+
+Yours,
+{{ config.MAIL_FROM_NAME }}
