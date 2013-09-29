@@ -19,6 +19,14 @@ def run(p):
 
     return res.decode("utf-8", "replace")
 
+def hex_to_rgb_float(hex):
+    if hex[0] == "#": hex = hex[1:]
+    n = 2 if len(hex) == 6 else 1
+    return [int(hex[i:i+n]*(3-n),16)/255.0 for i in range(0, len(hex), n)]
+
+def rgb_brightness(r, g, b):
+    return (0.2126*r) + (0.7152*g) + (0.0722*b)
+
 def repository_path(slug):
     from mini import app
     return abspath(join(app.config["GIT_REPOSITORY_DIRECTORY"], slug + ".git"))
@@ -107,18 +115,6 @@ class AccessControl(object):
 
     def user_has_permission(self, permission):
         return self.current_user.has_permission(permission)
-
-    def require(self, permission):
-        def decorator(f):
-            from functools import wraps
-            @wraps(f)
-            def wrapper(*args, **kwargs):
-                self.check(permission)
-                return f(*args, **kwargs)
-
-            self.required_permissions[wrapper] = permission
-            return wrapper
-        return decorator
 
     def check(self, has_permission):
         if not has_permission: raise Forbidden()

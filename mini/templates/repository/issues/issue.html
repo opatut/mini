@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <label>Assignee</label>
                         <select class="issue-assignee-select input-sm form-control" name="assignee" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
-                            <option {% if not issue.assignee %}selected="SELECTED" {% endif %}value="0">nobody</option>
+                            <option {% if not issue.assignee %}selected="SELECTED" {% endif %}value="0">- nobody -</option>
                             {% for user in repository.get_users_with_permission("read") %}
                                 <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_display_name()}}</option>
                             {% endfor %}
@@ -38,18 +38,30 @@
                     </div>
 
                     <div class="form-group">
-                        <strong>Labels</strong>
+                        <strong>Tags</strong>
+                        {% if repository.issue_tags %}
                         <ul class="issue-tag-select">
                             {% for tag in repository.issue_tags if tag in issue.issue_tags or issue.can_edit(current_user) %}
                                 <li class="{{ 'active' if tag in issue.issue_tags else 'inactive' }}">
                                     <label>
                                         <input {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %} type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} name="tag" value="{{ tag.id }}" />
                                         <span class="color" style="background: #{{ tag.color }}"></span>
-                                        <span class="tag">{{ tag.tag }}</span>
+                                        <span class="tag {{ tag.text_color_class }}">{{ tag.tag }}</span>
                                     </label>
                                 </li>
+                            {% else %}
+                                <li>this issue has no tags</li>
                             {% endfor %}
                         </ul>
+                        {% else %}
+                        <div class="help-block">
+                            This repository has no tags defined.
+                            {% if repository.has_permission(current_user, "admin") %}
+                                <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}">Click here</a>
+                                to define tags.
+                            {% endif %}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% if issue.can_edit(current_user) %}

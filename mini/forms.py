@@ -118,3 +118,7 @@ class RepositorySettingsForm(Form):
 
 class RepositoryCreateForm(RepositorySettingsForm):
     clone = TextField("Clone from URL", validators=[Optional(), URL()])
+
+class TagForm(Form):
+    tag = TextField("Tag", validators=[Required(), Regexp("^[\w\d_+ /-]+$", message="Invalid character.")])
+    color = TextField("Color", validators=[Required(), Regexp("^([a-f0-9A-F]{3}){1,2}$", message="Invalid color code, format is #RGB or #RRGGBB.")])

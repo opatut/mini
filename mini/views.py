@@ -18,8 +18,8 @@ def index():
     return redirect(url_for("repositories"))
 
 @app.route("/settings/")
-@access.require("settings.core")
 def settings():
+    access.check(current_user.has_permission("settings.core"))
     return render_template("account/settings.html")
 
 @app.route("/repositories")
@@ -35,8 +35,8 @@ def users():
 ################################################################################
 
 @app.route("/login/", methods=["GET", "POST"])
-@access.require("nologin")
 def login():
+    access.check(current_user.has_permission("nologin"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -49,22 +49,22 @@ def login():
     return render_template("account/login.html", form=form)
 
 @app.route("/logout/")
-@access.require("login")
 def logout():
+    access.check(current_user.has_permission("login"))
     current_user.logout()
     flash("You have been logged out.", "info")
     return redirect(url_for("index"))
 
 @app.route("/register/")
-@access.require("nologin")
 def register():
+    access.check(current_user.has_permission("nologin"))
     abort(501)
     #return render_template("register.html")
 
 @app.route("/settings/", methods=("GET", "POST"))
 @app.route("/settings/<tab>/", methods=("GET", "POST"))
-@access.require("login")
 def settings(tab="general"):
+    access.check(current_user.has_permission("login"))
     args = {}
 
     if tab == "general":
@@ -122,8 +122,8 @@ def settings(tab="general"):
     return render_template("account/settings.html", tab=tab, **args)
 
 @app.route("/settings/emails/<id>/<action>/")
-@access.require("login")
 def settings_email_action(action, id):
+    access.check(current_user.has_permission("login"))
     email = Email.query.filter_by(id=id).first_or_404()
 
     if email.user != current_user:
@@ -265,6 +265,38 @@ def admin(slug, tab="general"):
             db.session.commit()
             flash("Repository settings have been saved.", "success")
             return redirect(url_for("admin", slug=repository.slug, tab="general"))
+    elif tab == "tags":
+        tags = IssueTag.query.filter_by(repository_id=repository.id).all()
+        args["tags"] = tags
+
+        tag = None
+        if "edit-tag" in request.args:
+            tag = IssueTag.query.filter_by(tag=request.args.get("edit-tag")).first()
+            args["edit_tag"] = tag
+        elif "remove-tag" in request.args:
+            tag = IssueTag.query.filter_by(tag=request.args.get("remove-tag")).first_or_404()
+            db.session.delete(tag)
+            db.session.commit()
+            flash("Tag %s deleted."%tag.tag, "success")
+            return redirect(url_for("admin", slug=repository.slug, tab="tags"))
+
+
+        form = TagForm(obj=tag)
+        if form.validate_on_submit():
+            if not tag:
+                edit_tag = IssueTag()
+                edit_tag.repository = repository
+                db.session.add(edit_tag)
+            else:
+                edit_tag = tag
+            form.populate_obj(edit_tag)
+            db.session.commit()
+            if tag:
+                flash("Tag %s updated." % edit_tag.tag, "success")
+            else:
+                flash("Tag %s added." % edit_tag.tag, "success")
+            return redirect(url_for("admin", slug=repository.slug, tab="tags"))
+        args["form"] = form
     elif tab == "permissions":
         form = AddPermissionForm()
         args["form"] = form
@@ -326,12 +358,13 @@ def issue(slug, number):
     if request.method == "POST" and "save-status" in request.args:
         access.check(issue.can_edit(current_user))
         issue.status = request.form.get("status")
-        issue.assignee = User.query.filter_by(id=request.form.get("assignee")).first()
+        assignee_id = request.form.get("assignee")
+        issue.assignee = User.query.filter_by(id=assignee_id).first() if assignee_id else None
         issue.issue_tags = [tag for tag in repository.issue_tags if str(tag.id) in request.form.getlist("tag")]
 
         if not issue.status in ("open", "discussion", "wip", "invalid", "closed"):
             flash("Please select a valid issue state.", "error")
-        elif not issue.assignee or not repository.has_permission(issue.assignee, "read"):
+        elif issue.assignee and not repository.has_permission(issue.assignee, "read"):
             flash("Please select a user with read permissions on the repository.", "error")
         else:
             flash("Issue saved.", "success")

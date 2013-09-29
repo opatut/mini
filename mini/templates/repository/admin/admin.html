@@ -9,7 +9,8 @@
         <ul class="nav nav-pills nav-stacked sidebar-nav">
             {% for _tab, _label in [
                 ("general", "General"),
-                ("permissions", "Permissions")] %}
+                ("permissions", "Permissions"),
+                ("tags", "Issue tags")] %}
 
                 <li{% if tab==_tab %} class="active"{% endif %}><a href="{{ url_for('admin', slug=repository.slug, tab=_tab) }}">{{ _label }}</a></li>
             {% endfor %}
@@ -50,97 +51,162 @@
                     access level when you trust all other users.
                 </div>
             {% endif %}
-                <h3 class="form-title">User permissions</h3>
 
-                <table class="table">
-                    <tr><th>User</th><th>Level of access</th></tr>
-                        {% for permission in repository.permissions %}
+            <h3 class="form-title">User permissions</h3>
+
+            <table class="table">
+                <tr><th>User</th><th>Level of access</th></tr>
+                    {% for permission in repository.permissions %}
+                    <tr>
+                        <td style="white-space: nowrap;">
+                            {% if permission.user %}
+                            {{ permission.user.get_link() }}
+                            {% else %}
+                                all other users
+                            {% endif %}
+                        </td>
+
+                        {% set colors = { "none": "inverse", "find": "info", "comment": "success", "read": "success", "write": "warning", "mod": "warning", "admin": "danger" } %}
+                        <td>
+                        {% for access in REPOSITORY_ROLES + ["remove"] %}
+                            {% if access == "remove" %}{% endif %}
+                            {% set disabled = (access == "remove" and not permission.user) or (permission.user == current_user) %}
+                            <a href="{{ url_for('admin_set_permission', slug=repository.slug, id=permission.user.id if permission.user else 0, level=access) }}"
+                                class="btn btn-xs btn-{{ colors[access] if permission.access == access else 'default' }}{% if disabled %} disabled{% endif %}"
+                                style="width: 65px; margin-bottom: 2px;">
+                                {{ access }}
+                            </a>
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <hr />
+
+            <h4>Add a user</h4>
+            <form method="POST" class="form-inline">
+                {{ form.hidden_tag() }}
+                {{ form_errors(form) }}
+
+                <div class="form-group">
+                    {{ form.username.label(class="sr-only") }}
+                    {{ form.username(placeholder = "Username", class="form-control") }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.access.label(class="sr-only") }}
+                    {{ form.access(class="form-control") }}
+                </div>
+
+                <div class="form-group text-right">
+                    <input type="submit" value="Add user" class="btn btn-success" />
+                </div>
+            </form>
+
+            <hr />
+
+            <h4>List of permissions</h4>
+            <p>
+                This is a list of all the available permission levels. Each permission
+                level implicitly allows all previous permissions.
+            </p>
+
+            <table class="table">
+                <tr>
+                    <th><span class="label label-inverse">none</span></th>
+                    <td>no access to repository</td>
+                </tr>
+                <tr>
+                    <th><span class="label label-info">find</span></th>
+                    <td>repository shown in list, no access</td>
+                </tr>
+                <tr>
+                    <th><span class="label label-success">read</span></th>
+                    <td>view files, history, issues and wiki</td>
+                </tr>
+                <tr>
+                    <th><span class="label label-success">comment</span></th>
+                    <td>create and comment on issues</td>
+                </tr>
+                <tr>
+                    <th><span class="label label-warning">write</span></th>
+                    <td>push access, edit wiki</td>
+                </tr>
+                <tr>
+                    <th><span class="label label-warning">mod</span></th>
+                    <td>moderate (edit) other user's issues and comments</td>
+                </tr>
+                <tr>
+                    <th><span class="label label-danger">admin</span></th>
+                    <td>full access, permission management</td>
+                </tr>
+            </table>
+        {% elif tab == "tags" %}
+
+            {% set colors = ["E11D21", "EB6420", "FBCA04", "009800", "006B75", "207DE5", "0052CC", "5319E7", "333333",
+                             "F7C6C7", "FAD8C7", "FEF2C0", "BFE5BF", "BFDADC", "C7DEF8", "BFD4F2", "D4C5F9", "BBBBBB"] %}
+
+            <div class="row">
+                <div class="col-md-8 col-sm-6">
+                    <h3 class="form-title">Issue tags</h3>
+                    <table class="table tag-edit-list table-hover">
+                    {% for tag in tags %}
                         <tr>
-                            <td style="white-space: nowrap;">
-                                {% if permission.user %}
-                                {{ permission.user.get_link() }}
-                                {% else %}
-                                    all other users
-                                {% endif %}
-                            </td>
-
-                            {% set colors = { "none": "inverse", "find": "info", "comment": "success", "read": "success", "write": "warning", "mod": "warning", "admin": "danger" } %}
-                            <td>
-                            {% for access in REPOSITORY_ROLES + ["remove"] %}
-                                {% if access == "remove" %}{% endif %}
-                                {% set disabled = (access == "remove" and not permission.user) or (permission.user == current_user) %}
-                                <a href="{{ url_for('admin_set_permission', slug=repository.slug, id=permission.user.id if permission.user else 0, level=access) }}"
-                                    class="btn btn-xs btn-{{ colors[access] if permission.access == access else 'default' }}{% if disabled %} disabled{% endif %}"
-                                    style="width: 65px; margin-bottom: 2px;">
-                                    {{ access }}
-                                </a>
-                            {% endfor %}
+                            <td class="compact"><span class="tag-color" style="background: #{{ tag.color }};"></span></td>
+                            <td class="tag-tag">{{ tag.tag }}</td>
+                            <td class="compact">
+                                <ul class="meta-actions">
+                                    <li><a class="edit-link" href="?edit-tag={{ tag.tag }}"><i class="icon-pencil"></i></a></li>
+                                    <li><a href="?remove-tag={{ tag.tag }}"><i class="icon-remove"></i></a></li>
+                                </ul>
                             </td>
                         </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-                <hr />
-
-                <h4>Add a user</h4>
-                <form method="POST" class="form-inline">
-                    {{ form.hidden_tag() }}
-                    {{ form_errors(form) }}
-
-                    <div class="form-group">
-                        {{ form.username.label(class="sr-only") }}
-                        {{ form.username(placeholder = "Username", class="form-control") }}
-                    </div>
-
-                    <div class="form-group">
-                        {{ form.access.label(class="sr-only") }}
-                        {{ form.access(class="form-control") }}
-                    </div>
-
-                    <div class="form-group text-right">
-                        <input type="submit" value="Add user" class="btn btn-success" />
-                    </div>
-                </form>
-
-                <hr />
-
-                <h4>List of permissions</h4>
-                <p>
-                    This is a list of all the available permission levels. Each permission
-                    level implicitly allows all previous permissions.
-                </p>
-
-                <table class="table">
-                    <tr>
-                        <th><span class="label label-inverse">none</span></th>
-                        <td>no access to repository</td>
-                    </tr>
-                    <tr>
-                        <th><span class="label label-info">find</span></th>
-                        <td>repository shown in list, no access</td>
-                    </tr>
-                    <tr>
-                        <th><span class="label label-success">read</span></th>
-                        <td>view files, history, issues and wiki</td>
-                    </tr>
-                    <tr>
-                        <th><span class="label label-success">comment</span></th>
-                        <td>create and comment on issues</td>
-                    </tr>
-                    <tr>
-                        <th><span class="label label-warning">write</span></th>
-                        <td>push access, edit wiki</td>
-                    </tr>
-                    <tr>
-                        <th><span class="label label-warning">mod</span></th>
-                        <td>moderate (edit) other user's issues and comments</td>
-                    </tr>
-                    <tr>
-                        <th><span class="label label-danger">admin</span></th>
-                        <td>full access, permission management</td>
-                    </tr>
+                    {% else %}
+                        <tr><td>There are no tags yet.</td></tr>
+                    {% endfor %}
                     </table>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <h3 class="form-title">{{ ("Edit tag: " + edit_tag.tag) if edit_tag else "New tag" }}</h3>
+                    <form method="POST">
+                        {{ form_errors(form) }}
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.tag.label }}
+                            {{ form.tag(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.color.label }}
+
+                            <div class="input-group">
+                                <span class="input-group-addon">#</span>
+                                {{ form.color(class="form-control color-picker-input", maxlength=6) }}
+                                <span class="input-group-addon">
+                                    <span class="color-display">&nbsp;</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="color-picker form-group" data-input="#color">
+                            <ul>
+                            {% for color in colors %}
+                                <li><span title="#{{ color }}" data-color="{{ color }}" style="background-color: #{{ color }}"></span></li>
+                            {% endfor %}
+                            </ul>
+                            <noscript>
+                                <div class="help-block">
+                                    <i class="icon-exclamation-sign"></i> Hover over the colors to see their hex values.
+                                </div>
+                            </noscript>
+                        </div>
+                        <div class="form-group text-right">
+                            <input type="submit" value="{{ 'Save tag' if edit_tag else 'Add tag' }}" class="btn btn-success" />
+                        </div>
+                    </form>
+                </div>
+            </div>
         {% else %}
             unknown tab
         {% endif %}

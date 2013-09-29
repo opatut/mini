@@ -274,6 +274,11 @@ ul.nav-tabs li a i {
     font-weight: normal;
 }
 
+.issuetag.dark,
+.issuetag.dark:hover {
+    color: rgba(0, 0, 0, 0.7);
+}
+
 .issue-tag-select {
     list-style: none;
     padding: 0;
@@ -337,9 +342,11 @@ ul.nav-tabs li a i {
 }
 
 .issue-tag-select li.active label {
-    color: #FFF;
     font-weight: bold;
 }
+
+.issue-tag-select li.active label span.tag.dark { color: #000; }
+.issue-tag-select li.active label span.tag.light { color: #FFF; }
 
 .issue-tag-select li > * {
     padding: 5px !important;
@@ -641,3 +648,67 @@ ul.wiki-pages li.current > a {
         margin-left: 220px;
     }
 }
+
+
+.color-picker ul {
+    display: block;
+    list-style: none;
+    font-size: 0pt;
+    margin: 0;
+    padding: 2px;
+    border-radius: 3px;
+    border: 1px solid #BBB;
+}
+
+.color-picker li {
+    margin: 0; padding: 0;
+    display: inline-block;
+    width: 11.1111%;
+    height: 20px;
+    padding: 0;
+}
+
+.color-picker li span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.color-display {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.tag-edit-list .tag-color {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    vertical-align: -2px;
+}
+
+.tag-edit-list .meta-actions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tag-edit-list .meta-actions li {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.tag-edit-list .meta-actions li a {
+    font-size: 14px;
+    text-decoration: none;
+    color: #888;
+}
+
+.tag-edit-list .meta-actions li a:hover {
+    color: #444;
+}
+
