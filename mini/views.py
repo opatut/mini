@@ -142,6 +142,7 @@ def settings(tab="general"):
             key.user = current_user
             db.session.add(key)
             db.session.commit()
+            PublicKey.generate_authorized_keys_file()
             flash("Your key was added. Please check the fingerprint: <code>%s</code>." % key.fingerprint, "success")
             return redirect(url_for("settings", tab="keys"))
 

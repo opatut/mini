@@ -16,7 +16,7 @@ class User(db.Model, AnonymousUser):
     password = db.Column(db.String(128))
     created = db.Column(db.DateTime)
 
-    status = db.Column(db.Enum("unverified", "normal", "banned"))
+    status = db.Column(db.Enum("unverified", "normal", "banned"), default="normal")
     verify_hash = db.Column(db.String(80))
 
     permissions = db.Column(db.Text)
