@@ -198,12 +198,23 @@ def user(username=""):
     return render_template("account/profile.html", user=user)
 
 ################################################################################
-# HISTORY                                                                      #
+# ACTIVITY                                                                     #
 ################################################################################
 
 @app.route("/<slug>/")
 def repository(slug):
-    return redirect(url_for("browse", slug=slug))
+    return redirect(url_for("activity", slug=slug))
+
+@app.route("/<slug>/activity/")
+def activity(slug):
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "read"))
+    return render_template("repository/content/activity.html", repository=repository)
+
+
+################################################################################
+# HISTORY                                                                      #
+################################################################################
 
 @app.route("/<slug>/history/")
 def history(slug):
@@ -383,14 +394,23 @@ def admin_set_permission(slug, id, level):
     return redirect(url_for("admin", slug=slug, tab="permissions"))
 
 ################################################################################
-# ISSUES                                                                       #
+# ISSUES AND MERGES                                                            #
 ################################################################################
 
 @app.route("/<slug>/issues/")
 def issues(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "read"))
-    return render_template("repository/issues/issues.html", issues=repository.issues, repository=repository)
+    issues = repository.issues.filter_by(type="issue")
+    return render_template("repository/issues/issues.html", issues=issues, repository=repository)
+
+@app.route("/<slug>/merge/")
+def merges(slug):
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "read"))
+    merges = repository.issues.filter_by(type="merge")
+    return render_template("repository/merges/merges.html", merges=merges, repository=repository)
+
 
 @app.route("/<slug>/issues/<number>", methods=("GET", "POST"))
 def issue(slug, number):
@@ -451,6 +471,11 @@ def issue(slug, number):
 
     return render_template("repository/issues/issue.html", repository=repository, issue=issue, action="view", **args)
 
+# alias
+@app.route("/<slug>/merge/<int:number>", methods=("GET", "POST"))
+def merge(slug, number):
+    return issue(slug, number)
+
 @app.route("/<slug>/issues/<number>/edit", methods=("GET", "POST"))
 def issue_edit(slug, number):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
@@ -464,9 +489,14 @@ def issue_edit(slug, number):
         form.populate_obj(issue)
         db.session.commit()
         flash("The issue was updated.", "success")
-        return redirect(url_for("issue", slug=repository.slug, number=issue.number))
+        return redirect(url_for(issue.type, slug=repository.slug, number=issue.number))
 
     return render_template("repository/issues/issue.html", repository=repository, issue=issue, form=form, action="edit")
+
+# alias
+@app.route("/<slug>/merge/<int:number>/edit", methods=("GET", "POST"))
+def merge_edit(slug, number):
+    return issue_edit(slug, number)
 
 @app.route("/<slug>/issues/new", methods=("GET", "POST"))
 def issue_new(slug):
@@ -489,6 +519,15 @@ def issue_new(slug):
         return redirect(url_for("issue", slug=repository.slug, number=issue.number))
 
     return render_template("repository/issues/new.html", repository=repository, form=form)
+
+@app.route("/<slug>/please/merge", methods=("GET", "POST"))
+@app.route("/<slug>/merges/new", methods=("GET", "POST"))
+def merge_new(slug):
+    access.check(current_user.has_permission("login"))
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "comment"))
+    # TODO
+    return "TODO"
 
 ################################################################################
 # WIKI                                                                         #

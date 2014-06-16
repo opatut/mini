@@ -1,0 +1,25 @@
+<div class="activity {{ activity.type }}">
+
+    <div class="title">
+        {{ activity.user.get_link(size=18) }} 
+        {% block title %}{% endblock %}
+
+        {% if show_repository %}
+        <span class="repository">
+            in
+            {{ activity.repository.get_link() }}
+        </span>
+        {% endif %}
+        <span class="date">
+            <!-- {{ activity.date|date_human }} -->
+            at {{ activity.date|time(small=true) }}
+        </span>
+    </div>
+
+
+    {% if self.content() %}
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+    {% endif %}
+</div>

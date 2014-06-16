@@ -14,9 +14,11 @@
 
 
     <ul class="nav nav-tabs sub-nav" style="margin-bottom: 1em;">
+        <li{{ ' class="active"'|safe if request.endpoint in ("activity") else "" }}><a href="{{ url_for('activity', slug=repository.slug) }}"><i class="icon-rocket"></i> <span class="tab-label">Activity</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint in ("history", "commit") else "" }}><a href="{{ url_for('history', slug=repository.slug) }}"><i class="icon-time"></i> <span class="tab-label">History</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint == "browse"  else "" }}><a href="{{ url_for('browse', slug=repository.slug) }}"><i class="icon-file"></i> <span class="tab-label">Browse</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint.startswith("issue")  else "" }}><a href="{{ url_for('issues', slug=repository.slug) }}"><i class="icon-exclamation-sign"></i> <span class="tab-label">Issues</span></a></li>
+        <li{{ ' class="active"'|safe if request.endpoint.startswith("merge")  else "" }}><a href="{{ url_for('merges', slug=repository.slug) }}"><i class="icon-level-up"></i> <span class="tab-label">Merge requests</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint.startswith("wiki")    else "" }}><a href="{{ url_for('wiki', slug=repository.slug) }}"><i class="icon-book"></i> <span class="tab-label">Wiki</span></a></li>
         {% if repository.has_permission(current_user, "admin") %}
         <li{{ ' class="active"'|safe if request.endpoint == "admin"   else "" }}><a href="{{ url_for('admin', slug=repository.slug) }}"><i class="icon-wrench"></i> <span class="tab-label">Admin</span></a></li>

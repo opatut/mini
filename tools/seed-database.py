@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from mini import db
 from mini.models import *
+from datetime import timedelta
 
 db.drop_all()
 db.create_all()
@@ -109,6 +110,19 @@ for s in ("open", "discussion", "closed", "wip", "invalid"):
     issue.author = opatut
     db.session.add(issue)
 
+merge1 = Merge()
+merge1.number = repo.next_issue_number
+repo.next_issue_number += 1
+merge1.title = "Please merge me"
+merge1.text = "Just testing, *nevermind*!"
+merge1.status = "open"
+merge1.author = opatut
+merge1.from_repository = repo
+merge1.from_rev = "30785629a6"
+merge1.repository = repo
+merge1.rev = "master"
+db.session.add(merge1)
+
 wiki_main = WikiPage()
 wiki_main.slug = "main"
 wiki_main.title = "Main Page"
@@ -129,6 +143,31 @@ This is some sort of subpage.
 wiki_sub.repository = repo
 wiki_sub.parent_page = wiki_main
 db.session.add(wiki_sub)
+
+## ACTIVITIES ##
+
+a1 = PushActivity()
+a1.user = opatut
+a1.repository = repo
+a1.commit_ids = "30785629a6,d1ca43bd60,76ae3390b9"
+
+a2 = PushActivity()
+a2.user = opatut
+a2.repository = repo
+a2.commit_ids = "29231e6092"
+a2.date -= timedelta(hours=5, minutes=24)
+
+a3 = CommentActivity()
+a3.user = opatut
+a3.repository = repo
+a3.issuecomment = comment
+a3.date -= timedelta(hours=3, minutes=12)
+
+a4 = CreateBranchActivity()
+a4.user = opatut
+a4.repository = repo
+a4.branchname = "feature"
+a4.date -= timedelta(days=2)
 
 db.session.commit()
 

@@ -4,7 +4,7 @@ from mini.models.user import User
 from mini.models.permission import Permission
 from datetime import datetime
 from os.path import abspath, join, isdir
-from flask import flash
+from flask import flash, Markup, url_for
 from flask.ext.login import current_user
 import git, os, shutil
 
@@ -17,6 +17,9 @@ class Repository(db.Model):
     upstream = db.Column(db.String(256)) # URL BRANCH
     created = db.Column(db.DateTime)
     next_issue_number = db.Column(db.Integer, default=1)
+
+    issues = db.relationship("Issue", backref="repository", lazy="dynamic")
+    activities = db.relationship("Activity", backref="repository", lazy="dynamic")
 
     _git = None
     _commits = None
@@ -154,3 +157,9 @@ class Repository(db.Model):
     def move_to(self, slug):
         shutil.move(self.path, repository_path(slug))
         self.slug = slug
+
+    def get_link(self, size=16):
+        return Markup('<span class="repository"><a href="{0}">{1}</a></span>'.format(self.get_url(), self.title))
+
+    def get_url(self):
+        return url_for("repository", slug=self.slug)

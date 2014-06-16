@@ -1,31 +1,30 @@
 {% extends "repository/_base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% set type = "issue" if issue.type == "issue" else "merge request" %}
-{% set status_list = ["open", "discussion", "wip", "invalid", "closed"] if type == "issue" else ["open", "rejected", "merged"] %}
-
 {% block repository_actions %}
-    <a href="{{ url_for(issue.type+'s', slug=repository.slug) }}" class="btn btn-default btn-sm">&laquo; Back to list</a>
-    <a href="{{ url_for(issue.type+'_new', slug=repository.slug) }}" class="btn btn-success btn-sm">{{ "Request merge" if issue.type == "merge" else "New %s"%type }}</a>
+    <a href="{{ url_for('merges', slug=repository.slug) }}" class="btn btn-default btn-sm">&laquo; Back to list</a>
+    <a href="{{ url_for('merge_new', slug=repository.slug) }}" class="btn btn-success btn-sm">Request merge</a>
 {% endblock %}
 
 {% block repository_content %}
 
 <br />
 
+{% set issue = merge %}
+
 <div class="row">
     <div class="col-md-3 col-md-push-9">
         <form method="POST" action="?save-status" id="issue-status-form">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><strong>{{ type|title }} Status</strong></h3>
+                    <h3 class="panel-title"><strong>Issue Status</strong></h3>
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
                         <label>Status</label>
-                        <select class="issue-status-select input-sm form-control {{issue.status}}" name="status" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
-                            {% for s in status_list %}
-                                <option {% if issue.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
+                        <select class="issue-status-select input-sm form-control {{merge.status}}" name="status" {% if not merge.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
+                            {% for s in ["open", "discussion", "wip", "invalid", "closed"] %}
+                                <option {% if merge.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -53,7 +52,7 @@
                                     </label>
                                 </li>
                             {% else %}
-                                <li>this {{ type }} has no tags</li>
+                                <li>this issue has no tags</li>
                             {% endfor %}
                         </ul>
                         {% else %}
@@ -88,7 +87,7 @@
                     {% if action == "view" %}
                         <div class="pull-right" style="padding-top: 2px;">
                             {% if comment.can_edit(current_user) %}
-                            <a href="{{ url_for(issue.type+'_edit', slug=repository.slug, number=issue.number) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{{ url_for('issue_edit', slug=repository.slug, number=issue.number) }}" class="btn btn-primary btn-sm">Edit</a>
                             {% endif %}
                         </div>
                         <h3>{{ comment.title }}</h3>
@@ -98,7 +97,7 @@
                             {{ form.title(placeholder=form.title.label.text, class="form-control") }}
                         </div>
                         <div class="col-md-3 text-right" style="padding-top: 2px;">
-                            <a href="{{ url_for(issue.type, slug=repository.slug, number=issue.number) }}" class="btn btn-danger btn-sm">Cancel</a>
+                            <a href="{{ url_for('issue', slug=repository.slug, number=issue.number) }}" class="btn btn-danger btn-sm">Cancel</a>
                             <input type="submit" value="Save" class="btn btn-success btn-sm" />
                         </div>
                     </div>
@@ -125,7 +124,7 @@
                     <b>{{ comment.author.get_display_name() }}</b>
 
                     {% if mode == "issue" %}
-                        opened this {{ type }}
+                        opened this issue
                     {% else %}
                         commented
                     {% endif %}

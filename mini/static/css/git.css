@@ -256,3 +256,21 @@ div.browse-path {
 .stats .deletions:before {
     background: #A00;
 }
+
+.activities hr {
+    margin: 10px 0;
+}
+
+.activity .date {
+    color: #AAA;
+}
+
+.activity .title {
+    font-size: 1.1em;
+    /*font-weight: bold;*/
+}
+
+.activity .content {
+    margin-top: 10px;
+    margin-left: 24px;
+}

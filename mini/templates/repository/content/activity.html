@@ -1,0 +1,17 @@
+{% extends "repository/_base.html" %}
+
+{% block repository_content %}
+{% set date = None %}
+
+<div class="activities">
+{% for activity in repository.activities.order_by("date DESC") %}
+    {% if not date or date.date() != activity.date.date() %}
+        {% set date = activity.date %}
+        <h3>{{ date|date_human(capitalize=True) }}</h3>
+        <hr />
+    {% endif %}
+    {{ activity.render() }}
+    <hr />
+{% endfor %}
+</div>
+{% endblock %}

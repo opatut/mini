@@ -1,7 +1,7 @@
 from mini import app
 from mini.util import AnonymousUser
 from mini.models import User, Email
-from datetime import datetime as dt, date as d
+from datetime import datetime as dt, date as d, timedelta as td
 from flask import Markup
 import time, os, pygments, pygments.lexers, pygments.formatters, git, re
 from os.path import *
@@ -57,8 +57,8 @@ def git_user(u):
 
 # format a timestamp in default time format (00:00:00)
 @app.template_filter()
-def time(s, with_title=True):
-    return date_title(s, s.strftime("%H:%M:%S"), with_title)
+def time(s, with_title=True, small=False):
+    return date_title(s, s.strftime("%H:%M" + ("" if small else ":%S")), with_title)
 
 # format a timestamp in default date format (0000-00-00)
 @app.template_filter()
@@ -72,8 +72,15 @@ def datetime(s, with_title=True):
 
 # format a timestamp as human readable date
 @app.template_filter()
-def date_human(s, with_title=True):
-    return date_title(s, "today" if dt.utcnow().date() == s.date() else s.strftime("%B %d, %Y"), with_title)
+def date_human(s, with_title=True, capitalize=False):
+    if dt.utcnow().date() == s.date():
+        val = "today"
+    elif dt.utcnow().date() == s.date() - td(days=1): 
+        val = "yesterday"
+    else:
+        val = s.strftime("%B %d, %Y")
+    if capitalize: val = val.capitalize()
+    return date_title(s, val, with_title)
 
 @app.template_filter()
 def filetype(blob):

@@ -205,6 +205,16 @@ ul.nav-tabs li a i {
     display: none;
 }
 
+.sub-nav .label, 
+.sub-nav .badge {
+    margin-left: 5px;
+    vertical-align: 1px;
+    font-size: 8pt;
+    padding: 3px 5px;
+    padding-right: 6px;
+}
+
+
 .sub-nav .active .tab-label {
     display: inline;
 }
@@ -463,6 +473,7 @@ blockquote * {
 }
 
 
+.merge-table .merge span.status-icon,
 .issue-table .issue span.status-icon {
     background: #000;
     display: inline-block;
@@ -482,19 +493,29 @@ td.compact {
     white-space: nowrap;
 }
 
+.merge-table .merge .status-icon,
 .issue-table .issue .status-icon {
     font-size: 14px;
     margin-right: 5px;
     color: #0A0;
 }
 
-.issue-table .issue.invalid .status-icon { color: #A00; }
-.issue-table .issue.closed .status-icon { color: #A00; }
+.merge-table .merge.rejected .status-icon,
+.issue-table .issue.invalid .status-icon { 
+    color: #A00; 
+}
 
+.merge-table .merge.closed .status-icon,
+.issue-table .issue.closed .status-icon { 
+    color: #A00; 
+}
+
+.merge-table .number,
 .issue-table .number {
     color: #AAA;
 }
 
+.merge-table .merge.rejected .title a,
 .issue-table .issue.invalid .title a,
 .issue-table .issue.closed .title a {
     color: #AAA;

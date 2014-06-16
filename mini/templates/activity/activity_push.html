@@ -1,0 +1,18 @@
+{% extends "activity/_base.html" %}
+{% set commits = activity.commits %}
+{% block title %}
+    pushed {{ commits|length }} commit{{ "s" if commits|length > 1 else "" }} to <code class="branch">somebranch</code>
+{% endblock %}
+{% block content %}
+<ul class="list-unstyled">
+    {% for commit in commits %}
+        <li>
+            {% set author = commit.author|git_user %}
+            <a class="user" href="{{ author.get_url() }}"><img src="{{ author.get_avatar(16) }}" class="avatar" /></a>
+            <a href="{{ url_for('commit', slug=activity.repository.slug, rev=commit.hexsha) }}" class="sha">{{ commit.hexsha|shortsha }}</a>
+            {{ (commit.message*5)|first_line|shorten(120) }}
+            <span class="date">{{ commit|git_committer_time|date_human }}</span>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

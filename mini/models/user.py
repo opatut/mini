@@ -64,8 +64,8 @@ class User(db.Model, AnonymousUser):
     def get_display_name(self):
         return self.name if self.name else self.username
 
-    def get_link(self):
-        return Markup('<span class="user"><a href="{2}"><img class="avatar" src="{0}" /></a> {1}</span>'.format(self.get_avatar(16), self.get_display_name(), self.get_url()))
+    def get_link(self, size=16):
+        return Markup('<span class="user"><a href="{2}"><img class="avatar" src="{0}" /></a> <a href="{2}">{1}</a></span>'.format(self.get_avatar(size), self.get_display_name(), self.get_url()))
 
     def get_url(self):
         return url_for("user", username=self.username)

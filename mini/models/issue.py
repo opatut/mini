@@ -1,15 +1,17 @@
 from mini import db
-from flask import url_for
+from flask import url_for, Markup
 from datetime import datetime
 
 class Issue(db.Model):
     __tablename__ = "issue"
+
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))
     created = db.Column(db.DateTime)
     number = db.Column(db.Integer)
     title = db.Column(db.String(128), default="")
     text = db.Column(db.Text, default="")
-    status = db.Column(db.Enum("open", "discussion", "closed", "wip", "invalid"), default="open")
+    status = db.Column(db.Enum("open", "merged", "discussion", "closed", "wip", "invalid", name="issue_status"), default="open")
 
     assignee_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     assignee = db.relationship("User", backref="assigned_issues", foreign_keys=[assignee_id])
@@ -17,14 +19,21 @@ class Issue(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     author = db.relationship("User", backref="authored_issues", foreign_keys=[author_id])
 
-    repository = db.relationship("Repository", backref="issues")
     repository_id = db.Column(db.Integer, db.ForeignKey("repository.id"))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'issue',
+        'polymorphic_on': type
+    }
 
     def __init__(self):
         self.created = datetime.utcnow()
 
+    def get_link(self):
+        return Markup('<span class="{0}"><a href="{2}">{1}</a></span>'.format(self.type, self.title, self.get_url()))
+
     def get_url(self):
-        return url_for("issue", slug=self.repository.slug, number=self.number)
+        return url_for(self.type, slug=self.repository.slug, number=self.number)
 
     def get_sorted_comments(self):
         comments = list(self.issue_comments)
