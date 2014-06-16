@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="form-group">
-                        <strong>Tags</strong>
+                        <strong>Tags <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}" class="pull-right btn btn-default btn-xs" title="Edit tags"><i class="icon-pencil"></i></a></strong>
                         {% if repository.issue_tags %}
                         <ul class="issue-tag-select">
                             {% for tag in repository.issue_tags if tag in issue.issue_tags or issue.can_edit(current_user) %}

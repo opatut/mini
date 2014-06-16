@@ -16,31 +16,27 @@
         <h1>Repository List</h1>
     </div>
 
-<div class="row">
+<hr />
 {% for repository in repositories if repository.has_permission(current_user, "find") %}
-    <div class="col-md-6">
-        <div class="repository">
-            <div class="title" style="margin-bottom: 3px;">
-                <a href="{{ url_for('repository', slug=repository.slug) }}">{{ repository.title }}</a>
-                <small><b>/</b> {{ repository.slug }}</small>
-            </div>
+<div class="repository">
+    <h3>
+        <a href="{{ url_for('repository', slug=repository.slug) }}">{{ repository.title }}</a>
+        <small><b>/</b> {{ repository.slug }}</small>
+    </h3>
 
-            <div class="details">
-                {{ (repository.description or "This repository has no description.")|markdown }}
-            </div>
-
-            <div class="options">
-                <a class="btn btn-default btn-xs" href="{{ url_for('history', slug=repository.slug) }}"><i class="icon-time"></i> History</a>
-                <a class="btn btn-default btn-xs" href="{{ url_for('browse', slug=repository.slug) }}"><i class="icon-file"></i> Browse</a>
-                <a class="btn btn-default btn-xs" href="{{ url_for('issues', slug=repository.slug) }}"><i class="icon-exclamation-sign"></i> Issues</a>
-
-                <code>git clone {{ repository.git_url }}</code>
-            </div>
-        </div>
+    <div class="details">
+        {{ (repository.description or "This repository has no description.")|markdown }}
     </div>
-    {% if loop.index%2==0 and not loop.last %}
-        </div><div class="row">
-    {% endif %}
-{% endfor %}
+
+    <div class="options">
+        <a class="btn btn-default btn-xs" href="{{ url_for('history', slug=repository.slug) }}"><i class="icon-time"></i> History</a>
+        <a class="btn btn-default btn-xs" href="{{ url_for('browse', slug=repository.slug) }}"><i class="icon-file"></i> Browse</a>
+        <a class="btn btn-default btn-xs" href="{{ url_for('issues', slug=repository.slug) }}"><i class="icon-exclamation-sign"></i> Issues</a>
+
+        <code>git clone {{ repository.git_url }}</code>
+    </div>
 </div>
+<hr />
+{% endfor %}
+
 {% endblock %}

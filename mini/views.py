@@ -370,7 +370,7 @@ def admin_set_permission(slug, id, level):
             flash("The permission level has been changed.", "success")
     else:
         abort(404)
-    return redirect(url_for("admin", slug=slug))
+    return redirect(url_for("admin", slug=slug, tab="permissions"))
 
 ################################################################################
 # ISSUES                                                                       #
