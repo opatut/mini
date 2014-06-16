@@ -54,7 +54,7 @@ def generate_new_slug(obj):
         return False
 
 def get_hooks_path():
-    return abspath("hooks.py")
+    return abspath(join(abspath(__file__), "..", "..", "hooks.py"))
 
 def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
