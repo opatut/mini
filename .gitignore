@@ -5,6 +5,6 @@
 *.pyc
 config.py
 config/
-env/
+env
 data/
 authorized_keys*

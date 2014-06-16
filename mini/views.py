@@ -262,7 +262,7 @@ def file_content(slug, rev, path):
     if not commit: abort(404)
 
     blob = commit.tree / path
-    response = main_app.make_response(blob.data_stream.read())
+    response = app.make_response(blob.data_stream.read())
     response.mimetype = blob.mime_type
     return response
 
