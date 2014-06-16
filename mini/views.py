@@ -146,6 +146,16 @@ def settings(tab="general"):
             flash("Your key was added. Please check the fingerprint: <code>%s</code>." % key.fingerprint, "success")
             return redirect(url_for("settings", tab="keys"))
 
+        remove_id = request.args.get("remove", 0)
+        if remove_id:
+            key = PublicKey.query.filter_by(id=remove_id).first_or_404()
+            if key.user != current_user: abort(403)
+            db.session.delete(key)
+            db.session.commit()
+            PublicKey.generate_authorized_keys_file()
+            flash("Your key %s was removed." % key.name, "success")
+            return redirect(url_for("settings", tab="keys"))
+
         args["form"] = form
 
     elif tab == "notifications":

@@ -162,7 +162,13 @@
                                 <td>{{ key.name }}</td>
                                 <td><code>{{ key.fingerprint }}</code></td>
                                 <td>{{ key.last_access|date_human if key.last_access else "never" }}</td>
-                                <td><a href="#" class="btn btn-xs btn-danger">Remove</a></td>
+                                <td><a href="{{ url_for('settings', tab='keys', remove=key.id) }}" class="btn btn-xs btn-danger">Remove</a></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4">
+                                    You do not have any keys.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
