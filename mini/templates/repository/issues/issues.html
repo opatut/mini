@@ -19,14 +19,14 @@
     {% for issue in issues %}
         <tr class="issue {{ issue.status }}">
             <td class="number compact">
-                <i class="status-icon icon-{{ {"open":"circle-blank", "closed":"ok-circle", "invalid":"ban-circle", "wip":"circle-blank", "discussion":"circle-blank"}[issue.status] }}"></i>
+                <i class="status-icon fa fa-{{ {"open":"circle-o", "closed":"check-circle-o", "invalid":"ban", "wip":"circle-o", "discussion":"circle-o"}[issue.status] }}"></i>
                 #{{ issue.number }}
             </td>
             <td class="title">
                 <a href="{{ issue.get_url() }}">{{ issue.title }}</a>
             </td>
             <td class="text-right compact">
-                {% if issue.issue_comments %}{{ issue.issue_comments|length }} <i class="icon-comment-alt"></i>{% endif %}
+                {% if issue.issue_comments %}{{ issue.issue_comments|length }} <i class="fa fa-comments-o"></i>{% endif %}
             </td>
             <td class="assignee">
                 {{ issue.assignee.get_link() if issue.assignee else "&mdash;"|safe }}

@@ -409,7 +409,7 @@ def merges(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "read"))
     merges = repository.issues.filter_by(type="merge")
-    return render_template("repository/merges/merges.html", merges=merges, repository=repository)
+    return render_template("repository/issues/merges.html", merges=merges, repository=repository)
 
 
 @app.route("/<slug>/issues/<number>", methods=("GET", "POST"))

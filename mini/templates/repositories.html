@@ -29,9 +29,9 @@
     </div>
 
     <div class="options">
-        <a class="btn btn-default btn-xs" href="{{ url_for('history', slug=repository.slug) }}"><i class="icon-time"></i> History</a>
-        <a class="btn btn-default btn-xs" href="{{ url_for('browse', slug=repository.slug) }}"><i class="icon-file"></i> Browse</a>
-        <a class="btn btn-default btn-xs" href="{{ url_for('issues', slug=repository.slug) }}"><i class="icon-exclamation-sign"></i> Issues</a>
+        <a class="btn btn-default btn-xs" href="{{ url_for('history', slug=repository.slug) }}"><i class="fa fa-history"></i> History</a>
+        <a class="btn btn-default btn-xs" href="{{ url_for('browse', slug=repository.slug) }}"><i class="fa fa-file"></i> Browse</a>
+        <a class="btn btn-default btn-xs" href="{{ url_for('issues', slug=repository.slug) }}"><i class="fa fa-exclamation-circle"></i> Issues</a>
 
         <code>git clone {{ repository.git_url }}</code>
     </div>

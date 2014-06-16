@@ -41,7 +41,7 @@
                     </div>
 
                     <div class="form-group">
-                        <strong>Tags <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}" class="pull-right btn btn-default btn-xs" title="Edit tags"><i class="icon-pencil"></i></a></strong>
+                        <strong>Tags <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}" class="pull-right btn btn-default btn-xs" title="Edit tags"><i class="fa fa-pencil"></i></a></strong>
                         {% if repository.issue_tags %}
                         <ul class="issue-tag-select">
                             {% for tag in repository.issue_tags if tag in issue.issue_tags or issue.can_edit(current_user) %}
@@ -111,15 +111,15 @@
                     <ul class="meta-actions">
                         {% if not edit_comment_id == comment.id %}
                             {% if comment.can_edit(current_user) %}
-                                <li><a href="?edit-comment={{ comment.id }}"><i class="icon-pencil"></i></a></li>
+                                <li><a href="?edit-comment={{ comment.id }}"><i class="fa fa-pencil"></i></a></li>
                             {% endif %}
                             {% if comment.can_delete(current_user) %}
-                                <li><a href="?remove-comment={{ comment.id }}"><i class="icon-remove"></i></a></li>
+                                <li><a href="?remove-comment={{ comment.id }}"><i class="fa fa-trash-o"></i></a></li>
                             {% endif %}
                         {% endif %}
                     </ul>
 
-                    <i class="icon-comment"></i>
+                    <i class="fa fa-comment"></i>
                     {% endif %}
 
                     <b>{{ comment.author.get_display_name() }}</b>
@@ -167,6 +167,13 @@
         {% for comment in issue.get_sorted_comments() %}
             {{ render_comment(comment) }}
         {% endfor %}
+
+        {% if issue.type == "merge" %}
+        <div class="merging ready">
+            <i class="fa fa-check"></i>
+            This can be merged.
+        </div>
+        {% endif %}
 
         {% if issue.can_comment(current_user) %}
         <form method="POST" action="?post-comment">

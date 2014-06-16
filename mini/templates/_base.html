@@ -33,14 +33,12 @@
                         <div class="navbar-header">
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-menu">
                                 <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
+                                <i class="fa fa-bars"></i>
                             </button>
 
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-login">
                                 <span class="sr-only">Login</span>
-                                <i class="icon-user" style="color: white;"></i>
+                                <i class="fa fa-user" style="color: white;"></i>
                             </button>
 
                             <a class="navbar-brand" href="{{ url_for('index') }}">
@@ -64,7 +62,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ url_for('logout') }}" class="hidden-xs hidden-sm"><i class="icon-off"></i></a>
+                                    <a href="{{ url_for('logout') }}" class="hidden-xs hidden-sm"><i class="fa fa-power-off"></i></a>
                                     <a href="{{ url_for('logout') }}" class="visible-xs visible-sm">Logout</span></a>
                                 </li>
                             {% else %}

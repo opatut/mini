@@ -274,3 +274,15 @@ div.browse-path {
     margin-top: 10px;
     margin-left: 24px;
 }
+
+
+.merging {
+    border: 2px solid #66CC88;
+    padding: 10px;
+    margin: 10px 0 30px;
+    background: #EEE;
+}
+
+.merging.ready {
+    background: #AAFFCC;
+}
