@@ -1,4 +1,6 @@
+{% if not noemptybase %}
 {% extends "repository/_base.html" %}
+{% endif %}
 
 {% block repository_content %}
 
@@ -8,11 +10,11 @@
     local system, and push some commits back online.
 </div>
 
-<h3>Clone this repository</h3>
+<h4>Clone this repository</h4>
 <pre>git clone {{ repository.git_url }}
 </pre>
 
-<h3>Push from an existing repository</h3>
+<h4>Push from an existing repository</h4>
 <pre>git remote add origin {{ repository.git_url }}
 git push -u origin master
 </pre>

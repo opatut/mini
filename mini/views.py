@@ -198,15 +198,11 @@ def user(username=""):
     return render_template("account/profile.html", user=user)
 
 ################################################################################
-# ACTIVITY                                                                     #
+# REPOSITORY                                                                   #
 ################################################################################
 
 @app.route("/<slug>/")
 def repository(slug):
-    return redirect(url_for("activity", slug=slug))
-
-@app.route("/<slug>/activity/")
-def activity(slug):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "read"))
     return render_template("repository/content/activity.html", repository=repository)
@@ -526,8 +522,12 @@ def merge_new(slug):
     access.check(current_user.has_permission("login"))
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "comment"))
-    # TODO
-    return "TODO"
+
+    form = RequestMergeForm()
+    if form.validate_on_submit():
+        pass
+
+    return render_template("repository/issues/request.html", repository=repository, form=form)
 
 ################################################################################
 # WIKI                                                                         #

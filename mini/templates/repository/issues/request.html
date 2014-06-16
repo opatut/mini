@@ -1,0 +1,54 @@
+{% extends "repository/_base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block repository_actions %}
+    <a href="{{ url_for('merges', slug=repository.slug) }}" class="btn btn-default btn-sm">Cancel</a>
+{% endblock %}
+
+{% block repository_content %}
+
+<div class="settings">
+    <h3 class="form-title">Request a Merge</h3>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form_errors(form) }}
+
+        <div class="row request-revs">
+            <div class="form-group col-sm-3">
+                {{ form.from_rev.label }}
+                {{ form.from_rev(class="form-control branch-input", placeholder="start typing...") }}
+            </div>
+
+            <div class="form-group col-sm-3">
+                {{ form.rev.label }}
+                {{ form.rev(class="form-control branch-input", placeholder="start typing...") }}
+            </div>
+            <div class="form-group col-sm-6">
+                <label for="">Note</label>
+                <p class="help-block">
+                    If you specify a branch name to merge from, the merge 
+                    request is automatically updated whenever someone pushes new 
+                    commits to that branch.
+                </p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.text.label }}
+            {{ form.text(class="form-control", rows=10) }}
+        </div>
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Create" />
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

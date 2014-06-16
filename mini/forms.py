@@ -102,6 +102,12 @@ class EditIssueForm(MultiForm):
     title = TextField("Issue title", validators=[Required()])
     text = TextAreaField("Description")
 
+class RequestMergeForm(MultiForm):
+    title = TextField("Request title", validators=[Required()])
+    text = TextAreaField("Description")
+    from_rev = TextField("Merge from...")
+    rev = TextField("... into", default="master")
+
 class EditCommentForm(Form):
     text = TextAreaField("Comment", validators=[Required()])
 

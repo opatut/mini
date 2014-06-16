@@ -27,4 +27,5 @@ $(document).ready(function() {
         }
     });
 
+    $(".branch-input").typeahead({source:branches, minLength: 0, showHintOnFocus: true}).attr("autocomplete", "off");
 });

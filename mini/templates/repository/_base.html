@@ -3,6 +3,9 @@
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/git.css') }}" type="text/css" />
     <script src="{{ url_for('static', filename='js/git.js') }}"></script>
+    <script>
+        var branches = [{% for branch in repository.git.branches %}"{{ branch }}",{% endfor %}];
+    </script>
 {% endblock %}
 
 {% block title %}{{ repository.title }}{% endblock %}
@@ -12,9 +15,8 @@
         <h1>{{ repository.title }}</h1>
     </div>
 
-
     <ul class="nav nav-tabs sub-nav" style="margin-bottom: 1em;">
-        <li{{ ' class="active"'|safe if request.endpoint in ("activity") else "" }}><a href="{{ url_for('activity', slug=repository.slug) }}"><i class="fa fa-rocket"></i> <span class="tab-label">Activity</span></a></li>
+        <li{{ ' class="active"'|safe if request.endpoint in ("repository",) else "" }}><a href="{{ url_for('repository', slug=repository.slug) }}"><i class="fa fa-rocket"></i> <span class="tab-label">Home</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint in ("history", "commit") else "" }}><a href="{{ url_for('history', slug=repository.slug) }}"><i class="fa fa-history"></i> <span class="tab-label">History</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint == "browse"  else "" }}><a href="{{ url_for('browse', slug=repository.slug) }}"><i class="fa fa-file"></i> <span class="tab-label">Browse</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint.startswith("issue")  else "" }}><a href="{{ url_for('issues', slug=repository.slug) }}"><i class="fa fa-exclamation-circle"></i> <span class="tab-label">Issues</span></a></li>

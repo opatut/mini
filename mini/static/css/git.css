@@ -286,3 +286,11 @@ div.browse-path {
 .merging.ready {
     background: #AAFFCC;
 }
+
+.request-revs {
+    background: #EEE;
+    border: 1px solid #CCC;
+    margin: 0;
+    margin-bottom: 10px;
+    padding-top: 10px;
+}
