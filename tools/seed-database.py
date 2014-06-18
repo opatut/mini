@@ -82,6 +82,11 @@ issue.author = opatut
 issue.repository = repo
 db.session.add(issue)
 
+a5 = CreateIssueActivity()
+a5.repository = repo
+a5.user = opatut
+a5.issues.append(issue)
+
 issue = Issue()
 issue.number = repo.next_issue_number
 repo.next_issue_number += 1
@@ -93,11 +98,28 @@ issue.author = opatut
 issue.issue_tags.append(issuetag1)
 db.session.add(issue)
 
+a8 = ModifyIssueActivity()
+a8.repository = repo
+a8.user = opatut
+a8.issue = issue
+a8.new_status = "closed"
+issue.status = "closed"
+a8.new_assignee = None
+
+a6 = CreateIssueActivity()
+a6.repository = repo
+a6.user = opatut
+a6.issues.append(issue)
+
 comment = IssueComment()
 comment.author = opatut
 comment.text = "I said [something](http://google.de)."
 issue.issue_comments.append(comment)
 db.session.add(comment)
+
+a7 = CreateIssueActivity()
+a7.repository = repo
+a7.user = opatut
 
 for s in ("open", "discussion", "closed", "wip", "invalid"):
     issue = Issue()
@@ -109,6 +131,8 @@ for s in ("open", "discussion", "closed", "wip", "invalid"):
     issue.repository = repo
     issue.author = opatut
     db.session.add(issue)
+    a7.issues.append(issue)
+
 
 merge1 = Merge()
 merge1.number = repo.next_issue_number
@@ -146,16 +170,16 @@ db.session.add(wiki_sub)
 
 ## ACTIVITIES ##
 
-a1 = PushActivity()
-a1.user = opatut
-a1.repository = repo
-a1.commit_ids = "30785629a6,d1ca43bd60,76ae3390b9"
+# a1 = PushActivity()
+# a1.user = opatut
+# a1.repository = repo
+# a1.commit_ids = "30785629a6,d1ca43bd60,76ae3390b9"
 
-a2 = PushActivity()
-a2.user = opatut
-a2.repository = repo
-a2.commit_ids = "29231e6092"
-a2.date -= timedelta(hours=5, minutes=24)
+# a2 = PushActivity()
+# a2.user = opatut
+# a2.repository = repo
+# a2.commit_ids = "29231e6092"
+# a2.date -= timedelta(hours=5, minutes=24)
 
 a3 = CommentActivity()
 a3.user = opatut

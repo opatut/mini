@@ -272,7 +272,24 @@ div.browse-path {
 
 .activity .content {
     margin-top: 10px;
-    margin-left: 24px;
+    padding-left: 24px;
+}
+
+.activity .icon {
+    float: left;
+    font-size: 21px;
+    margin: 0 10px;
+    color: #CCC;
+}
+
+.activity .icon.big {
+    font-size: 28px;
+    margin: -3px 10px;
+}
+
+.activity .title,
+.activity .content {
+    margin-left: 50px;
 }
 
 
@@ -293,4 +310,9 @@ div.browse-path {
     margin: 0;
     margin-bottom: 10px;
     padding-top: 10px;
+}
+
+.history .btn-xs {
+    margin-top: -2px;
+    margin-bottom: -3px;
 }

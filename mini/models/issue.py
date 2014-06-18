@@ -45,3 +45,12 @@ class Issue(db.Model):
 
     def can_comment(self, user):
         return not user.is_anonymous() and (user == self.author or self.repository.has_permission(user, "comment"))
+
+    def get_status_icon(self):
+        return {"open": "circle-o", 
+            "closed":"check-circle-o", 
+            "invalid":"ban", 
+            "wip":"circle-o", 
+            "merged":"check-circle-o", 
+            "rejected":"ban",
+            "discussion":"circle-o"}[self.status]

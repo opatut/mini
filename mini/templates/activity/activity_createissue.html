@@ -1,0 +1,29 @@
+{% extends "activity/_base.html" %}
+{% set issues = activity.issues %}
+{% set merge = issues[0] if issues[0].type == "merge" else None %}
+
+{% block icon %}exclamation-circle{% endblock %}
+
+{% block title %}
+    {% if merge %}
+        requested a merge from {{ merge.from_rev }} into {{ merge.rev }}
+    {% else %}
+        created {{ "an issue" if issues|length == 1 else (issues|length|string + " issues") }} 
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if not merge %}
+        <ul class="list-unstyled">
+            {% for issue in issues %}
+                <li class="issue {{ issue.status }}">
+                    <i class="status-icon fa fa-{{ issue.get_status_icon() }}"></i>
+                    {{ issue.get_link() }}
+                    {% for tag in issue.issuetags %}
+                        {{ tag }}
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

@@ -1,4 +1,4 @@
-from activity import Activity, PushActivity, CommentActivity, CreateBranchActivity
+from activity import Activity, PushActivity, CommentActivity, CreateBranchActivity, CreateIssueActivity, ModifyIssueActivity
 from email import Email
 from issue import Issue
 from issuecomment import IssueComment

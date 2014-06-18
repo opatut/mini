@@ -218,6 +218,12 @@ def history(slug):
     access.check(repository.has_permission(current_user, "read"))
     return render_template("repository/content/history.html", repository=repository)
 
+@app.route("/<slug>/graph/")
+def graph(slug):
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "read"))
+    return render_template("repository/content/graph.html", repository=repository)
+
 @app.route("/<slug>/history/<rev>/")
 def commit(slug, rev):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
@@ -418,10 +424,23 @@ def issue(slug, number):
 
     if request.method == "POST" and "save-status" in request.args:
         access.check(issue.can_edit(current_user))
-        issue.status = request.form.get("status")
-        assignee_id = request.form.get("assignee")
-        issue.assignee = User.query.filter_by(id=assignee_id).first() if assignee_id else None
-        issue.issue_tags = [tag for tag in repository.issue_tags if str(tag.id) in request.form.getlist("tag")]
+
+        activity = ModifyIssueActivity()
+        activity.repository = repository
+        activity.user = current_user
+        activity.issue = issue
+
+        new_status = request.form.get("status")
+        new_assignee = User.query.filter_by(id=request.form.get("assignee", 0)).first()
+        new_tags = [tag for tag in repository.issue_tags if str(tag.id) in request.form.getlist("tag")]
+
+        if issue.status != new_status: activity.new_status = new_status
+        if issue.assignee != new_assignee: activity.new_assignee = new_assignee
+        activity.new_tags = issue.issue_tags != new_tags
+
+        issue.status = new_status
+        issue.assignee = new_assignee
+        issue.issue_tags = new_tags
 
         if not issue.status in ("open", "discussion", "wip", "invalid", "closed"):
             flash("Please select a valid issue state.", "error")
@@ -510,6 +529,16 @@ def issue_new(slug):
         issue.author = current_user
         issue.repository = repository
         db.session.add(issue)
+
+        # check if last activity in repository was createissueactivity by this user
+        activity = repository.activities.order_by("date DESC").first()
+        if not activity or activity.type != "activity_createissue" or activity.user != current_user:
+            activity = CreateIssueActivity()
+            activity.user = current_user
+            activity.repository = repository
+        activity.issues.append(issue)
+        db.session.add(issue)
+
         db.session.commit()
         flash("Your issue was created.", "success")
         return redirect(url_for("issue", slug=repository.slug, number=issue.number))

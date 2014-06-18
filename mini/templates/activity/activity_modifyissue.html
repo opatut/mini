@@ -1,0 +1,25 @@
+{% extends "activity/_base.html" %}
+
+{% set issue = activity.issue %}
+
+{% block icon %}{% if activity.new_status == "closed" %}check{% else %}exclamation-circle{% endif %}{% endblock %}
+
+{% block title %}
+    {% if activity.new_status %}
+        {% if activity.new_status == "closed" %}
+            closed {{ issue.get_link() }}
+        {% else %}
+            changed the status of {{ issue.get_link() }} to {{ activity.new_status }}
+        {% endif %}
+    {% elif activity.new_assignee %}
+        assigned {{ issue.get_link() }} to 
+
+        {% if activity.new_assignee == activity.user %}
+            themselves
+        {% else %}
+            {{ activity.new_assignee.get_link() }}
+        {% endif %}
+    {% else %}
+        modified {{ issue.get_link() }}
+    {% endif %}
+{% endblock %}

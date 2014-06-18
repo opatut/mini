@@ -6,7 +6,7 @@ SQLALCHEMY_ECHO = False
 SECRET_KEY = "...change...me..."
 
 # Path to where the repositories are stored
-GIT_REPOSITORY_DIRECTORY = "data/repositories/"
+GIT_REPOSITORY_DIRECTORY = "/home/paul/src/mini/data/repositories/"
 
 # For display of the clone URLs, does not effect the application
 GIT_USER = "git"

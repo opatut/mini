@@ -1,5 +1,7 @@
 <div class="activity {{ activity.type }}">
 
+    <i class="icon fa fa-{% block icon %}circle-o{% endblock %}"></i>
+
     <div class="title">
         {{ activity.user.get_link(size=18) }} 
         {% block title %}{% endblock %}

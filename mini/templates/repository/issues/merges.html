@@ -19,7 +19,7 @@
     {% for merge in merges %}
         <tr class="merge {{ merge.status }}">
             <td class="number compact">
-                <i class="status-icon fa fa-{{ {"open":"circle-o", "merged":"check-circle-o", "rejected":"ban"}[merge.status] }}"></i>
+                <i class="status-icon fa fa-{{ merge.get_status_icon() }}"></i>
                 #{{ merge.number }}
             </td>
             <td class="title">

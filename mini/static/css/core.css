@@ -473,8 +473,8 @@ blockquote * {
 }
 
 
-.merge-table .merge span.status-icon,
-.issue-table .issue span.status-icon {
+.merge span.status-icon,
+.issue span.status-icon {
     background: #000;
     display: inline-block;
     height: 26px;
@@ -493,20 +493,20 @@ td.compact {
     white-space: nowrap;
 }
 
-.merge-table .merge .status-icon,
-.issue-table .issue .status-icon {
+.merge .status-icon,
+.issue .status-icon {
     font-size: 14px;
     margin-right: 5px;
     color: #0A0;
 }
 
-.merge-table .merge.rejected .status-icon,
-.issue-table .issue.invalid .status-icon { 
+.merge.rejected .status-icon,
+.issue.invalid .status-icon { 
     color: #A00; 
 }
 
-.merge-table .merge.closed .status-icon,
-.issue-table .issue.closed .status-icon { 
+.merge.closed .status-icon,
+.issue.closed .status-icon { 
     color: #A00; 
 }
 
@@ -515,9 +515,9 @@ td.compact {
     color: #AAA;
 }
 
-.merge-table .merge.rejected .title a,
-.issue-table .issue.invalid .title a,
-.issue-table .issue.closed .title a {
+.merge.rejected .title a,
+.issue.invalid .title a,
+.issue.closed .title a {
     color: #AAA;
 }
 

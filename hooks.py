@@ -16,6 +16,7 @@ execfile(activate_this, dict(__file__ = activate_this))
 
 from mini.models import *
 from mini.util import *
+from mini import app, db
 import fileinput
 
 # globals
@@ -39,23 +40,57 @@ def get_repository(**kwargs):
     if not repository: die("Could not find repository.")
     return repository
 
+def backtrack_commits(activity, commit, target):
+    for ref in repository.git.refs:
+        if ref.commit == commit:
+            return # we had this commit already
+    if commit.hexsha == target:
+        return
+    activity.commit_ids += commit.hexsha + ","
+    for parent in commit.parents:
+        backtrack_commits(activity, parent, target)
+
 ################################################################################
 # HOOKS                                                                        #
 ################################################################################
 
 def pre_receive():
-    revs = [line for line in sys.stdin if line.strip()]
-    print_remote("[pre-receive] The following revs are being updated")
-    for rev in revs:
-        print_remote("  " + rev)
-    print_remote("[pre-receive] You updated %s revs." % len(revs))
+    # revs = [line for line in sys.stdin if line.strip()]
+    # print_remote("[pre-receive] The following revs are being updated")
+    # for rev in revs:
+    #     print_remote("  " + rev)
+    # print_remote("[pre-receive] You updated %s revs." % len(revs))
+    pass
 
 def post_receive():
-    revs = [line for line in sys.stdin if line.strip()]
-    print_remote("[post-receive] The following revs were updated")
-    for rev in revs:
-        print_remote("  " + rev)
-    print_remote("[post-receive] You updated %s revs." % len(revs))
+    revs = [line.strip() for line in sys.stdin if line.strip()]
+
+    for line in revs:
+        before, after, ref = line.split()
+        branch = ref.split("/")[-1]
+        if before == "0"*40: before = None
+        if not before:
+            activity = CreateBranchActivity()
+            activity.branchname = branch
+        else:
+            commit = repository.get_commit(after)
+            merge_only = False
+
+            if len(commit.parents) == 2:
+                # TODO: check if this was "only" a merge
+                merge_only = True
+                pass
+
+            activity = PushActivity()
+            activity.commit_ids = ""
+            backtrack_commits(activity, commit, before)
+            activity.commit_ids.strip(",")
+        activity.repository = repository
+        activity.user = user
+        db.session.add(activity)
+        db.session.commit()
+
+
 
 def git_serve():
     command = os.getenv("SSH_ORIGINAL_COMMAND")
@@ -102,8 +137,11 @@ if __name__ == "__main__":
     # retrieve key
     key_id = os.getenv("MINI_KEY_ID")
     key = PublicKey.query.filter_by(id=key_id).first()
-    if not key: die("Unable to associate SSH Key. Please add it to your profile.")
-    user = key.user
+
+    # if not key: die("Unable to associate SSH Key. Please add it to your profile.")
+    # user = key.user
+    user = User.query.filter_by(username="peter").first()
+
 
     if hook != "git-serve": # git-serve finds its own repository
         repository = get_repository(slug=sys.argv[2])

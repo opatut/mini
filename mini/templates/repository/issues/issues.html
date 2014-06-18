@@ -19,7 +19,7 @@
     {% for issue in issues %}
         <tr class="issue {{ issue.status }}">
             <td class="number compact">
-                <i class="status-icon fa fa-{{ {"open":"circle-o", "closed":"check-circle-o", "invalid":"ban", "wip":"circle-o", "discussion":"circle-o"}[issue.status] }}"></i>
+                <i class="status-icon fa fa-{{ issue.get_status_icon() }}"></i>
                 #{{ issue.number }}
             </td>
             <td class="title">
