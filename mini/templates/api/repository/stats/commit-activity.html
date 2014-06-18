@@ -1,0 +1,10 @@
+{% set commit_activity = repository.get_commit_activity(normalize=True) -%}
+{ 
+{%- for week, data in commit_activity.items()|sort %} 
+    "{{ week|date(with_title=False) }}": {
+        {%- for option in ["lines", "insertions", "deletions", "commits"] %}
+            "{{ option }}" : {{ data[option] }}{% if not loop.last %},{% endif %} 
+        {%- endfor %}
+    }{% if not loop.last %},{% endif %}
+{%- endfor %} 
+}

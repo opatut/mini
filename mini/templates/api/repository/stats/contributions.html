@@ -1,0 +1,10 @@
+{% set contributions = repository.get_contributions() %}
+{ 
+{%- for user, data in contributions.items()|sort(attribute=1)|reverse %} 
+    "{{ user }}": {
+        {%- for option in ["lines", "insertions", "deletions", "commits"] %}
+            "{{ option }}" : {{ data[option] }}{% if not loop.last %},{% endif %} 
+        {%- endfor %}
+    }{% if not loop.last %},{% endif %}
+{%- endfor %} 
+}

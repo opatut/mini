@@ -72,15 +72,26 @@ def datetime(s, with_title=True):
 
 # format a timestamp as human readable date
 @app.template_filter()
-def date_human(s, with_title=True, capitalize=False):
-    if dt.utcnow().date() == s.date():
+def date_human(s, with_title=True, capitalize=False, always_format=False):
+    if not always_format and dt.utcnow().date() == s.date():
         val = "today"
-    elif dt.utcnow().date() == s.date() - td(days=1): 
+    elif not always_format and dt.utcnow().date() == s.date() - td(days=1): 
         val = "yesterday"
     else:
         val = s.strftime("%B %d, %Y")
     if capitalize: val = val.capitalize()
     return date_title(s, val, with_title)
+
+@app.template_filter()
+def date_nice(s):
+    return s.strftime("%b %d, %Y")
+
+@app.template_filter()
+def js_date(s):
+    return s.strftime("Date.UTC(%Y, %m-1, %d)") # in JS, months start at 0
+
+
+
 
 @app.template_filter()
 def filetype(blob):

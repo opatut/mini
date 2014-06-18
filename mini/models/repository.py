@@ -1,8 +1,8 @@
-from mini import app, db
+from mini import app, db, cache
 from mini.util import run, get_hooks_path, repository_path
 from mini.models.user import User
 from mini.models.permission import Permission
-from datetime import datetime
+from datetime import datetime, timedelta
 from os.path import abspath, join, isdir
 from flask import flash, Markup, url_for
 from flask.ext.login import current_user
@@ -87,6 +87,53 @@ class Repository(db.Model):
         else:
             return None
 
+    def get_commit_activity(self, normalize=False):
+        weeks = {}
+        for commit in self.get_commits():
+            date = datetime.fromtimestamp(commit.committed_date + commit.committer_tz_offset).date()
+            week = date - timedelta(days=date.weekday())
+            if not week in weeks:
+                weeks[week] = dict(deletions=0, insertions=0, lines=0, commits=0)
+            weeks[week]["deletions"] += commit.stats.total["deletions"]
+            weeks[week]["insertions"] += commit.stats.total["insertions"]
+            weeks[week]["lines"] += commit.stats.total["lines"]
+            weeks[week]["commits"] += 1
+        if normalize:
+            start = min(weeks.keys())
+            end = max(weeks.keys())
+            while start < end:
+                if not start in weeks:
+                    weeks[start] = dict(deletions=0, insertions=0, lines=0, commits=0)
+                start += timedelta(days=7)
+        return weeks
+
+    def get_contributions(self, threshold=0.01):
+        from mini.filters import git_user
+        data = {}
+        for commit in self.get_commits():
+            user = git_user(commit.author).name
+            if not user in data: 
+                data[user] = dict(lines=0, deletions=0, insertions=0, commits=0)
+            data[user]["deletions"] += commit.stats.total["deletions"]
+            data[user]["insertions"] += commit.stats.total["insertions"]
+            data[user]["lines"] += commit.stats.total["lines"]
+            data[user]["commits"] += 1
+
+        if threshold:
+            minimum = sum([stats["commits"] for stats in data.itervalues()]) * threshold
+            out = dict(lines=0, deletions=0, insertions=0, commits=0)
+            for user, stats in data.items():
+                if stats["commits"] < minimum:
+                    out["deletions"]  += stats["deletions"]
+                    out["insertions"] += stats["insertions"]
+                    out["lines"]      += stats["lines"]
+                    out["commits"]    += stats["commits"]
+                    del data[user]
+            if out["commits"]:
+                data["others"] = out
+
+        return data
+
     def is_branch(self, name):
         return len([x for x in self.git.branches if x.name==name or x.path==name])>0
 
@@ -163,3 +210,8 @@ class Repository(db.Model):
 
     def get_url(self):
         return url_for("repository", slug=self.slug)
+
+    def clear_cache(self):
+        # stats caches
+        for type in ["contributions", "commit-activity"]:
+            cache.delete_memoized('api_stats', self.slug, type)

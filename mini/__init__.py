@@ -1,5 +1,6 @@
 from datetime import *
 from flask import Flask, render_template
+from flask.ext.cache import Cache
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
 from flask.ext.login import LoginManager, current_user
@@ -10,6 +11,8 @@ app = Flask(__name__)
 app.config.from_pyfile('../config.py', silent=True)
 
 db = SQLAlchemy(app)
+
+cache = Cache(app, config=dict(CACHE_TYPE='simple'))
 
 mail = Mail(app)
 

@@ -5,7 +5,10 @@
     <script src="{{ url_for('static', filename='js/git.js') }}"></script>
     <script>
         var branches = [{% for branch in repository.git.branches %}"{{ branch }}",{% endfor %}];
+        var repository = {};
+        repository.slug = "{{ repository.slug }}";
     </script>
+    {% block repository_head %}{% endblock %}
 {% endblock %}
 
 {% block title %}{{ repository.title }}{% endblock %}
@@ -22,6 +25,7 @@
         <li{{ ' class="active"'|safe if request.endpoint.startswith("issue")  else "" }}><a href="{{ url_for('issues', slug=repository.slug) }}"><i class="fa fa-exclamation-circle"></i> <span class="tab-label">Issues</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint.startswith("merge")  else "" }}><a href="{{ url_for('merges', slug=repository.slug) }}"><i class="fa fa-level-up"></i> <span class="tab-label">Merge requests</span></a></li>
         <li{{ ' class="active"'|safe if request.endpoint.startswith("wiki")    else "" }}><a href="{{ url_for('wiki', slug=repository.slug) }}"><i class="fa fa-book"></i> <span class="tab-label">Wiki</span></a></li>
+        <li{{ ' class="active"'|safe if request.endpoint.startswith("stats")    else "" }}><a href="{{ url_for('stats', slug=repository.slug) }}"><i class="fa fa-bar-chart-o"></i> <span class="tab-label">Stats</span></a></li>
         {% if repository.has_permission(current_user, "admin") %}
         <li{{ ' class="active"'|safe if request.endpoint == "admin"   else "" }}><a href="{{ url_for('admin', slug=repository.slug) }}"><i class="fa fa-wrench"></i> <span class="tab-label">Admin</span></a></li>
         {% endif %}

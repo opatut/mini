@@ -1,0 +1,31 @@
+{% extends "repository/_base.html" %}
+
+{% block repository_head %}
+    <script src="{{ url_for('static', filename='js/highcharts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stats.js') }}"></script>
+{% endblock %}
+
+{% block repository_content %}
+
+<h3>Commit activity</h3>
+
+<div class="chart-container" >
+    <div class="chart" id="chart-commit-activity"></div>
+</div>
+
+<hr />
+
+<h3>Contributions</h3>
+<div class="row">
+    <div class="col-md-6">
+        <div class="chart-container">
+            <div class="chart" id="chart-contributions-commits"></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="chart-container">
+            <div class="chart" id="chart-contributions-lines"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

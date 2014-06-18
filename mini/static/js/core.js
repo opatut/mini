@@ -46,3 +46,16 @@ $(document).ready(function() {
         window.location.href = $(this).find(".edit-link").attr("href");
     }).css("cursor", "pointer");
 });
+
+function parseDate(input) {
+    var parts = input.split('-');
+    return new Date(parts[0], parts[1]-1, parts[2]); // Note: months are 0-based
+}
+
+$.fn.spinner = function() {
+    var spinner = $('<div class="spinner"><i class="fa fa-circle-o-notch fa-spin fa-2x"></i></div>');
+    $(this).append(spinner);
+    spinner.hide();
+    spinner.fadeIn(200);
+    return spinner;
+}

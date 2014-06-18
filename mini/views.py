@@ -1,4 +1,4 @@
-from mini import app, access, db, mails
+from mini import app, access, db, mails, cache
 from mini.forms import *
 from mini.models import *
 from flask import render_template, flash, abort, url_for, request, redirect, g
@@ -207,6 +207,24 @@ def repository(slug):
     access.check(repository.has_permission(current_user, "read"))
     return render_template("repository/content/activity.html", repository=repository)
 
+################################################################################
+# STATS                                                                        #
+################################################################################
+
+@app.route("/<slug>/stats/")
+@app.route("/<slug>/statistics/")
+@app.route("/<slug>/graphs/")
+def stats(slug):
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "read"))
+    return render_template("repository/content/stats.html", repository=repository)
+
+@app.route("/api/<slug>/stats/<type>/")
+@cache.memoize(timeout=3600)
+def api_stats(slug, type):
+    repository = Repository.query.filter_by(slug=slug).first_or_404()
+    access.check(repository.has_permission(current_user, "read"))
+    return render_template("api/repository/stats/%s.html" % type, repository=repository)
 
 ################################################################################
 # HISTORY                                                                      #

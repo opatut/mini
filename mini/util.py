@@ -111,6 +111,9 @@ class AnonymousUser(object):
     def get_avatar(self, size=32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
 
+    def __eq__(self, other):
+        return self.name == other.name and self.email == other.email
+
 class AccessControl(object):
     def __init__(self, current_user):
         self.current_user = current_user
