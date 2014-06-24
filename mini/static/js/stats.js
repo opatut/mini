@@ -11,14 +11,15 @@ function loadCommitActivity() {
         url: '/api/'+repository.slug+'/stats/commit-activity/', 
         dataType: 'json',
         success: function(data) {
-            var insertions = [], deletions = []; 
+            var insertions = [], deletions = [], commits = []; 
             $.each(data, function(key, value) {
                 var date = parseDate(key);
                 insertions.push({x: date, y: value.insertions});
-                deletions.push({x: date, y: value.deletions});
+                deletions.push({x: date, y: -value.deletions});
+                commits.push({x: date, y: value.commits});
             });
             spinner.fadeOut(500, function() { spinner.hide(); });
-            chartCommitActivity(insertions, deletions);
+            chartCommitActivity(insertions, deletions, commits);
         },
         error: function(jxs, textStatus, error) {
             alert(textStatus);
@@ -27,7 +28,7 @@ function loadCommitActivity() {
 }
 
 function loadContributions() {
-    var spinner = $("#chart-contributions-lines").spinner();
+    var spinner = $("#chart-contributions-lines, #chart-contributions-commits").spinner();
     $.ajax({
         url: '/api/'+repository.slug+'/stats/contributions/', 
         dataType: 'json',
@@ -47,12 +48,13 @@ function loadContributions() {
 }
 
 
-function chartCommitActivity(insertions, deletions) {
+function chartCommitActivity(insertions, deletions, commits) {
     $('#chart-commit-activity').highcharts({
         chart: {
             type: 'spline',
-            zoomType: 'xy',
-            marginTop: 50
+            zoomType: 'x',
+            marginTop: 50,
+            alignTicks: true
         },
         plotOptions: {
             spline: {
@@ -60,10 +62,18 @@ function chartCommitActivity(insertions, deletions) {
                     enabled: false
                 },
                 lineWidth: 2,
-            } 
-        },
-        tooltip: {
-            valueSuffix: ' lines'
+                tooltip: {
+                    valueSuffix: ' lines'
+                },
+            },
+            column: {
+                groupPadding: 0,
+                pointPadding: 0,
+                color: "rgba(100, 200, 255, 0.6)",
+                tooltip: {
+                    valueSuffix: ' commits'
+                },
+            }
         },
         legend: {
                 align: 'left',
@@ -72,7 +82,7 @@ function chartCommitActivity(insertions, deletions) {
                 x: 50,
                 borderWidth: 0
             },
-        colors: ["#44EE22", "#FF4400"],
+        colors: ["#00AA00", "#FF0000"],
         title: {
             text: '',
             visible: false
@@ -81,18 +91,29 @@ function chartCommitActivity(insertions, deletions) {
             type: 'datetime',
             minRange: 14 * 24 * 3600000 // 14 days
         },
-        yAxis: {
+        yAxis: [{
             title: {
                 text: 'Number of Lines'
             },
-            min: 0,
-        },
+            // min: 0,
+        },{
+            title: {
+                text: 'Commit count',
+            },
+            // linkedTo: 0,
+            opposite: true
+        }],
         series: [{
+            type: 'column',
+            name: 'Commits',
+            yAxis: 1,
+            data: commits,
+        }, {
             name: 'Insertions',
-            data: insertions
+            data: insertions,
         }, {
             name: 'Deletions',
-            data: deletions
+            data: deletions,
         }]
     });
 }

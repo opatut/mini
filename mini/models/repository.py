@@ -1,5 +1,6 @@
 from mini import app, db, cache
 from mini.util import run, get_hooks_path, repository_path
+from mini.network import Network
 from mini.models.user import User
 from mini.models.permission import Permission
 from datetime import datetime, timedelta
@@ -24,6 +25,7 @@ class Repository(db.Model):
     _git = None
     _commits = None
     _contributors = None
+    _network = None
 
     def __init__(self):
         self.created = datetime.utcnow()
@@ -61,7 +63,7 @@ class Repository(db.Model):
     @property
     def git(self):
         if not self._git:
-            self._git = git.Repo(self.path)
+            self._git = git.Repo(self.path, odbt=git.GitCmdObjectDB)
         return self._git
 
     def get_commits(self):
@@ -89,14 +91,15 @@ class Repository(db.Model):
 
     def get_commit_activity(self, normalize=False):
         weeks = {}
-        for commit in self.get_commits():
+        for commit in self.git.iter_commits('master'):
             date = datetime.fromtimestamp(commit.committed_date + commit.committer_tz_offset).date()
             week = date - timedelta(days=date.weekday())
+            stats = commit.stats
             if not week in weeks:
                 weeks[week] = dict(deletions=0, insertions=0, lines=0, commits=0)
-            weeks[week]["deletions"] += commit.stats.total["deletions"]
-            weeks[week]["insertions"] += commit.stats.total["insertions"]
-            weeks[week]["lines"] += commit.stats.total["lines"]
+            weeks[week]["deletions"] += stats.total["deletions"]
+            weeks[week]["insertions"] += stats.total["insertions"]
+            weeks[week]["lines"] += stats.total["lines"]
             weeks[week]["commits"] += 1
         if normalize:
             start = min(weeks.keys())
@@ -110,7 +113,7 @@ class Repository(db.Model):
     def get_contributions(self, threshold=0.01):
         from mini.filters import git_user
         data = {}
-        for commit in self.get_commits():
+        for commit in self.git.iter_commits('master'):
             user = git_user(commit.author).name
             if not user in data: 
                 data[user] = dict(lines=0, deletions=0, insertions=0, commits=0)
@@ -213,5 +216,11 @@ class Repository(db.Model):
 
     def clear_cache(self):
         # stats caches
-        for type in ["contributions", "commit-activity"]:
+        for type in ["contributions", "commit-activity", "network"]:
             cache.delete_memoized('api_stats', self.slug, type)
+
+    def get_network(self):
+        if not self._network:
+            self._network = Network(self)
+            self._network.generate()
+        return self._network

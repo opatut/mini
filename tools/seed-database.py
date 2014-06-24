@@ -11,7 +11,7 @@ db.create_all()
 
 tester = User()
 tester.name = "Peter Langbein"
-tester.username = "peter"
+tester.identifier = "peter"
 tester.set_password("lol")
 db.session.add(tester)
 
@@ -24,7 +24,7 @@ db.session.add(mail)
 
 opatut = User()
 opatut.name = "Paul Bienkowski"
-opatut.username = "opatut"
+opatut.identifier = "opatut"
 opatut.set_password("lol")
 opatut.permissions = """*"""
 db.session.add(opatut)
@@ -34,6 +34,20 @@ key.user = opatut
 key.key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDRUFLcksSX57IC7Z1yGWWYignX7tnn0c2EffImrZbUoZTtxpQPvsnkw191/NAb9ol8K0ndjLYtaaRIxYsXwAcLaT+/Cu0K+Jd7E+CKa1KzJJNhYsnEJIYH+JMFbBcq3IP+r5XI5E35SA0mjWlPHmqFDssotSPd9f0Q66OIy7MNscrJaNNUSauVkNVr/SlMpEHB0mpY0fZJZz0Qlqb2PV7OWvh332bMdM70+dl9CyxNRNruApq95gI+IUYac7gMqgtoFIsxojBvaETuMqqhcfwuc9wx++ezxqq2UgMV9KDGlv9rfrjPr+P3/ZhUD0afo75BalCLyEAVeYugCv8hRg+lD1IgT7oJy1WVPIKAHgM8KjqDKWUDBJRdnBokMQ/y8PEaGRBzpWk5YIWefDf901xosgi4L+DMr2fxb7wRJOLb88Y+MmBuaN5ODa6FGMo7Ql7xRwgbVleS+J46mr2HG7ITTSLvn5on7K3cAfvUQsFfcesYLoHGbL6Lf7VY7HxAEMxrj9QJyp3LWrHw7kTdxGsT34ZQCcbI4NM0h++LVer5yjlMgOM8yf5ehc6hMIj2s417HNBKWMeojyZG3ThvtmQmhvxVyrWdFhntNB0tB0RxMiINQEBHLV6S/OHg9TKEhcPn1csG8H2QjXf1k88cGjuFu6xzCam+0Hfk/2DDZmkRVQ== paul@newton"
 key.name = "newton/curry"
 db.session.add(key)
+
+team1 = Team()
+team1.name = "Mini Developers"
+team1.identifier = "minidevs"
+team1.members.append(opatut)
+db.session.add(team1)
+
+team2 = Team()
+team2.name = "All test team"
+team2.identifier = "all"
+team2.members.append(opatut)
+team2.members.append(tester)
+team2.members.append(team1)
+db.session.add(team2)
 
 repo = Repository()
 repo.slug = "testrepo"

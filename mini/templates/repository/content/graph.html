@@ -1,9 +1,27 @@
 {% extends "repository/_base.html" %}
 
-{% block repository_content %}
+{% block repository_head %}
+    <script src="{{ url_for('static', filename='js/jquery.kinetic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/network.js') }}"></script>
+{% endblock %}
 
-{% for commit in repository.get_commits()|reverse %}
-{{ commit }}
-{% endfor %}
+{% block repository_actions %}
+    <a href="{{ url_for('history', slug=repository.slug) }}" class="btn btn-sm btn-primary">Show commits</a> 
+{% endblock %}
+
+{% block repository_content %}
+<h3>Branching graph</h3>
+
+<div id="network-graph-container" style="overflow: auto; max-width: 100%; border: 1px solid #CCC;">
+    <canvas id="network-graph"></canvas>
+</div>
+
+<div id="network-commit-details">
+    <div class="meta">
+        <span class="author">Some author</span>
+        <span class="hexsha"><code>c7da520da0</code></span>
+    </div>
+    <div class="message">This is the commit message.</div>
+</div>
 
 {% endblock %}

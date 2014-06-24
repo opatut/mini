@@ -14,7 +14,7 @@ class ValidLogin(object):
         self.message_password = message_password
 
     def __call__(self, form, field):
-        u = User.query.filter_by(username=field.data).first()
+        u = User.query.filter_by(identifier=field.data).first()
         if not u:
             raise ValidationError(self.message_username)
         elif hash_password(form[self.pw_field].data) != u.password:
@@ -52,7 +52,7 @@ class MultiForm(Form):
         return Form.hidden_tag(self, *args, **kwargs)
 
 class LoginForm(Form):
-    username = TextField("Username or eMail", validators=[ValidLogin("password")])
+    identifier = TextField("Username or eMail", validators=[ValidLogin("password")])
     password = PasswordField("Password", validators=[])
 
 class WikiPageForm(Form):
@@ -96,7 +96,7 @@ class NewPublicKeyForm(Form):
 
 class AddPermissionForm(Form):
     access = SelectField("Access level", choices=[(x,x) for x in REPOSITORY_ROLES])
-    username = TextField("Username", validators=[Required()])
+    identifier = TextField("Username", validators=[Required()])
 
 class EditIssueForm(MultiForm):
     title = TextField("Issue title", validators=[Required()])
@@ -131,7 +131,7 @@ class TagForm(Form):
     color = TextField("Color", validators=[Required(), Regexp("^([a-f0-9A-F]{3}){1,2}$", message="Invalid color code, format is #RGB or #RRGGBB.")])
 
 class RegisterForm(Form):
-    username = TextField("Username", validators=[Required(), UniqueObject(User, "username", message="This username is already in use.")])
+    identifier = TextField("Username", validators=[Required(), UniqueObject(User, "identifier", message="This username is already in use.")])
     email = TextField("Email address", validators=[Required(), Email(), UniqueObject(mini.models.Email, "email", message="This email address is already in use.")])
     password1 = PasswordField("Password", validators=[])
     password2 = PasswordField("Password", validators=[EqualTo("password1")])

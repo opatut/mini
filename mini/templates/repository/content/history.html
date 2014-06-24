@@ -1,6 +1,11 @@
 {% extends "repository/_base.html" %}
 
+{% block repository_actions %}
+    <a href="{{ url_for('graph', slug=repository.slug) }}" class="btn btn-sm btn-primary">Branching graph</a> 
+{% endblock %}
+
 {% block repository_content %}
+
 <div style="width: 100%">
     <table class="table history">
         <tr>
@@ -12,11 +17,11 @@
         </tr>
     {% for commit in repository.get_commits()|reverse %}
         <tr>
-            <td>{{ (commit.author|git_user).get_link() }}</td>
+            <td class="nowrap">{{ (commit.author|git_user).get_link() }}</td>
             <td><a href="{{ url_for('commit', slug=repository.slug, rev=commit.hexsha) }}" class="sha">{{ commit.hexsha|shortsha }}</a></td>
-            <td><div class="nobreak">{{ (commit.message*5)|first_line|shorten(120) }}</div></td>
-            <td>{{ commit|git_committer_time|date_human }}</td>
-            <td>
+            <td><div class="nobreak">{{ (commit.message)|first_line|shorten(120) }}</div></td>
+            <td class="nowrap">{{ commit|git_committer_time|date_human }}</td>
+            <td class="nowrap">
                 <a class="btn btn-xs btn-default" href="{{ url_for('commit', slug=repository.slug, rev=commit.hexsha) }}">Details</a>
                 <a class="btn btn-xs btn-default" href="{{ url_for('browse', slug=repository.slug, rev=commit.hexsha) }}">Browse</a>
             </td>

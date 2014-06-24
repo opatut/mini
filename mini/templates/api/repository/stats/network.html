@@ -1,0 +1,17 @@
+{
+    "commits": [
+    {%- for commit in repository.get_network().commits %}
+        {
+            "hexsha": "{{ commit.raw.hexsha }}",
+            "author": "{{ commit.raw.author }}",
+            "message": {{ commit.raw.message|json|safe }},
+            "x": {{ commit.number }}, 
+            "y": {{ commit.lane.number }},
+            "children": [{%- for child in commit.children %}{{ child.number }}{% if not loop.last %}, {% endif %}{% endfor %}],
+            "parents": [{%- for parent in commit.parents %}{{ parent.number }}{% if not loop.last %}, {% endif %}{% endfor %}],
+            "branches": [{% for branch in commit.branches %}"{{ branch }}"{% if not loop.last %}, {% endif %}{%- endfor %}],
+            "tags": [{% for tag in commit.tags %}"{{ tag }}"{% if not loop.last %}, {% endif %}{%- endfor %}]
+        }{% if not loop.last %},{% endif %}
+    {%- endfor %}
+    ]
+}

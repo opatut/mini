@@ -5,6 +5,7 @@ from datetime import datetime as dt, date as d, timedelta as td
 from flask import Markup
 import time, os, pygments, pygments.lexers, pygments.formatters, git, re
 from os.path import *
+from json import dumps
 
 # UTILITY to wrap a date/time in a span tag with a title
 def date_title(s, fmt, with_title=True):
@@ -90,7 +91,9 @@ def date_nice(s):
 def js_date(s):
     return s.strftime("Date.UTC(%Y, %m-1, %d)") # in JS, months start at 0
 
-
+@app.template_filter()
+def json(s):
+    return dumps(s)
 
 
 @app.template_filter()

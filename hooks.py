@@ -100,7 +100,7 @@ def git_serve():
 
     # check action
     if not action in ("git-receive-pack", "git-upload-pack"):
-        die("Authenticated as %s. This remote user is only for use with git." % user.username)
+        die("Authenticated as %s. This remote user is only for use with git." % user.identifier)
     permission = {"git-receive-pack": "write", "git-upload-pack": "read"}[action]
 
     # cut away quotation marks
@@ -117,7 +117,7 @@ def git_serve():
         die("Permission denied - no " + permission + " access.")
 
     key.access()
-    print_remote("User " + user.username + " authorized for " + permission + " access.")
+    print_remote("User " + user.identifier + " authorized for " + permission + " access.")
     os.system("cd {0} && git shell -c {1}".format(app.config["GIT_REPOSITORY_DIRECTORY"], shellquote(command)))
 
 
@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     # if not key: die("Unable to associate SSH Key. Please add it to your profile.")
     # user = key.user
-    user = User.query.filter_by(username="peter").first()
+    user = User.query.filter_by(identifier="peter").first()
 
 
     if hook != "git-serve": # git-serve finds its own repository

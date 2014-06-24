@@ -10,7 +10,7 @@ db.create_all()
 
 admin = User()
 admin.name = "Administrator"
-admin.username = "admin"
+admin.identifier = "admin"
 admin.set_password("admin")
 admin.permissions = """*"""
 db.session.add(admin)

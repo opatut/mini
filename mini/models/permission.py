@@ -1,22 +1,19 @@
 from mini import db
 
-# Used to map user<->repository permissions
-# For the
-
 REPOSITORY_ROLES = ["none", "find", "read", "comment", "write", "mod", "admin"]
 
 class Permission(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     access = db.Column(db.Enum(*REPOSITORY_ROLES), default = "none")
 
-    user = db.relationship("User", backref="repository_permissions")
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    member = db.relationship("Member", backref="repository_permissions")
+    member_id = db.Column(db.Integer, db.ForeignKey("member.id"))
 
     repository = db.relationship("Repository", backref="permissions")
     repository_id = db.Column(db.Integer, db.ForeignKey("repository.id"))
 
-    def __init__(self, user, repository, access):
-        self.user = user
+    def __init__(self, member, repository, access):
+        self.member = member
         self.repository = repository
         self.access = access
 

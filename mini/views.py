@@ -39,10 +39,10 @@ def login():
     access.check(current_user.has_permission("nologin"))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(identifier=form.identifier.data).first()
         if user.status == "normal":
             user.login()
-            flash("Welcome back, %s!" % user.username, "success")
+            flash("Welcome back, %s!" % user.identifier, "success")
             return redirect(url_for("index"))
         elif user.status == "unverified":
             flash("You have not yet verified your account. Please check your inbox!", "error")
@@ -68,7 +68,7 @@ def register():
 
     if form.validate_on_submit():
         user = User()
-        user.username = form.username.data
+        user.identifier = form.identifier.data
         user.set_password(form.password1.data)
         user.status = "unverified"
         user.generate_verify_hash()
@@ -86,9 +86,9 @@ def register():
 
     return render_template("account/register.html", form=form)
 
-@app.route("/verify/<username>/<hash>/")
-def verify(username, hash):
-    user = User.query.filter_by(username=username).first_or_404()
+@app.route("/verify/<identifier>/<hash>/")
+def verify(identifier, hash):
+    user = User.query.filter_by(identifier=identifier).first_or_404()
     if user.verify_hash == hash:
         user.status = "normal"
         db.session.commit()
@@ -192,10 +192,19 @@ def settings_email_action(action, id):
     db.session.commit()
     return redirect(url_for("settings", tab="emails"))
 
-@app.route("/user/<username>")
-def user(username=""):
-    user = User.query.filter_by(username=username).first_or_404()
+@app.route("/user/<identifier>")
+def user(identifier=""):
+    user = User.query.filter_by(identifier=identifier).first_or_404()
     return render_template("account/profile.html", user=user)
+
+################################################################################
+# TEAMS                                                                        #
+################################################################################
+
+@app.route("/team/<identifier>")
+def team(identifier):
+    team = Team.query.filter_by(identifier=identifier).first_or_404()
+    return render_template("teams/team.html", team=team)
 
 ################################################################################
 # REPOSITORY                                                                   #
@@ -211,6 +220,11 @@ def repository(slug):
 # STATS                                                                        #
 ################################################################################
 
+def jsonize(fin):
+    def fout(*args, **kwargs):
+        return json.dumps(fin(*args, **kwargs))
+    return fout
+
 @app.route("/<slug>/stats/")
 @app.route("/<slug>/statistics/")
 @app.route("/<slug>/graphs/")
@@ -220,7 +234,8 @@ def stats(slug):
     return render_template("repository/content/stats.html", repository=repository)
 
 @app.route("/api/<slug>/stats/<type>/")
-@cache.memoize(timeout=3600)
+# @cache.memoize(timeout=3600)
+# @jsonize
 def api_stats(slug, type):
     repository = Repository.query.filter_by(slug=slug).first_or_404()
     access.check(repository.has_permission(current_user, "read"))
@@ -378,7 +393,7 @@ def admin(slug, tab="general"):
         args["form"] = form
 
         if form.validate_on_submit():
-            user = User.query.filter_by(username=form.username.data).first()
+            user = User.query.filter_by(identifier=form.identifier.data).first()
             if not user:
                 flash("Username not found. Please enter the nickname, not the real name!", "error")
             elif not repository.set_permission(user, form.access.data):

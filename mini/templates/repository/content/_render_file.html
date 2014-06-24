@@ -1,7 +1,7 @@
 {% set type = file|filetype %}
 {% set extension = file|extension %}
 
-{% if type == "textfile" %}
+{% if type == "textfile" or extension in ("js",) %}
     {% if extension in ("md", "markdown") %}
         <div class="markdown markdown-file">
             {{ file.data_stream.read() | markdown }}
@@ -11,8 +11,21 @@
             {# vs tango autumn borland #}
             {{ "vs" | highlightsheet }}
         </style>
-        <div class="codefile">
-            {{ file.data_stream.read() | highlight(file.name) }}
+
+        <div class="commit-file panel panel-default">
+            <div class="panel-heading files">
+                <h3 class="panel-title">
+                    <div class="from">
+                        {{ file.path }}
+                    </div>
+                </h3>
+            </div>
+
+            <div class="panel-body" style="padding: 0;">
+                <div class="codefile">
+                    {{ file.data_stream.read() | highlight(file.name) }}
+                </div>
+            </div>
         </div>
     {% endif %}
 {% elif type == "image" %}

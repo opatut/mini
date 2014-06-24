@@ -2,6 +2,10 @@ html, body {
     height: 100%;
 }
 
+.container {
+    /*max-width: none;*/
+}
+
 body {
     font-family: Open Sans;
     font-size: 10pt;
@@ -205,6 +209,76 @@ ul.nav-tabs li a i {
     display: none;
 }
 
+.repo-sidebar {
+    float: left;
+    width: 170px;
+}
+
+.sidebar-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 6px;
+    border: 1px solid #DDD;
+    /*box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);*/
+    background: #F7F7F7;
+}
+
+.sidebar-nav li {
+  line-height: 40px;
+}
+
+.sidebar-nav li a {
+  display: block;
+  text-decoration: none;
+  padding: 0 14px;
+  border-top: 1px solid #FFF;
+  border-bottom: 1px solid #DDD;
+  color: #666;
+  transition: padding-left 0.2s;
+}
+
+.sidebar-nav li:first-child a {
+    border-top: 0;
+    border-radius: 6px 6px 0 0;
+}
+
+.sidebar-nav li:last-child a {
+    border-bottom: 0;
+    border-radius: 0 0 6px 6px;
+}
+
+.sidebar-nav li a .fa {
+    width: 20px;
+}
+
+.sidebar-nav li.active a,
+.sidebar-nav li.active a:hover {
+    background: #FFF;
+    color: #000;
+}
+
+.sidebar-nav li a:hover {
+  text-decoration: none;
+  /*background: rgba(255, 255, 255, 0.8);*/
+  color: #222;
+  /*padding-left: 28px;*/
+  /*text-decoration: underline;*/
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+  text-decoration: none;
+}
+
+.repo-content {
+    margin-left: 200px;
+}
+
+.sub-nav {
+    white-space: nowrap;
+}
+
 .sub-nav .label, 
 .sub-nav .badge {
     margin-left: 5px;
@@ -216,7 +290,7 @@ ul.nav-tabs li a i {
 
 
 .sub-nav .active .tab-label {
-    display: inline;
+    /*display: inline;*/
 }
 
 @media (min-width: 768px) {
@@ -607,6 +681,7 @@ ul.wiki-pages li.current > a {
     vertical-align: middle !important;
 }
 
+.nowrap,
 .emails .address {
     white-space: nowrap;
 }

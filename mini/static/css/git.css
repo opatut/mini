@@ -108,14 +108,24 @@ pre.normal {
 
 
 .codefile {
-    background: #F7F7F7;
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #DDD;
+    background: #FFF;
+    /*border-radius: 0px;*/
+    /*border: 1px solid #444;*/
+    overflow: auto;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    padding: 0;
 }
 
 .codefile .highlight {
     background: none;
+}
+
+.codefile table, .codefile td {
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .codefile pre {
@@ -125,18 +135,19 @@ pre.normal {
     font-size: 13px;
     line-height: 1.4em;
     margin: 0;
-}
-
-.codefile {
     overflow: auto;
-    width: 100%;
-    padding: 0;
-    margin: 0;
+    white-space: pre;
 }
 
 .linenos pre {
-    padding: 0 10px;
+    padding: 0 5px;
     text-align: right;
+    border-radius: 0;
+    background: #EEE;
+    color: #AAA;
+    border-right: 1px solid #CCC;
+
+    margin-right: 5px;
 }
 
 .branch-select {
@@ -156,14 +167,6 @@ div.browse-path {
 .tree-table td, .tree-table th {
     border-width: 1px 0 !important;
 }
-
-
-
-
-
-
-
-
 
 .commit-file {
     margin-bottom: 10px;
@@ -315,4 +318,23 @@ div.browse-path {
 .history .btn-xs {
     margin-top: -2px;
     margin-bottom: -3px;
+}
+
+#network-commit-details {
+    position: absolute;
+    width: 300px;
+    background: #F7F7F7;
+    border: 1px solid #CCC;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 6px;
+    border-radius: 4px;
+}
+
+#network-commit-details .author {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+#network-commit-details .message {
+    white-space: pre-wrap;
 }

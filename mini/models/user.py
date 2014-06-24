@@ -2,17 +2,19 @@
 
 from mini import db, login_manager
 from mini.util import *
-from mini.models import Email
+from mini.models.email import Email
+from mini.models.team import Member
 from datetime import datetime
 from flask.ext.login import current_user, login_user, logout_user
 from flask import url_for
 import fnmatch
 
-class User(db.Model, AnonymousUser):
+class User(Member, AnonymousUser):
     __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key = True)
+    __mapper_args__ = {'polymorphic_identity': __tablename__}
+
+    id = db.Column(db.Integer, db.ForeignKey("member.id"), primary_key = True)
     name = db.Column(db.String(80), unique = True)
-    username = db.Column(db.String(80), unique = True)
     password = db.Column(db.String(128))
     created = db.Column(db.DateTime)
 
@@ -59,16 +61,20 @@ class User(db.Model, AnonymousUser):
             if line and fnmatch.fnmatch(permission, line):
                 return True
 
+        # for team in self.teams:
+        #     if team.has_permission(permission):
+        #         return True
+
         return False
 
     def get_display_name(self):
-        return self.name if self.name else self.username
+        return self.name if self.name else self.identifier
 
     def get_link(self, size=16):
         return Markup('<span class="user"><a href="{2}"><img class="avatar" src="{0}" /></a> <a href="{2}">{1}</a></span>'.format(self.get_avatar(size), self.get_display_name(), self.get_url()))
 
     def get_url(self):
-        return url_for("user", username=self.username)
+        return url_for("user", identifier=self.identifier)
 
     @staticmethod
     def get_current():

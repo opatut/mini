@@ -9,7 +9,7 @@
     <h3>{{ user.get_display_name() }}</h3>
 
     <ul class="list-unstyled">
-        {% if user.name     %}<li><i class="fa fa-user"></i> {{ user.username }}</li>{% endif %}
+        {% if user.name     %}<li><i class="fa fa-user"></i> {{ user.identifier }}</li>{% endif %}
         {% if user.location %}<li><i class="fa fa-home"></i> {{ user.location }}</li>{% endif %}
     </ul>
 
