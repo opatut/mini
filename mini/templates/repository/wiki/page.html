@@ -2,6 +2,14 @@
 {% from "_formhelpers.html" import form_errors %}
 
 {% block repository_actions %}
+    {% if action == "view" %}
+        {% if page.can_edit(current_user) %}
+            <a href="{{ url_for('wiki_delete', slug=repository.slug, page=page.slug) }}" class="btn btn-danger btn-sm">Delete</a>
+            <a href="{{ url_for('wiki_edit', slug=repository.slug, page=page.slug) }}" class="btn btn-primary btn-sm">Edit</a>
+        {% endif %}
+    {% endif %}
+
+    <a href="{{ url_for('wiki_new', slug=repository.slug) }}" class="btn btn-success btn-sm">Create a new page</a>
 {% endblock %}
 
 {% block repository_content %}
@@ -12,10 +20,6 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="pull-right">
-                        {% if page.can_edit(current_user) %}
-                            <a href="{{ url_for('wiki_delete', slug=repository.slug, page=page.slug) }}" class="btn btn-danger btn-sm">Delete</a>
-                            <a href="{{ url_for('wiki_edit', slug=repository.slug, page=page.slug) }}" class="btn btn-primary btn-sm">Edit</a>
-                        {% endif %}
                     </div>
 
                     <ol class="breadcrumb">
@@ -39,21 +43,19 @@
             </div>
         </div>
         <div class="col-md-3">
-            <hr class="visible-xs visible-sm"/>
-            <a href="{{ url_for('wiki_new', slug=repository.slug) }}" class="btn btn-success">Create a new page</a>
-            <hr />
-
-            <h3>Wiki pages</h3>
-            <ul class="wiki-pages">
-                {% for p in repository.get_root_wiki_pages() recursive %}
-                    <li class="{{ 'current' if page == p else '' }}">
-                        <a href="{{ p.get_url() }}">{{ p.title }}</a>
-                        {% if p.child_pages %}
-                            <ul>{{ loop(p.child_pages) }}</ul>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+            <div class="card">
+                <h3>Wiki pages</h3>
+                <ul class="wiki-pages">
+                    {% for p in repository.get_root_wiki_pages() recursive %}
+                        <li class="{{ 'current' if page == p else '' }}">
+                            <a href="{{ p.get_url() }}">{{ p.title }}</a>
+                            {% if p.child_pages %}
+                                <ul>{{ loop(p.child_pages) }}</ul>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 {% elif action == "edit" or action == "new" %}

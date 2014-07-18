@@ -15,28 +15,32 @@
         </div>
         <h1>Repository List</h1>
     </div>
-
 <hr />
+<div class="row">
 {% for repository in repositories if repository.has_permission(current_user, "find") %}
-<div class="repository">
-    <h3>
-        <a href="{{ url_for('repository', slug=repository.slug) }}">{{ repository.title }}</a>
-        <small><b>/</b> {{ repository.slug }}</small>
-    </h3>
+<div class="col-md-4 col-sm-6">
+    <div class="repository card" style="margin-bottom: 30px;">
+        <h3>
+            <a href="{{ url_for('repository', slug=repository.slug) }}">{{ repository.title }}</a>
+            <small><b>/</b> {{ repository.slug }}</small>
+        </h3>
 
-    <div class="details">
-        {{ (repository.description or "This repository has no description.")|markdown }}
-    </div>
+        <div class="details">
+            {{ (repository.description or "This repository has no description.")|markdown }}
+        </div>
 
-    <div class="options">
-        <a class="btn btn-default btn-xs" href="{{ url_for('history', slug=repository.slug) }}"><i class="fa fa-history"></i> History</a>
-        <a class="btn btn-default btn-xs" href="{{ url_for('browse', slug=repository.slug) }}"><i class="fa fa-file"></i> Browse</a>
-        <a class="btn btn-default btn-xs" href="{{ url_for('issues', slug=repository.slug) }}"><i class="fa fa-exclamation-circle"></i> Issues</a>
+        <p class="url">
+            <code>git clone {{ repository.git_url }}</code>
+        </p>
 
-        <code>git clone {{ repository.git_url }}</code>
+        <div class="options">
+            <a class="btn btn-default btn-xs" href="{{ url_for('history', slug=repository.slug) }}"><i class="fa fa-history"></i> History</a>
+            <a class="btn btn-default btn-xs" href="{{ url_for('browse', slug=repository.slug) }}"><i class="fa fa-file"></i> Browse</a>
+            <a class="btn btn-default btn-xs" href="{{ url_for('issues', slug=repository.slug) }}"><i class="fa fa-exclamation-circle"></i> Issues</a>
+        </div>
     </div>
 </div>
-<hr />
 {% endfor %}
+</div>
 
 {% endblock %}

@@ -9,202 +9,217 @@
     <h1>Settings page</h1>
 </div>
 
+
 <div class="row">
     <div class="col-md-2 col-sm-4">
-        <ul class="nav nav-pills nav-stacked sidebar-nav">
-            {% for _tab, _label in [
-                ("general", "General"),
-                ("emails", "Email Addresses"),
-                ("keys", "SSH Keys"),
-                ("notifications", "Notifications")] %}
+        <div class="repo-sidebar">
+            <ul class="sub-nav sidebar-nav card">
+                {% for _tab, _label in [
+                    ("general", "General"),
+                    ("emails", "Email Addresses"),
+                    ("keys", "SSH Keys"),
+                    ("notifications", "Notifications")] %}
 
-                <li{% if tab==_tab %} class="active"{% endif %}><a href="{{ url_for('settings', tab=_tab) }}">{{ _label }}</a></li>
+                    <li{% if tab==_tab %} class="active"{% endif %}><a href="{{ url_for('settings', tab=_tab) }}">{{ _label }}</a></li>
 
-            {% endfor %}
-        </ul>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
     <div class="col-md-10 col-sm-8">
         {% if tab == "general" %}
         <div class="row">
-            <form class="settings col-md-6" method="POST">
-                <h3 class="form-title">General Settings</h3>
-                {{ form.hidden_tag() }}
-                {{ form_errors(form) }}
-                <div class="form-group">
-                    {{ form.name.label }}
-                    {{ form.name(class="form-control")}}
-                </div>
-                <div class="form-group">
-                    {{ form.location.label }}
-                    {{ form.location(class="form-control")}}
-                </div>
-                <div class="form-group">
-                    {{ form.about.label }}
-                    {{ form.about(class="form-control", rows=5)}}
-                </div>
-                <div class="form-group text-right">
-                    <input type="submit" value="Save" class="btn btn-success" />
-                </div>
-            </form>
+            <div class="col-md-6">
+                <form class="settings card" method="POST">
+                    <h3 class="form-title">General Settings</h3>
+                    {{ form.hidden_tag() }}
+                    {{ form_errors(form) }}
+                    <div class="form-group">
+                        {{ form.name.label }}
+                        {{ form.name(class="form-control")}}
+                    </div>
+                    <div class="form-group">
+                        {{ form.location.label }}
+                        {{ form.location(class="form-control")}}
+                    </div>
+                    <div class="form-group">
+                        {{ form.about.label }}
+                        {{ form.about(class="form-control", rows=5)}}
+                    </div>
+                    <div class="form-group text-right">
+                        <input type="submit" value="Save" class="btn btn-success" />
+                    </div>
+                </form>
+            </div>
 
-            <form class="settings col-md-6" method="POST">
-                <h3 class="form-title">Change Password</h3>
-                {{ password_form.hidden_tag() }}
-                {{ form_errors(password_form) }}
-                <div class="form-group">
-                    {{ password_form.password.label }}
-                    {{ password_form.password(class="form-control")}}
-                </div>
-                <div class="form-group">
-                    {{ password_form.password1.label }}
-                    {{ password_form.password1(class="form-control")}}
-                </div>
-                <div class="form-group">
-                    {{ password_form.password2.label }}
-                    {{ password_form.password2(class="form-control")}}
-                </div>
-                <div class="form-group text-right">
-                    <input type="submit" value="Save" class="btn btn-success" />
-                </div>
-            </form>
+            <div class="col-md-6">
+                <form class="settings card" method="POST">
+                    <h3 class="form-title">Change Password</h3>
+                    {{ password_form.hidden_tag() }}
+                    {{ form_errors(password_form) }}
+                    <div class="form-group">
+                        {{ password_form.password.label }}
+                        {{ password_form.password(class="form-control")}}
+                    </div>
+                    <div class="form-group">
+                        {{ password_form.password1.label }}
+                        {{ password_form.password1(class="form-control")}}
+                    </div>
+                    <div class="form-group">
+                        {{ password_form.password2.label }}
+                        {{ password_form.password2(class="form-control")}}
+                    </div>
+                    <div class="form-group text-right">
+                        <input type="submit" value="Save" class="btn btn-success" />
+                    </div>
+                </form>
+            </div>
         </div>
         {% elif tab == "emails" %}
         <div class="row">
-            <div class="settings col-md-8">
-                <h3 class="form-title">Email addresses</h3>
+            <div class="col-md-8">
+                <div class="settings card">
+                    <h3 class="form-title">Email addresses</h3>
 
-                <p>
-                    This is the list of all your registered email addresses. If
-                    a commit is found that contains any of these addresses, it
-                    is linked to your account. You can use any of these
-                    addresses to log in to your account.
-                </p>
+                    <p>
+                        This is the list of all your registered email addresses. If
+                        a commit is found that contains any of these addresses, it
+                        is linked to your account. You can use any of these
+                        addresses to log in to your account.
+                    </p>
 
-                <p>
-                    Notifications are sent to your
-                    primary address, your avatar is fetched from
-                    <a href="http://gravatar.com">gravatar.com</a> using your
-                    gravatar address.
-                </p>
+                    <p>
+                        Notifications are sent to your
+                        primary address, your avatar is fetched from
+                        <a href="http://gravatar.com">gravatar.com</a> using your
+                        gravatar address.
+                    </p>
 
-                <div class="table-responsive">
-                    <table class="table emails">
-                        <thead>
-                            <tr>
-                                <th>Address</th>
-                                <th>Default</th>
-                                <th>Gravatar</th>
-                                <th>Remove</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for email in current_user.emails %}
-                            <tr>
-                                <td class="address">
-                                    <img src="{{ email.get_avatar(24) }}" class="avatar" />
-                                    <span>{{ email.email }}</span>
-                                </td>
-                                <td><a href="{{ url_for('settings_email_action', action='set-default',  id=email.id) }}" class="btn btn-xs {% if email.is_default  %}btn-success{% else %}btn-default{% endif %}">Default</a></td>
-                                <td><a href="{{ url_for('settings_email_action', action='set-gravatar', id=email.id) }}" class="btn btn-xs {% if email.is_gravatar %}btn-success{% else %}btn-default{% endif %}">Gravatar</a></td>
+                    <div class="table-responsive">
+                        <table class="table emails">
+                            <thead>
+                                <tr>
+                                    <th>Address</th>
+                                    <th>Default</th>
+                                    <th>Gravatar</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for email in current_user.emails %}
+                                <tr>
+                                    <td class="address">
+                                        <img src="{{ email.get_avatar(24) }}" class="avatar" />
+                                        <span>{{ email.email }}</span>
+                                    </td>
+                                    <td><a href="{{ url_for('settings_email_action', action='set-default',  id=email.id) }}" class="btn btn-xs {% if email.is_default  %}btn-success{% else %}btn-default{% endif %}">Default</a></td>
+                                    <td><a href="{{ url_for('settings_email_action', action='set-gravatar', id=email.id) }}" class="btn btn-xs {% if email.is_gravatar %}btn-success{% else %}btn-default{% endif %}">Gravatar</a></td>
 
-                                {% if email.is_default or email.is_gravatar %}
-                                <td><span class="btn btn-xs btn-default disabled">Remove</span></td>
-                                {% else %}
-                                <td><a href="{{ url_for('settings_email_action', action='remove',       id=email.id) }}" class="btn btn-xs btn-danger">Remove</a></td>
-                                {% endif %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    {% if email.is_default or email.is_gravatar %}
+                                    <td><span class="btn btn-xs btn-default disabled">Remove</span></td>
+                                    {% else %}
+                                    <td><a href="{{ url_for('settings_email_action', action='remove',       id=email.id) }}" class="btn btn-xs btn-danger">Remove</a></td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <form class="settings col-md-4" method="POST">
-                <h3 class="form-title">Add new email address</h3>
-                {{ form.hidden_tag() }}
-                {{ form_errors(form) }}
+            <div class="col-md-4">
+                <form class="settings card" method="POST">
+                    <h3 class="form-title">Add new email address</h3>
+                    {{ form.hidden_tag() }}
+                    {{ form_errors(form) }}
 
-                <div class="form-group">
-                    {{ form.email.label }}
-                    {{ form.email(class="form-control") }}
-                </div>
-                <div class="form-group text-right">
-                    <input type="submit" value="Add email" class="btn btn-success" />
-                </div>
-            </form>
+                    <div class="form-group">
+                        {{ form.email.label }}
+                        {{ form.email(class="form-control") }}
+                    </div>
+                    <div class="form-group text-right">
+                        <input type="submit" value="Add email" class="btn btn-success" />
+                    </div>
+                </form>
+            </div>
         </div>
         {% elif tab == "keys" %}
         <div class="row">
-            <div class="settings col-md-8">
-                <h3 class="form-title">SSH Public Keys</h3>
+            <div class="col-md-8">
+                <div class="settings card">
+                    <h3 class="form-title">SSH Public Keys</h3>
 
-                <p>
-                    Please add your public key to this list for SSH access to
-                    the repositories. This is required to provide a secure and
-                    personalized access control. If you have troubles finding
-                    or generating your key, read
-                    <a href="https://help.github.com/articles/generating-ssh-keys">this</a>
-                    tutorial on Github, for now.
-                </p>
+                    <p>
+                        Please add your public key to this list for SSH access to
+                        the repositories. This is required to provide a secure and
+                        personalized access control. If you have troubles finding
+                        or generating your key, read
+                        <a href="https://help.github.com/articles/generating-ssh-keys">this</a>
+                        tutorial on Github, for now.
+                    </p>
 
-                <div class="table-responsive">
-                    <table class="table emails">
-                        <thead>
-                            <tr>
-                                <th>Key name</th>
-                                <th>Fingerprint</th>
-                                <th>Last access</th>
-                                <th>Remove</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for key in current_user.public_keys %}
-                            <tr>
-                                <td>{{ key.name }}</td>
-                                <td><code>{{ key.fingerprint }}</code></td>
-                                <td>{{ key.last_access|date_human if key.last_access else "never" }}</td>
-                                <td><a href="{{ url_for('settings', tab='keys', remove=key.id) }}" class="btn btn-xs btn-danger">Remove</a></td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="4">
-                                    You do not have any keys.
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table emails">
+                            <thead>
+                                <tr>
+                                    <th>Key name</th>
+                                    <th>Fingerprint</th>
+                                    <th>Last access</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key in current_user.public_keys %}
+                                <tr>
+                                    <td>{{ key.name }}</td>
+                                    <td><code>{{ key.fingerprint }}</code></td>
+                                    <td>{{ key.last_access|date_human if key.last_access else "never" }}</td>
+                                    <td><a href="{{ url_for('settings', tab='keys', remove=key.id) }}" class="btn btn-xs btn-danger">Remove</a></td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4">
+                                        You do not have any keys.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <form class="settings col-md-4" method="POST">
-                <h3 class="form-title">Add new key</h3>
-                {{ form.hidden_tag() }}
-                {{ form_errors(form) }}
+            <div class="col-md-4">
+                <form class="settings card" method="POST">
+                    <h3 class="form-title">Add new key</h3>
+                    {{ form.hidden_tag() }}
+                    {{ form_errors(form) }}
 
-                <div class="form-group">
-                    {{ form.key.label }}
-                    {{ form.key(class="form-control", placeholder="Paste your public key here.", rows=5) }}
-                    <div class="info">
-                        A public key usually starts with <code>ssh-rsa</code> or
-                        similar and is stored in <code>~/.ssh/id-rsa.pub</code>.
-                        If you have no keypair yet, generate one with <code>ssh-keygen</code>.
+                    <div class="form-group">
+                        {{ form.key.label }}
+                        {{ form.key(class="form-control", placeholder="Paste your public key here.", rows=5) }}
+                        <div class="info">
+                            A public key usually starts with <code>ssh-rsa</code> or
+                            similar and is stored in <code>~/.ssh/id-rsa.pub</code>.
+                            If you have no keypair yet, generate one with <code>ssh-keygen</code>.
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    {{ form.name.label }}
-                    {{ form.name(class="form-control") }}
-                    <div class="info">
-                        Give your key a name, so you can identify it later. It
-                        is generally a good idea to have one key per machine, and
-                        name them after the machine hostname.
+                    <div class="form-group">
+                        {{ form.name.label }}
+                        {{ form.name(class="form-control") }}
+                        <div class="info">
+                            Give your key a name, so you can identify it later. It
+                            is generally a good idea to have one key per machine, and
+                            name them after the machine hostname.
+                        </div>
                     </div>
-                </div>
-                <div class="form-group text-right">
-                    <input type="submit" value="Add key" class="btn btn-success" />
-                </div>
-            </form>
+                    <div class="form-group text-right">
+                        <input type="submit" value="Add key" class="btn btn-success" />
+                    </div>
+                </form>
+            </div>
         </div>
         {% elif tab == "notifications" %}
-        <div class="settings">
+        <div class="settings card">
             <h3 class="form-title">Notifications</h3>
             <p>
                 Notifications are not yet implemented. They are however one of the

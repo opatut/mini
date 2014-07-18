@@ -4,8 +4,8 @@
 
 {% block content %}
 
-<div style="margin: 50px 0; max-width: 400px;">
-    <h1>{{ error.code }} - {{ error.name }}</h1>
+<div class="card" style="margin: 50px auto; max-width: 400px;">
+    <h2>{{ error.code }} - {{ error.name }}</h2>
     <p>{{ error.description | safe }}</p>
 </div>
 

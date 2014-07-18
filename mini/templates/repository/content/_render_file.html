@@ -3,7 +3,7 @@
 
 {% if type == "textfile" or extension in ("js",) %}
     {% if extension in ("md", "markdown") %}
-        <div class="markdown markdown-file">
+        <div class="markdown markdown-file card">
             {{ file.data_stream.read() | markdown }}
         </div>
     {% else %}
@@ -12,7 +12,7 @@
             {{ "vs" | highlightsheet }}
         </style>
 
-        <div class="commit-file panel panel-default">
+        <div class="commit-file panel panel-default card">
             <div class="panel-heading files">
                 <h3 class="panel-title">
                     <div class="from">
@@ -29,7 +29,7 @@
         </div>
     {% endif %}
 {% elif type == "image" %}
-    <div class="image-preview white">
+    <div class="image-preview white card">
         <div class="well well-small pull-right" style="display: inline-block; padding: 3px 10px;">
             <button data-mode="white"       class="mode active"><span class="white"></span></button>
             <button data-mode="black"       class="mode"><span class="black"></span></button>
@@ -45,7 +45,7 @@
         This file is empty.
     </div>
 {% else %}
-    <div class="alert">
+    <div class="alert alert-info">
         This file cannot be displayed.
     </div>
 {% endif %}

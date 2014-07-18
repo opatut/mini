@@ -1,7 +1,7 @@
 #!/bin/bash
 pip install --upgrade \
-    flask==0.9 \
-    werkzeug==0.8.3 \
+    flask \
+    werkzeug \
     flask-sqlalchemy \
     flask-wtf \
     flask-markdown \
@@ -10,7 +10,9 @@ pip install --upgrade \
     iso8601 \
     pytz==2013d \
     pygments \
-    flask-sendmail
+    flask-sendmail \
+    flask-cache \
+    flask-whooshalchemy
 
 # == Old Stuff ==
 # python-dateutil

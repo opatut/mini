@@ -11,118 +11,102 @@
 
 {% block repository_content %}
 
-<br />
-
 <div class="row">
     <div class="col-md-3 col-md-push-9">
         <form method="POST" action="?save-status" id="issue-status-form">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><strong>{{ type|title }} Status</strong></h3>
+            <div class="card">
+                <h3>{{ type|title }} Status</h3>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select class="issue-status-select input-sm form-control {{issue.status}}" name="status" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
+                        {% for s in status_list %}
+                            <option {% if issue.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select class="issue-status-select input-sm form-control {{issue.status}}" name="status" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
-                            {% for s in status_list %}
-                                <option {% if issue.status==s %}selected="SELECTED" {% endif %}value="{{s}}">{{s}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
 
-                    <div class="form-group">
-                        <label>Assignee</label>
-                        <select class="issue-assignee-select input-sm form-control" name="assignee" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
-                            <option {% if not issue.assignee %}selected="SELECTED" {% endif %}value="0">- nobody -</option>
-                            {% for user in repository.get_users_with_permission("read") %}
-                                <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_display_name()}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label>Assignee</label>
+                    <select class="issue-assignee-select input-sm form-control" name="assignee" {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %}>
+                        <option {% if not issue.assignee %}selected="SELECTED" {% endif %}value="0">- nobody -</option>
+                        {% for user in repository.get_users_with_permission("read") %}
+                            <option {% if issue.assignee==user %}selected="SELECTED" {% endif %}value="{{user.id}}">{{user.get_display_name()}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                    <div class="form-group">
-                        <strong>Tags <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}" class="pull-right btn btn-default btn-xs" title="Edit tags"><i class="fa fa-pencil"></i></a></strong>
-                        {% if repository.issue_tags %}
-                        <ul class="issue-tag-select">
-                            {% for tag in repository.issue_tags if tag in issue.issue_tags or issue.can_edit(current_user) %}
-                                <li class="{{ 'active' if tag in issue.issue_tags else 'inactive' }}">
-                                    <label>
-                                        <input {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %} type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} name="tag" value="{{ tag.id }}" />
-                                        <span class="color" style="background: #{{ tag.color }}"></span>
-                                        <span class="tag {{ tag.text_color_class }}">{{ tag.tag }}</span>
-                                    </label>
-                                </li>
-                            {% else %}
-                                <li>this {{ type }} has no tags</li>
-                            {% endfor %}
-                        </ul>
+                <div class="form-group">
+                    <strong>Tags <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}" class="pull-right btn btn-default btn-xs" title="Edit tags"><i class="fa fa-pencil"></i></a></strong>
+                    {% if repository.issue_tags %}
+                    <ul class="issue-tag-select">
+                        {% for tag in repository.issue_tags if tag in issue.issue_tags or issue.can_edit(current_user) %}
+                            <li class="{{ 'active' if tag in issue.issue_tags else 'inactive' }}">
+                                <label>
+                                    <input {% if not issue.can_edit(current_user) %}disabled="DISABLED"{% endif %} type="checkbox" {{ 'checked="CHECKED" ' if tag in issue.issue_tags else '' }} name="tag" value="{{ tag.id }}" />
+                                    <span class="color" style="background: #{{ tag.color }}"></span>
+                                    <span class="tag {{ tag.text_color_class }}">{{ tag.tag }}</span>
+                                </label>
+                            </li>
                         {% else %}
-                        <div class="help-block">
-                            This repository has no tags defined.
-                            {% if repository.has_permission(current_user, "admin") %}
-                                <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}">Click here</a>
-                                to define tags.
-                            {% endif %}
-                        </div>
+                            <li>this {{ type }} has no tags</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="help-block">
+                        This repository has no tags defined.
+                        {% if repository.has_permission(current_user, "admin") %}
+                            <a href="{{ url_for('admin', slug=repository.slug, tab='tags') }}">Click here</a>
+                            to define tags.
                         {% endif %}
                     </div>
+                    {% endif %}
                 </div>
                 {% if issue.can_edit(current_user) %}
-                <div class="panel-footer" align="right" id="issue-status-footer">
+                <div align="right" id="issue-status-footer">
                     <input type="submit" value="Save" class="btn btn-success btn-sm" />
                 </div>
                 {% endif %}
             </div>
         </form>
     </div>
+    
     <div class="col-md-9 col-md-pull-3">
         {% macro render_comment(comment, mode="comment") %}
-        <a name="{{ mode }}-{{ comment.id }}" />
-        <div class="comment">
-            <a class="comment-avatar" href="#">
-                <img src="{{ comment.author.get_avatar(48) }}" alt="" width="48" height="48">
-            </a>
-            <div class="comment-content">
-                {% if mode == "issue" %}
-                    <div class="comment-heading">
-                    {% if action == "view" %}
-                        <div class="pull-right" style="padding-top: 2px;">
+        <div class="card">
+            <a name="{{ mode }}-{{ comment.id }}"></a>
+            {% if mode == "issue" %}
+                <div class="comment-heading">
+                {% if action == "view" %}
+                        <div class="pull-right">
                             {% if comment.can_edit(current_user) %}
                             <a href="{{ url_for(issue.type+'_edit', slug=repository.slug, number=issue.number) }}" class="btn btn-primary btn-sm">Edit</a>
                             {% endif %}
                         </div>
-                        <h3>{{ comment.title }}</h3>
-                    {% elif action == "edit" %}
-                    <div class="row" style="margin-bottom: -5px">
-                        <div class="col-md-9">
-                            {{ form.title(placeholder=form.title.label.text, class="form-control") }}
-                        </div>
-                        <div class="col-md-3 text-right" style="padding-top: 2px;">
-                            <a href="{{ url_for(issue.type, slug=repository.slug, number=issue.number) }}" class="btn btn-danger btn-sm">Cancel</a>
-                            <input type="submit" value="Save" class="btn btn-success btn-sm" />
-                        </div>
+                        {{ comment.title }}
+                {% elif action == "edit" %}
+                <div class="row">
+                    <div class="col-md-9" style="margin-top: 1rem;">
+                        {{ form.title(placeholder=form.title.label.text, class="form-control") }}
                     </div>
-                    {% endif %}
+                    <div class="col-md-3 text-right" style="padding-top: 2px;">
+                        <a href="{{ url_for(issue.type, slug=repository.slug, number=issue.number) }}" class="btn btn-danger btn-sm">Cancel</a>
+                        <input type="submit" value="Save" class="btn btn-success btn-sm" />
                     </div>
+                </div>
                 {% endif %}
+                </div>
+            {% endif %}
 
+            <div class="comment-author">
+                <div>
+                    <a href="{{ comment.author.get_url() }}">
+                        <img src="{{ comment.author.get_avatar(32) }}" alt="" width="32" height="32" class="avatar">
+                    </a>
+                </div>
+                <div class="author-name">
+                    {{ comment.author.get_display_name() }}
+                </div>
                 <div class="comment-meta">
-                    {% if mode == "comment" %}
-                    <ul class="meta-actions">
-                        {% if not edit_comment_id == comment.id %}
-                            {% if comment.can_edit(current_user) %}
-                                <li><a href="?edit-comment={{ comment.id }}"><i class="fa fa-pencil"></i></a></li>
-                            {% endif %}
-                            {% if comment.can_delete(current_user) %}
-                                <li><a href="?remove-comment={{ comment.id }}"><i class="fa fa-trash-o"></i></a></li>
-                            {% endif %}
-                        {% endif %}
-                    </ul>
-
-                    <i class="fa fa-comment"></i>
-                    {% endif %}
-
-                    <b>{{ comment.author.get_display_name() }}</b>
 
                     {% if mode == "issue" %}
                         opened this {{ type }}
@@ -132,25 +116,42 @@
 
                     {{ comment.created|date_human }} at {{ comment.created|time }}
                 </div>
-                <div class="comment-body markdown">
-                    {% if mode == "issue" and action == "edit" %}
-                        {{ form.text(class="form-control", rows=7, placeholder=form.text.label.text) }}
-                    {% elif mode == "comment" and edit_comment_id == comment.id %}
-                    <form method="POST">
-                        {{ form_comment.hidden_tag() }}
-                        {{ form_errors(form_comment) }}
-                        <div class="form-group" style="margin-bottom: 5px;">
-                            {{ form_comment.text(rows=5, class="form-control", placeholder=form_comment.text.label.text) }}
-                        </div>
-                        <div class="form-group text-right" style="margin: 0">
-                            <a href="{{ issue.get_url() }}#comment-{{ comment.id }}" class="btn btn-default btn-sm">Cancel</a>
-                            <input type="submit" class="btn btn-success btn-sm" value="Save" />
-                        </div>
-                    {% else %}
-                        {{ comment.text|markdown }}
-                    {% endif%}
-                </div>
             </div>
+
+            <div class="comment-body markdown">
+                {% if mode == "issue" and action == "edit" %}
+                    {{ form.text(class="form-control", rows=7, placeholder=form.text.label.text) }}
+                {% elif mode == "comment" and edit_comment_id == comment.id %}
+                <form method="POST">
+                    {{ form_comment.hidden_tag() }}
+                    {{ form_errors(form_comment) }}
+                    <div class="form-group" style="margin-bottom: 5px;">
+                        {{ form_comment.text(rows=5, class="form-control", placeholder=form_comment.text.label.text) }}
+                    </div>
+                    <div class="form-group text-right" style="margin: 0">
+                        <a href="{{ issue.get_url() }}#comment-{{ comment.id }}" class="btn btn-default btn-sm">Cancel</a>
+                        <input type="submit" class="btn btn-success btn-sm" value="Save" />
+                    </div>
+                {% else %}
+                    {{ comment.text|markdown }}
+                {% endif%}
+            </div>
+
+            {% if mode == "comment" %}
+                <div class="comment-actions">
+                    <ul class="meta-actions">
+                        {% if not edit_comment_id == comment.id %}
+                            {% if comment.can_edit(current_user) %}
+                                <li><a class="btn-xs btn btn-link" href="?edit-comment={{ comment.id }}"><i class="fa fa-pencil"></i> Edit</a></li>
+                            {% endif %}
+                            {% if comment.can_delete(current_user) %}
+                                <li><a class="btn-xs btn btn-link" href="?remove-comment={{ comment.id }}"><i class="fa fa-trash-o"></i> Delete</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+
         </div>
         {% endmacro %}
 
@@ -176,18 +177,21 @@
         {% endif %}
 
         {% if issue.can_comment(current_user) %}
+        <div class="card">
         <form method="POST" action="?post-comment">
             <div class="comment">
-                <a class="comment-avatar" href="#">
-                    <img src="{{ current_user.get_avatar(48) }}" alt="" width="48" height="48">
-                </a>
                 <div class="comment-content comment-reply">
                     <textarea class="form-control" placeholder="Leave a comment" rows="5" name="comment"></textarea>
                 </div>
 
                 <div align="right">
-                    <input type="submit" value="Comment & close"    class="btn btn-sm btn-default" />
-                    <input type="submit" value="Comment"            class="btn btn-sm btn-success" />
+                    <div class="pull-left">
+                        <a class="comment-avatar" href="#">
+                            <img src="{{ current_user.get_avatar(32) }}" alt="" width="32" height="32">
+                        </a>
+                    </div>
+                    <input type="submit" value="Comment & close"    class="btn btn-default" />
+                    <input type="submit" value="Comment"            class="btn btn-success" />
                 </div>
             </div>
         </form>
@@ -200,6 +204,7 @@
             Comments are disabled for you on this repository.
         </div>
         {% endif %}
+        </div>
     </div>
 </div>
 

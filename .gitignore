@@ -7,4 +7,5 @@ config.py
 config/
 env
 data/
+indexdir/
 authorized_keys*

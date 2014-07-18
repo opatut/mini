@@ -328,6 +328,8 @@ div.browse-path {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     padding: 6px;
     border-radius: 4px;
+    display: none;
+    z-index: 1000;
 }
 
 #network-commit-details .author {

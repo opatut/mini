@@ -6,54 +6,56 @@
 
 {% block repository_content %}
 
-<div class="table-responsive">
-    <table class="table merge-table">
-        <tr>
-            <th class="compact"></th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Status</th>
-        </tr>
-    {% for merge in merges %}
-        <tr class="merge {{ merge.status }}">
-            <td class="number compact">
-                <i class="status-icon fa fa-{{ merge.get_status_icon() }}"></i>
-                #{{ merge.number }}
-            </td>
-            <td class="title">
-                <a href="{{ merge.get_url() }}">{{ merge.title }}</a>
-            </td>
-            <td>
-                {{ merge.author.get_link() if merge.author else "&mdash;"|safe }}
-            </td>
-            <td>
-                <code class="rev">
-                    {% if merge.from_repository != merge.repository %}
-                        {{ merge.from_repository.slug }} : 
-                    {% endif %}
-                    <a href="{{ url_for('commit', slug=merge.from_repository.slug, rev=merge.from_rev) }}">{{ merge.from_rev }}</a>
-                </code>
-            </td>
-            <td>
-                <code class="rev">
-                    {% if merge.from_repository != merge.repository %}
-                        {{ merge.repository.slug }} : 
-                    {% endif %}
-                    <a href="{{ url_for('commit', slug=merge.repository.slug, rev=merge.rev) }}">{{ merge.rev }}</a>
-                </code>
-            </td>
-            <td class="status">{{ merge.status }}</td>
-        </tr>
-    {% else %}
-        <tr>
-            <td colspan="6">
-                <div class="alert alert-info">You have no merge requests.</div>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
+<div class="card nopad">
+    <div class="table-responsive">
+        <table class="table merge-table card-table">
+            <tr>
+                <th class="compact"></th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Status</th>
+            </tr>
+        {% for merge in merges %}
+            <tr class="merge {{ merge.status }}">
+                <td class="number compact">
+                    <i class="status-icon fa fa-{{ merge.get_status_icon() }}"></i>
+                    #{{ merge.number }}
+                </td>
+                <td class="title">
+                    <a href="{{ merge.get_url() }}">{{ merge.title }}</a>
+                </td>
+                <td>
+                    {{ merge.author.get_link() if merge.author else "&mdash;"|safe }}
+                </td>
+                <td>
+                    <code class="rev">
+                        {% if merge.from_repository != merge.repository %}
+                            {{ merge.from_repository.slug }} : 
+                        {% endif %}
+                        <a href="{{ url_for('commit', slug=merge.from_repository.slug, rev=merge.from_rev) }}">{{ merge.from_rev }}</a>
+                    </code>
+                </td>
+                <td>
+                    <code class="rev">
+                        {% if merge.from_repository != merge.repository %}
+                            {{ merge.repository.slug }} : 
+                        {% endif %}
+                        <a href="{{ url_for('commit', slug=merge.repository.slug, rev=merge.rev) }}">{{ merge.rev }}</a>
+                    </code>
+                </td>
+                <td class="status">{{ merge.status }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">
+                    <div class="alert alert-info">You have no merge requests.</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
 </div>
 
 {% endblock %}

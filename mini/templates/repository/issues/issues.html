@@ -6,44 +6,46 @@
 
 {% block repository_content %}
 
-<div class="table-responsive">
-    <table class="table issue-table">
-        <tr>
-            <th class="compact"></th>
-            <th>Title</th>
-            <th class="compact"></th>
-            <th>Assignee</th>
-            <th>Status</th>
-            <th>Tags</th>
-        </tr>
-    {% for issue in issues %}
-        <tr class="issue {{ issue.status }}">
-            <td class="number compact">
-                <i class="status-icon fa fa-{{ issue.get_status_icon() }}"></i>
-                #{{ issue.number }}
-            </td>
-            <td class="title">
-                <a href="{{ issue.get_url() }}">{{ issue.title }}</a>
-            </td>
-            <td class="text-right compact">
-                {% if issue.issue_comments %}{{ issue.issue_comments|length }} <i class="fa fa-comments-o"></i>{% endif %}
-            </td>
-            <td class="assignee">
-                {{ issue.assignee.get_link() if issue.assignee else "&mdash;"|safe }}
-            </td>
-            <td class="status">{{ issue.status }}</td>
-            <td class="tags">
-                {% for tag in issue.issue_tags %}{{ tag.render() }} {% endfor %}
-            </td>
-        </tr>
-    {% else %}
-        <tr>
-            <td colspan="6">
-                <div class="alert alert-info">You have no issues. Yay!</div>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
+<div class="card nopad">
+    <div class="table-responsive">
+        <table class="table issue-table card-table">
+            <tr>
+                <th class="compact"></th>
+                <th>Title</th>
+                <th class="compact"></th>
+                <th>Assignee</th>
+                <th>Status</th>
+                <th>Tags</th>
+            </tr>
+        {% for issue in issues %}
+            <tr class="issue {{ issue.status }}">
+                <td class="number compact">
+                    <i class="status-icon fa fa-{{ issue.get_status_icon() }}"></i>
+                    #{{ issue.number }}
+                </td>
+                <td class="title">
+                    <a href="{{ issue.get_url() }}">{{ issue.title }}</a>
+                </td>
+                <td class="text-right compact">
+                    {% if issue.issue_comments %}{{ issue.issue_comments|length }} <i class="fa fa-comments-o"></i>{% endif %}
+                </td>
+                <td class="assignee">
+                    {{ issue.assignee.get_link() if issue.assignee else "&mdash;"|safe }}
+                </td>
+                <td class="status">{{ issue.status }}</td>
+                <td class="tags">
+                    {% for tag in issue.issue_tags %}{{ tag.render() }} {% endfor %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">
+                    <div class="alert alert-info">You have no issues. Yay!</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
 </div>
 
 {% endblock %}

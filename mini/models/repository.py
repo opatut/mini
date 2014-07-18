@@ -149,16 +149,16 @@ class Repository(db.Model):
 
     @property
     def implicit_permission(self):
-        permission = Permission.query.filter_by(repository=self, user=None).first()
+        permission = Permission.query.filter_by(repository=self, member=None).first()
         if not permission:
             permission = Permission(None, self, "none")
             db.session.add(permission)
             db.session.commit()
         return permission
 
-    def get_explicit_permission(self, user):
-        if not user: return self.implicit_permission
-        return Permission.query.filter_by(repository_id=self.id, user_id=user.id).first()
+    def get_explicit_permission(self, member):
+        if not member: return self.implicit_permission
+        return Permission.query.filter_by(repository_id=self.id, member_id=member.id).first()
 
     def set_permission(self, user, access):
         if user == current_user: return False # never allow this

@@ -4,34 +4,37 @@
 
 {% block content %}
 
-<div class="profile-sidebar">
-    <img src="{{ user.get_avatar(200) }}" class="avatar img-responsive" width="200" height="200" />
-    <h3>{{ user.get_display_name() }}</h3>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="profile-sidebar card">
+            <div class="avatar-box">
+                <img src="{{ user.get_avatar(200) }}" class="avatar"/>
+            </div>
+            <h3>{{ user.get_display_name() }}</h3>
 
-    <ul class="list-unstyled">
-        {% if user.name     %}<li><i class="fa fa-user"></i> {{ user.identifier }}</li>{% endif %}
-        {% if user.location %}<li><i class="fa fa-home"></i> {{ user.location }}</li>{% endif %}
-    </ul>
+            <ul class="list-unstyled">
+                {% if user.name     %}<li><i class="fa fa-user"></i> {{ user.identifier }}</li>{% endif %}
+                {% if user.location %}<li><i class="fa fa-home"></i> {{ user.location }}</li>{% endif %}
+            </ul>
 
-    {% if user == current_user %}
-    <hr />
-    <p><a class="btn btn-primary" href="{{ url_for('settings') }}">Profile settings</a></p>
-    {% endif %}
-</div>
-
-<div class="profile">
-
-    <div class="row">
-        <div class="col-md-6">
+            {% if user == current_user %}
+            <hr />
+            <p><a class="btn btn-primary" href="{{ url_for('settings') }}">Profile settings</a></p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
             <h3>Recent activity</h3>
             <p>coming soon</p>
         </div>
-        <div class="col-md-6">
+    </div>
+    <div class="col-sm-3">
+        <div class="card">
             <h3>Statistics</h3>
             <p>coming soon</p>
-        </div>
+        </div>        
     </div>
 </div>
-
 
 {% endblock %}

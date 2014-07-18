@@ -10,18 +10,22 @@
 {% endblock %}
 
 {% block repository_content %}
-<h3>Branching graph</h3>
+<div class="card">
+    <h3>Branching graph</h3>
 
-<div id="network-graph-container" style="overflow: auto; max-width: 100%; border: 1px solid #CCC;">
-    <canvas id="network-graph"></canvas>
-</div>
-
-<div id="network-commit-details">
-    <div class="meta">
-        <span class="author">Some author</span>
-        <span class="hexsha"><code>c7da520da0</code></span>
+    <div id="network-graph-container" style="overflow: auto; max-width: 100%; border: 1px solid #CCC; min-height: 200px;">
+        <canvas id="network-graph"></canvas>
     </div>
-    <div class="message">This is the commit message.</div>
 </div>
 
+{% endblock %}
+
+{% block overlay %}
+    <div id="network-commit-details">
+        <div class="meta">
+            <span class="author">Some author</span>
+            <span class="hexsha"><code>c7da520da0</code></span>
+        </div>
+        <div class="message">This is the commit message.</div>
+    </div>
 {% endblock %}

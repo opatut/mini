@@ -8,13 +8,14 @@
     <h1>{{ team.name }}</h1>
 </div>
 
-<ul>
-{% for member in team.members %}
-    <li>
-        {% set is_team = member.type == "team" %}
-        {{ member.get_link() }}
-    </li>
-{% endfor %}
-</ul>
-
+<div class="card">
+    <ul class="list-unstyled">
+    {% for member in team.members %}
+        <li>
+            {% set is_team = member.type == "team" %}
+            {{ member.get_link() }}
+        </li>
+    {% endfor %}
+    </ul>
+</div>
 {% endblock %}

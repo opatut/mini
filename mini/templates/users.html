@@ -9,15 +9,17 @@
 
 <div class="user-list row">
 {% for user in users %}
-    <div class="user col-md-3 col-sm-6">
-        <a href="{{ user.get_url() }}"><img src="{{ user.get_avatar(48) }}" class="avatar" /></a>
-        <div class="name"><a href="{{ user.get_url() }}">{{ user.get_display_name() }}</a></div>
-        {% if user.name %}<div class="username">{{ user.identifier }}</div>{% endif %}
-        <div class="info">
-            {% if user.location %}
-                <i class="fa fa-home"></i>
-                {{ user.location }}
-            {% endif %}
+    <div class="col-md-3 col-sm-6">
+        <div class="user card">
+            <a href="{{ user.get_url() }}"><img src="{{ user.get_avatar(48) }}" class="avatar" /></a>
+            <div class="name"><a href="{{ user.get_url() }}">{{ user.get_display_name() }}</a></div>
+            {% if user.name %}<div class="username">{{ user.identifier }}</div>{% endif %}
+            <div class="info">
+                {% if user.location %}
+                    <i class="fa fa-home"></i>
+                    {{ user.location }}
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endfor %}

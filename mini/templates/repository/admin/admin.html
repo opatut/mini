@@ -2,22 +2,19 @@
 {% from "_formhelpers.html" import form_errors %}
 
 {% block repository_content %}
+    <ul class="nav-pills nav">
+    {% for _tab, _label in [
+        ("general", "General"),
+        ("permissions", "Permissions"),
+        ("tags", "Issue tags")] %}
 
-<br />
-<div class="row">
-    <div class="col-md-2 col-sm-4">
-        <ul class="sidebar-nav">
-            {% for _tab, _label in [
-                ("general", "General"),
-                ("permissions", "Permissions"),
-                ("tags", "Issue tags")] %}
+        <li{% if tab==_tab %} class="active"{% endif %}><a href="{{ url_for('admin', slug=repository.slug, tab=_tab) }}">{{ _label }}</a></li>
+    {% endfor %}
+    </ul>
 
-                <li{% if tab==_tab %} class="active"{% endif %}><a href="{{ url_for('admin', slug=repository.slug, tab=_tab) }}">{{ _label }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
+    <hr />
 
-    <div class="col-md-10 col-sm-8 settings">
+    <div class="settings card">
         {% if tab == "general" %}
             <h3 class="form-title">General Settings</h3>
 

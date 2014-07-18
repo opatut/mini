@@ -6,6 +6,7 @@ from flask.ext.markdown import Markdown
 from flask.ext.login import LoginManager, current_user
 from flask.ext.sendmail import Mail
 from mini.util import AccessControl, AnonymousUser
+from mini.search import ix
 
 app = Flask(__name__)
 app.config.from_pyfile('../config.py', silent=True)

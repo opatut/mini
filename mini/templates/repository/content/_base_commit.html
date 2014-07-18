@@ -2,7 +2,7 @@
 
 {% block repository_content %}
 
-<div class="callout callout-info commit-message">
+<div class="card commit-message">
     <div class="info pull-right">
         {% for c in [commit]+commit.parents|list %}
             <div>
@@ -12,14 +12,17 @@
         {% endfor %}
     </div>
 
-    <h4>{{ commit.message|first_line }}</h4>
+    <h4 style="margin-top: 0">{{ commit.message|first_line }}</h4>
+
     {% set message_body = (commit.message|splitlines)[1:] %}
     {% if message_body %}<pre class="normal">{{ "\n".join(message_body) }}</pre>{% endif %}
 
     <div class="meta">
         Authored by {{ (commit.author|git_user).get_link() }}
         on {{ commit|git_committer_time|date_human }}
+        {% block commit_meta %}{% endblock %}
     </div>
+
 </div>
 
 {% block commit_content %}{% endblock %}

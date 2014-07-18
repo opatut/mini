@@ -1,26 +1,27 @@
 {% extends "repository/content/_base_commit.html" %}
 
+{% set author = commit.author | git_user %}
+{% set date = commit | git_committer_time %}
+
 {% block repository_actions %}
     <a href="{{ url_for('browse', slug=repository.slug, rev=rev) }}" class="btn btn-primary btn-sm">Browse files @ {{ commit.hexsha|shortsha }}</a>
 {% endblock %}
 
-{% block commit_content %}
+{% block commit_meta %}
 
-{% set author = commit.author | git_user %}
-{% set date = commit | git_committer_time %}
-
-<p>
+    &ndash;
     <span class="stats">
         {% set s = commit.stats.total %}
         <span class="insertions">{{ s["insertions"] }} insertions</span>
-        -
+        &ndash;
         <span class="deletions">{{ s["deletions"] }} deletions</span>
-        -
+        &ndash;
         <span class="lines">{{ s["lines"] }} total</span>
     </span>
     <div style="clear: right;"></div>
-</p>
+{% endblock %}
 
+{% block commit_content %}
 
 {% if not commit.parents[0] %}
     <p class="alert alert-info">
@@ -32,7 +33,7 @@
     </p>
 {% else %}
     {% for diff in commit.parents[0].diff(commit, create_patch = True) %}
-        <div class="commit-file panel panel-default">
+        <div class="card commit-file panel panel-default">
             {% set from = diff.rename_from if diff.renamed else diff.a_blob.path %}
             {% set to = diff.rename_to if diff.renamed else diff.b_blob.path %}
 
@@ -71,7 +72,7 @@
                                 <td class="number a">{% if t != "insertion" %}{{ lineA }}{% endif %}</td>
                                 <td class="number b">{% if t != "deletion" %}{{ lineB }}{% endif %}</td>
                             {% endif %}
-                            <td> {{ line }}</td>
+                            <td> {{ line.decode("utf-8") }}</td>
                         </tr>
                     {% endfor %}
 

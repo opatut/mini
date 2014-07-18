@@ -17,11 +17,6 @@ def inject():
 def index():
     return redirect(url_for("repositories"))
 
-@app.route("/settings/")
-def settings():
-    access.check(current_user.has_permission("settings.core"))
-    return render_template("account/settings.html")
-
 @app.route("/repositories")
 def repositories():
     return render_template("repositories.html", repositories=Repository.query.all())

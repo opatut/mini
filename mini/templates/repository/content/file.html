@@ -4,18 +4,19 @@
 
 {% block repository_content %}
 
-<div class="page-header">
+<div class="card">
     <div class="pull-right">
         {% block file_actions %}{% endblock %}
         <a href="{{ raw_url }}" class="btn btn-primary btn-small"><i class="fa fa-save"></i> Download</a>
     </div>
 
-    <h3>{{ file.name }}</h3>
+    <h3 style="margin-top: 0">{{ file.name }}</h3>
+
+    {% set path = file.path %}
+    <p>{% include "repository/content/_path.html" %}</p>
 </div>
 
-{% set path = file.path %}
-<p>{% include "repository/content/_path.html" %}</p>
-
 {% include "repository/content/_render_file.html" %}
+
 {% endblock %}
 

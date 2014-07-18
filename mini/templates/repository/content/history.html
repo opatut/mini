@@ -6,35 +6,37 @@
 
 {% block repository_content %}
 
-<div style="width: 100%">
-    <table class="table history">
-        <tr>
-            <th>Author</th>
-            <th>Commit</th>
-            <th>Message</th>
-            <th>Date</th>
-            <th></th>
-        </tr>
-    {% for commit in repository.get_commits()|reverse %}
-        <tr>
-            <td class="nowrap">{{ (commit.author|git_user).get_link() }}</td>
-            <td><a href="{{ url_for('commit', slug=repository.slug, rev=commit.hexsha) }}" class="sha">{{ commit.hexsha|shortsha }}</a></td>
-            <td><div class="nobreak">{{ (commit.message)|first_line|shorten(120) }}</div></td>
-            <td class="nowrap">{{ commit|git_committer_time|date_human }}</td>
-            <td class="nowrap">
-                <a class="btn btn-xs btn-default" href="{{ url_for('commit', slug=repository.slug, rev=commit.hexsha) }}">Details</a>
-                <a class="btn btn-xs btn-default" href="{{ url_for('browse', slug=repository.slug, rev=commit.hexsha) }}">Browse</a>
-            </td>
-        </tr>
-    {% else %}
-        <tr>
-            <td colspan="4">
-                <div class="alert alert-info">
-                    The repository does not have any commits yet.
-                </div>
-            </td>
-        </tr>
-    {% endfor %}
-    </table>
+<div class="card nopad">
+    <div class="table-responsive">
+        <table class="table history card-table">
+            <tr>
+                <th>Author</th>
+                <th>Commit</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        {% for commit in repository.get_commits()|reverse %}
+            <tr>
+                <td class="nowrap">{{ (commit.author|git_user).get_link() }}</td>
+                <td><a href="{{ url_for('commit', slug=repository.slug, rev=commit.hexsha) }}" class="sha">{{ commit.hexsha|shortsha }}</a></td>
+                <td><div class="nobreak">{{ (commit.message)|first_line|shorten(120) }}</div></td>
+                <td class="nowrap">{{ commit|git_committer_time|date_human }}</td>
+                <td class="nowrap">
+                    <a class="btn btn-xs btn-default" href="{{ url_for('commit', slug=repository.slug, rev=commit.hexsha) }}">Details</a>
+                    <a class="btn btn-xs btn-default" href="{{ url_for('browse', slug=repository.slug, rev=commit.hexsha) }}">Browse</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">
+                    <div class="alert alert-info">
+                        The repository does not have any commits yet.
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}

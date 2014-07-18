@@ -5,36 +5,40 @@
 
 <div class="row">
     <div class="col-md-9">
-        
-        <div class="activities">
-        {% for activity in repository.activities.order_by("date DESC") %}
-            {% if not date or date.date() != activity.date.date() %}
-                {% set date = activity.date %}
-                <h3>{{ date|date_human(capitalize=True) }}</h3>
+        <div class="activities card">
+            {% for activity in repository.activities.order_by("date DESC") %}
+                {% if not date or date.date() != activity.date.date() %}
+                    {% if date %}
+                        </div>
+                        <div class="activities card">
+                    {% endif %}
+                    {% set date = activity.date %}
+                    <h3>{{ date|date_human(capitalize=True) }}</h3>
+                    <hr />
+                {% endif %}
+                {{ activity.render() }}
                 <hr />
-            {% endif %}
-            {{ activity.render() }}
-            <hr />
-        {% else %}
-            <h3>This is an empty repository</h3>
-            {% set noemptybase = True %}
-            {% include "repository/content/empty.html" with context %}
-        {% endfor %}
+            {% else %}
+                <h3>This is an empty repository</h3>
+                {% set noemptybase = True %}
+                {% include "repository/content/empty.html" with context %}
+            {% endfor %}
         </div>
-
     </div>
     <div class="col-md-3">
-        <h3>Quick Actions</h3>
+        <div class="card">
+            <h3>Quick Actions</h3>
 
-        <div class="quick-actions">
-            <a href="{{ url_for('issue_new', slug=repository.slug) }}" class="btn btn-block btn-inverse"><i class="fa fa-exclamation-circle"></i> Create issue</a>
-            <a href="{{ url_for('merge_new', slug=repository.slug) }}" class="btn btn-block btn-inverse"><i class="fa fa-level-up"></i> Request merge</a>
-            <a href="#" class="btn btn-block btn-warning"><i class="fa fa-rss"></i> RSS</a>
+            <div class="quick-actions">
+                <a href="{{ url_for('issue_new', slug=repository.slug) }}" class="btn btn-block btn-inverse"><i class="fa fa-exclamation-circle"></i> Create issue</a>
+                <a href="{{ url_for('merge_new', slug=repository.slug) }}" class="btn btn-block btn-inverse"><i class="fa fa-level-up"></i> Request merge</a>
+                <a href="#" class="btn btn-block btn-warning"><i class="fa fa-rss"></i> RSS</a>
+            </div>
+
+            <h3>Fetch URL</h3>
+
+            <input type="text" value="{{ repository.git_url }}" class="form-control input-sm" onclick="this.select();"/>
         </div>
-
-        <h3>Fetch URL</h3>
-
-        <input type="text" value="{{ repository.git_url }}" class="form-control input-sm" onclick="this.select();"/>
     </div>
 </div>
 {% endblock %}

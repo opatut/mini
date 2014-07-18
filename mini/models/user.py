@@ -14,7 +14,6 @@ class User(Member, AnonymousUser):
     __mapper_args__ = {'polymorphic_identity': __tablename__}
 
     id = db.Column(db.Integer, db.ForeignKey("member.id"), primary_key = True)
-    name = db.Column(db.String(80), unique = True)
     password = db.Column(db.String(128))
     created = db.Column(db.DateTime)
 

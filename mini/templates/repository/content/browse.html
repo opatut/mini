@@ -6,10 +6,12 @@
 
 {% block commit_content %}
 
-<h4>
+<div class="card" style="padding: 0; padding-top: 1.5rem;">
+
+<h4 style="padding: 0 1.5rem;">
     {% set isbranch = repository.is_branch(rev) %}
 
-    <span class="branch-select">
+    <span class="branch-select pull-right">
     <span class="input-group">
         <span class="input-group-addon input-small">{% if isbranch %}branch{% else %}commit{% endif %}</span>
 
@@ -27,48 +29,49 @@
 
     {% include "repository/content/_path.html" %}
 </h4>
+<hr>
+    <div class="table-responsive">
+        <table class="table table-striped tree-table card-table">
+            <thead>
+                <tr>
+                    <th width="16"></th>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Last changed</th>
+                    <th>Commit</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if path %}
+            <tr class="folder">
+                <td><i class="fam-16 fam-folder"></i></td>
+                <td><a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=path | parentpath) }}">[..]</a></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-muted">- parent directory -</td>
+            </tr>
+            {% endif %}
 
-<div class="table-responsive">
-<table class="table table-bordered table-striped tree-table">
-    <thead>
-        <tr>
-            <th width="16"></th>
-            <th>Filename</th>
-            <th>Size</th>
-            <th>Last changed</th>
-            <th>Commit</th>
-            <th>Message</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% if path %}
-    <tr class="folder">
-        <td><i class="fam-16 fam-folder"></i></td>
-        <td><a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=path | parentpath) }}">[..]</a></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="text-muted">- parent directory -</td>
-    </tr>
-    {% endif %}
-
-{% if tree.trees or tree.blobs %}
-{% for file in tree.trees + tree.blobs %}
-    {% set last = repository.find_commit_containing(rev, file) %}
-    <tr class="{% if file.type == "TREE" %}folder{% else %}file{% endif %}">
-        <td><i class="fam-16 fam-{{ file | filetype }}"></i></td>
-        <td><a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=file.path) }}">{{ file.name }}</a></td>
-        <td>{% if file.type == "BLOB" %}{{ file.size | filesize }}{% else %}&mdash;{% endif %}</td>
-        <td>{{ last | git_committer_time | datetime }}</td>
-        <td><a href="{{ url_for('commit', slug=repository.slug, rev=last.hexsha) }}" class="sha">{{ last.hexsha|shortsha }}</a></td>
-        <td>{{ last.message[:70] }}</td>
-    </tr>
-{% endfor %}
-{% else %}
-    <tr><td colspan="5"><i>This directory is empty.</i></td></tr>
-{% endif %}
-    </tbody>
-</table>
+        {% if tree.trees or tree.blobs %}
+        {% for file in tree.trees + tree.blobs %}
+            {% set last = repository.find_commit_containing(rev, file) %}
+            <tr class="{% if file.type == "TREE" %}folder{% else %}file{% endif %}">
+                <td><i class="fam-16 fam-{{ file | filetype }}"></i></td>
+                <td><a href="{{ url_for('browse', slug=repository.slug, rev=rev, path=file.path) }}">{{ file.name }}</a></td>
+                <td>{% if file.type == "BLOB" %}{{ file.size | filesize }}{% else %}&mdash;{% endif %}</td>
+                <td>{{ last | git_committer_time | datetime }}</td>
+                <td><a href="{{ url_for('commit', slug=repository.slug, rev=last.hexsha) }}" class="sha">{{ last.hexsha|shortsha }}</a></td>
+                <td>{{ last.message[:70] }}</td>
+            </tr>
+        {% endfor %}
+        {% else %}
+            <tr><td colspan="5"><i>This directory is empty.</i></td></tr>
+        {% endif %}
+            </tbody>
+        </table>
+        </div>
 </div>
 
 {# SHOW README IF ANY #}
