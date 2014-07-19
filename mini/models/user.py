@@ -26,6 +26,8 @@ class User(Member, AnonymousUser):
     location = db.Column(db.String(200))
     about = db.Column(db.Text)
 
+    activities = db.relationship("Activity", backref="user", lazy="dynamic")
+
     def __init__(self):
         self.created = datetime.utcnow()
 
@@ -74,6 +76,10 @@ class User(Member, AnonymousUser):
 
     def get_url(self):
         return url_for("user", identifier=self.identifier)
+
+    def get_owned_repositories(self):
+        from mini.models import Repository, Permission
+        return Repository.query.join(Permission).filter_by(member_id=self.id, access="admin")
 
     @staticmethod
     def get_current():

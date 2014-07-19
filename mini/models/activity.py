@@ -7,7 +7,6 @@ class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime)
 
-    user = db.relationship("User", backref="activities")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     repository_id = db.Column(db.Integer, db.ForeignKey("repository.id"))
@@ -22,8 +21,8 @@ class Activity(db.Model):
     def __init__(self):
         self.date = datetime.utcnow()
 
-    def render(self, show_repository=False):
-        return Markup(render_template("activity/%s.html" % self.type, activity=self, show_repository=show_repository))
+    def render(self, mode="repository"):
+        return Markup(render_template("activity/%s.html" % self.type, activity=self, mode=mode))
 
 
 class PushActivity(Activity):

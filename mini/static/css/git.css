@@ -260,42 +260,6 @@ div.browse-path {
     background: #A00;
 }
 
-.activities hr {
-    margin: 10px 0;
-}
-
-.activity .date {
-    color: #AAA;
-}
-
-.activity .title {
-    font-size: 1.1em;
-    /*font-weight: bold;*/
-}
-
-.activity .content {
-    margin-top: 10px;
-    padding-left: 24px;
-}
-
-.activity .icon {
-    float: left;
-    font-size: 21px;
-    margin: 0 10px;
-    color: #CCC;
-}
-
-.activity .icon.big {
-    font-size: 28px;
-    margin: -3px 10px;
-}
-
-.activity .title,
-.activity .content {
-    margin-left: 50px;
-}
-
-
 .merging {
     border: 2px solid #66CC88;
     padding: 10px;

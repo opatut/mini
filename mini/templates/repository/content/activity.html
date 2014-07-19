@@ -16,7 +16,7 @@
                     <h3>{{ date|date_human(capitalize=True) }}</h3>
                     <hr />
                 {% endif %}
-                {{ activity.render() }}
+                {{ activity.render("repository") }}
                 <hr />
             {% else %}
                 <h3>This is an empty repository</h3>

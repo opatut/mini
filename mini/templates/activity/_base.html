@@ -3,15 +3,15 @@
     <i class="icon fa fa-{% block icon %}circle-o{% endblock %}"></i>
 
     <div class="title">
-        {{ activity.user.get_link(size=18) }} 
+        {% if mode == "user" %}
+            <span class="repository">
+                In {{ activity.repository.get_link() }}:
+            </span>
+        {% else %}
+            {{ activity.user.get_link(size=18) }} 
+        {% endif %}
         {% block title %}{% endblock %}
 
-        {% if show_repository %}
-        <span class="repository">
-            in
-            {{ activity.repository.get_link() }}
-        </span>
-        {% endif %}
         <span class="date">
             <!-- {{ activity.date|date_human }} -->
             at {{ activity.date|time(small=true) }}
