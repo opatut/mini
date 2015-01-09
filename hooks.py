@@ -137,11 +137,8 @@ if __name__ == "__main__":
     # retrieve key
     key_id = os.getenv("MINI_KEY_ID")
     key = PublicKey.query.filter_by(id=key_id).first()
-
-    # if not key: die("Unable to associate SSH Key. Please add it to your profile.")
-    # user = key.user
-    user = User.query.filter_by(identifier="peter").first()
-
+    if not key: die("Unable to associate SSH Key. Please add it to your profile.")
+    user = key.user
 
     if hook != "git-serve": # git-serve finds its own repository
         repository = get_repository(slug=sys.argv[2])
