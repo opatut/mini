@@ -1,6 +1,7 @@
 from mini import app, access, db, mails, cache
 from mini.forms import *
 from mini.models import *
+from mini.util import generate_new_slug
 from flask import render_template, flash, abort, url_for, request, redirect, g
 from flask.ext.login import current_user
 import git # for type checks
