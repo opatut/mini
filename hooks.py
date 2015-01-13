@@ -95,6 +95,10 @@ def post_receive():
 def git_serve():
     command = os.getenv("SSH_ORIGINAL_COMMAND")
 
+    # quit if there's no command
+    if not command:
+        die("Authenticated as %s. This remote user does not have shell access." % user.identifier)
+
     # split the command
     action, repo = command.split()
 
